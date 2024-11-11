@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # Serveur DNS
+  dns:
+    image: sameersbn/bind:latest
+    container_name: dns
+    networks:
+      - internal_net
+    environment:
+      - BIND_USER=root
+    ports:
+      - "53:53/udp"  # Port DNS
+    volumes:
+      - ./config/dns:/data
+    restart: always
+
+  # Active Directory avec Samba
+  ad:
+    image: dperson/samba
+    container_name: ad
+    networks:
+      - internal_net
+    environment:
+      - TZ=Europe/Paris
+      - SAMBA_DOMAIN=DOMAINE_LOCAL  # Remplacez par le nom du domaine
+      - SAMBA_REALM=DOMAINE.LOCAL   # Remplacez par le nom du domaine
+      - SAMBA_ADMIN_PASSWORD=admin_password  # Définir un mot de passe administrateur
+    ports:
+      - "389:389"    # LDAP
+      - "445:445"    # Partage de fichiers
+      - "3268:3268"  # Recherche GC
+    volumes:
+      - ./config/ad:/etc/samba
+    restart: always
+
+  # Serveur LDAP
+  ldap:
+    image: osixia/openldap:latest
+    container_name: ldap
+    networks:
+      - internal_net
+    environment:
+      - LDAP_ORGANISATION="Mon Organisation"
+      - LDAP_DOMAIN="domaine.local"  # Remplacez par le domaine LDAP
+      - LDAP_ADMIN_PASSWORD=admin_password
+    ports:
+      - "389:389"    # Port LDAP
+      - "636:636"    # Port LDAPS (LDAP sécurisé)
+    volumes:
+      - ./config/ldap:/var/lib/ldap
+      - ./config/slapd.d:/etc/ldap/slapd.d
+    restart: always
+
+  # Serveur Home Assistant
+  home_assistant:
+    image: homeassistant/home-assistant:stable
+    container_name: home_assistant
+    networks:
+      - internal_net
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - "8123:8123"  # Port Home Assistant
+    volumes:
+      - ./config/home_assistant:/config
+    restart: always
+
+  # Serveur VPN OpenVPN
+  openvpn:
+    image: kylemanna/openvpn:latest
+    container_name: openvpn
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - internal_net
+    ports:
+      - "1194:1194/udp"  # Port OpenVPN
+    volumes:
+      - ./config/openvpn:/etc/openvpn
+    environment:
+      - TZ=Europe/Paris
+    restart: always
+    command: "ovpn_run"
+
+  # Pare-feu OPNsense (simulation avec un proxy)
+  opnsense:
+    image: nginx:latest  # Placeholder pour simuler un pare-feu avec des règles de proxy
+    container_name: opnsense
+    networks:
+      - internal_net
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - "8080:80"  # Port HTTP pour accéder au pare-feu simulé
+    volumes:
+      - ./config/opnsense:/etc/nginx/conf.d
+    restart: always
+
+  # Machine Client
+  client:
+    image: debian:latest
+    container_name: client
+    networks:
+      - internal_net
+    environment:
+      - DISPLAY
+    command: bash -c "apt-get update && apt-get install -y xfce4 && startxfce4"
+    restart: always
+
+networks:
+  internal_net:
+    driver: bridge
