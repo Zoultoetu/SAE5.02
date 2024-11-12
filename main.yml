@@ -1,0 +1,10 @@
+# main.yml
+- include: dns_setup.yml
+- include: ad_setup.yml
+- include: ldap_setup.yml
+- include: home_assistant_setup.yml
+- include: openvpn_setup.yml
+- include: opnsense_setup.yml
+- include: client_setup.yml
+- include: ad_security.yml
+- include: openvpn_security.yml

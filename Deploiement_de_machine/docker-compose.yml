@@ -6,7 +6,8 @@ services:
     image: sameersbn/bind:latest
     container_name: dns
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.2
     environment:
       - BIND_USER=root
     ports:
@@ -20,12 +21,13 @@ services:
     image: dperson/samba
     container_name: ad
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.3
     environment:
       - TZ=Europe/Paris
-      - SAMBA_DOMAIN=DOMAINE_LOCAL  # Remplacez par le nom du domaine
-      - SAMBA_REALM=DOMAINE.LOCAL   # Remplacez par le nom du domaine
-      - SAMBA_ADMIN_PASSWORD=admin_password  # Définir un mot de passe administrateur
+      - SAMBA_DOMAIN=domaine_toinefa  # Remplacez par le nom du domaine
+      - SAMBA_REALM=domaine.toinefa   # Remplacez par le nom du domaine
+      - SAMBA_ADMIN_PASSWORD=root  # Définir un mot de passe administrateur
     ports:
       - "389:389"    # LDAP
       - "445:445"    # Partage de fichiers
@@ -39,7 +41,8 @@ services:
     image: osixia/openldap:latest
     container_name: ldap
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.4
     environment:
       - LDAP_ORGANISATION="Mon Organisation"
       - LDAP_DOMAIN="domaine.local"  # Remplacez par le domaine LDAP
@@ -57,7 +60,8 @@ services:
     image: homeassistant/home-assistant:stable
     container_name: home_assistant
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.5
     environment:
       - TZ=Europe/Paris
     ports:
@@ -73,7 +77,8 @@ services:
     cap_add:
       - NET_ADMIN
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.6
     ports:
       - "1194:1194/udp"  # Port OpenVPN
     volumes:
@@ -83,12 +88,13 @@ services:
     restart: always
     command: "ovpn_run"
 
-  # Pare-feu OPNsense (simulation avec un proxy)
+  # Pare-feu OPNsense
   opnsense:
     image: nginx:latest  # Placeholder pour simuler un pare-feu avec des règles de proxy
     container_name: opnsense
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.7
     environment:
       - TZ=Europe/Paris
     ports:
@@ -102,7 +108,8 @@ services:
     image: debian:latest
     container_name: client
     networks:
-      - internal_net
+      internal_net:
+        ipv4_address: 192.168.0.8
     environment:
       - DISPLAY
     command: bash -c "apt-get update && apt-get install -y xfce4 && startxfce4"
@@ -111,3 +118,6 @@ services:
 networks:
   internal_net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
