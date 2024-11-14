@@ -1,4 +1,3 @@
-# main.yml
 - include: dns_setup.yml
 - include: ad_setup.yml
 - include: ldap_setup.yml
