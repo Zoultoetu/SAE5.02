@@ -1,0 +1,28 @@
+# dns.yml
+- name: Configure DNS Server
+  hosts: dns
+  become: true
+  tasks:
+    - name: Install Bind DNS server
+      apt:
+        name: bind9
+        state: present
+      tags: dns
+
+    - name: Configure Bind for local domain
+      template:
+        src: templates/named.conf.local.j2
+        dest: /etc/bind/named.conf.local
+      notify: Restart Bind
+
+    - name: Configure the DNS zone file
+      template:
+        src: templates/db.domain.local.j2
+        dest: /etc/bind/db.domain.local
+      notify: Restart Bind
+
+  handlers:
+    - name: Restart Bind
+      service:
+        name: bind9
+        state: restarted

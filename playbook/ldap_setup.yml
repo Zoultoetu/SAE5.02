@@ -1,0 +1,29 @@
+# ldap_setup.yml
+- name: Configure OpenLDAP Server
+  hosts: ldap
+  become: true
+  tasks:
+    - name: Install LDAP Server
+      apt:
+        name: slapd
+        state: present
+      tags: ldap
+
+    - name: Configure LDAP
+      template:
+        src: templates/slapd.conf.j2
+        dest: /etc/ldap/slapd.conf
+      notify: Restart LDAP
+
+    - name: Configure LDAP database
+      command: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/slapd.ldif
+      when: ldap_stat.stat.exists == False
+
+  handlers:
+    - name: Restart LDAP
+      service:
+        name: slapd
+        state: restarted
+
+
+### slapd.conf.j2 : Contient la configuration pour le serveur LDAP.

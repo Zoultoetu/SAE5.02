@@ -1,0 +1,15 @@
+# opensense_setup.yml
+- name: Configure OPNsense Firewall Rules
+  hosts: opnsense
+  become: true
+  tasks:
+    - name: Set firewall rules for admin access
+      shell: |
+        # Commands to allow admin access to all services
+        # Set rule allowing specific admin IPs (modify with specific rules as needed)
+
+    - name: Set firewall rules for restricted access
+      shell: |
+        # Commands to allow only specific ports for non-admin users
+        # (example with HTTP/HTTPS for Home Assistant access only)
+      tags: firewall

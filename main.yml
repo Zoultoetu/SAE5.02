@@ -1,9 +1,63 @@
-- include: dns_setup.yml
-- include: ad_setup.yml
-- include: ldap_setup.yml
-- include: home_assistant_setup.yml
-- include: openvpn_setup.yml
-- include: opnsense_setup.yml
-- include: client_setup.yml
-- include: ad_security.yml
-- include: openvpn_security.yml
+---
+# main.yml : Playbook principal pour configurer les services et activer SSH sur chaque machine
+
+- hosts: all
+  become: true
+  tasks:
+    # Installer le serveur SSH sur chaque machine
+    - name: Installer SSH
+      apt:
+        name: openssh-server
+        state: present
+      when: ansible_connection == "docker"  # Vérifie si la connexion est via Docker (important pour les conteneurs)
+
+    # Autoriser la connexion root via SSH
+    - name: Permettre la connexion root via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify: Redémarrer SSH  # Si SSH est configuré, redémarre le service pour appliquer les changements
+
+    # Définir le mot de passe pour root
+    - name: Définir le mot de passe root
+      user:
+        name: root
+        password: "{{ 'root' | password_hash('sha512') }}"  # Utilisation d'un mot de passe haché pour plus de sécurité
+
+    # S'assurer que le service SSH est activé et démarré
+    - name: Démarrer et activer le service SSH
+      service:
+        name: ssh
+        state: started
+        enabled: true
+
+  handlers:
+    # Redémarrer SSH si la configuration a été modifiée
+    - name: Redémarrer SSH
+      service:
+        name: ssh
+        state: restarted
+
+# Playbooks spécifiques à chaque service
+- hosts: dns
+  import_playbook: dns_setup.yml  # Importer le playbook de configuration pour le DNS
+
+- hosts: ad
+  import_playbook: ad_setup.yml  # Importer le playbook de configuration pour l'Active Directory
+
+- hosts: ldap
+  import_playbook: ldap_setup.yml  # Importer le playbook de configuration pour LDAP
+
+- hosts: home_assistant
+  import_playbook: home_assistant_setup.yml  # Importer le playbook de configuration pour Home Assistant
+
+- hosts: openvpn
+  import_playbook: openvpn_setup.yml  # Importer le playbook de configuration pour OpenVPN
+
+- hosts: opnsense
+  import_playbook: opnsense_setup.yml  # Importer le playbook de configuration pour OPNsense
+
+- hosts: client
+  import_playbook: client_setup.yml  # Importer le playbook de configuration pour le client (si nécessaire)
+

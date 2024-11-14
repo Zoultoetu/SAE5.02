@@ -1,0 +1,27 @@
+# openvpn_setup.yml
+- name: Configure OpenVPN Server
+  hosts: openvpn
+  become: true
+  tasks:
+    - name: Install OpenVPN and LDAP plugin
+      apt:
+        name: openvpn
+        state: present
+      tags: vpn
+
+    - name: Configure OpenVPN for LDAP authentication
+      template:
+        src: templates/server.conf.j2
+        dest: /etc/openvpn/server.conf
+      notify: Restart OpenVPN
+
+    - name: Configure LDAP for OpenVPN
+      template:
+        src: templates/auth-ldap.conf.j2
+        dest: /etc/openvpn/auth-ldap.conf
+
+  handlers:
+    - name: Restart OpenVPN
+      service:
+        name: openvpn
+        state: restarted

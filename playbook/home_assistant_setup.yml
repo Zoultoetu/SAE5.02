@@ -1,0 +1,38 @@
+# home_assistant_setup.yml
+- name: Configure Home Assistant with LDAP authentication
+  hosts: home_assistant
+  become: true
+  tasks:
+    - name: Install Apache and LDAP module
+      apt:
+        name:
+          - apache2
+          - libapache2-mod-authnz-ldap
+        state: present
+      tags: home_assistant
+
+    - name: Configure LDAP proxy authentication
+      template:
+        src: templates/ldap_proxy.conf.j2
+        dest: /etc/apache2/sites-available/ldap_proxy.conf
+      notify: Restart Apache
+
+    - name: Enable LDAP proxy site
+      command: a2ensite ldap_proxy.conf
+      notify: Restart Apache
+
+    - name: Run Home Assistant container
+      docker_container:
+        name: home_assistant
+        image: homeassistant/home-assistant:latest
+        restart_policy: always
+        network_mode: host
+        volumes:
+          - /path/to/home_assistant/config:/config
+      tags: home_assistant
+
+  handlers:
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted

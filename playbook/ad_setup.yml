@@ -1,0 +1,31 @@
+# ad.yml
+- name: Configure Samba Active Directory
+  hosts: ad
+  become: true
+  tasks:
+    - name: Install Samba packages
+      apt:
+        name:
+          - samba
+          - winbind
+          - smbclient
+        state: present
+      tags: ad
+
+    - name: Configure Samba AD
+      template:
+        src: templates/smb.conf.j2
+        dest: /etc/samba/smb.conf
+      notify: Restart Samba
+
+    - name: Create AD domain
+      command: samba-tool domain provision --realm=DOMAINE.LOCAL --domain=DOMAINE_LOCAL --adminpass=admin_password
+      when: samba_domain_stat.stat.exists == False
+
+  handlers:
+    - name: Restart Samba
+      service:
+        name: smbd
+        state: restarted
+
+# smb.conf.j2 : Contient la configuration AD pour DOMAINE.LOCAL.
