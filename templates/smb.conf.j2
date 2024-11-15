@@ -1,0 +1,16 @@
+[global]
+   workgroup = SAE5.02
+   realm = SAE5.02_domain
+   netbios name = {{ inventory_hostname }}
+   server role = active directory domain controller
+   dns forwarder = 8.8.8.8
+   idmap_ldb:use rfc2307 = yes
+   log level = 2
+
+[netlogon]
+   path = /var/lib/samba/sysvol/SAE5.02_domain/scripts
+   read only = no
+
+[sysvol]
+   path = /var/lib/samba/sysvol
+   read only = no

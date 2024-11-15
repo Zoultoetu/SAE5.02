@@ -1,31 +1,40 @@
-# ad.yml
-- name: Configure Samba Active Directory
+- name: Configure Active Directory (Samba)
   hosts: ad
   become: true
   tasks:
-    - name: Install Samba packages
+    - name: Install Samba and necessary packages
       apt:
         name:
           - samba
-          - winbind
           - smbclient
+          - winbind
+          - krb5-user
         state: present
-      tags: ad
 
-    - name: Configure Samba AD
+    - name: Configure Samba for AD domain
       template:
         src: templates/smb.conf.j2
         dest: /etc/samba/smb.conf
       notify: Restart Samba
 
-    - name: Create AD domain
-      command: samba-tool domain provision --realm=DOMAINE.LOCAL --domain=DOMAINE_LOCAL --adminpass=admin_password
-      when: samba_domain_stat.stat.exists == False
+    - name: Provision Samba AD Domain
+      command: samba-tool domain provision --realm={{ samba_realm }} --domain={{ samba_domain }} --adminpass={{ admin_password }} --dns-backend=SAMBA_INTERNAL
+      creates: /var/lib/samba/private/sam.ldb
+
+    - name: Start and enable Samba services
+      service:
+        name: smbd
+        state: started
+        enabled: true
+
+    - name: Start and enable Winbind
+      service:
+        name: winbind
+        state: started
+        enabled: true
 
   handlers:
     - name: Restart Samba
       service:
         name: smbd
         state: restarted
-
-# smb.conf.j2 : Contient la configuration AD pour DOMAINE.LOCAL.

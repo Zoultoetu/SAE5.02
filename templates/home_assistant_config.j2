@@ -1,0 +1,14 @@
+homeassistant:
+  name: Home Assistant
+  latitude: 45.2937  # Remplacez par vos coordonnées
+  longitude: 4.1434
+  elevation: 339.95
+  unit_system: metric
+  time_zone: "Europe/Paris"
+  auth_providers:
+    - type: ldap
+      server: "{{ ldap_server }}"
+      bind_type: "simple"
+      base_dn: "{{ ldap_base_dn }}"
+      bind_user: "cn=admin,{{ ldap_base_dn }}"
+      bind_password: "{{ ldap_admin_password }}"
