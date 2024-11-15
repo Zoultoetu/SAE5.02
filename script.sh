@@ -1,5 +1,6 @@
 #!/bin/bash
 
+git clone https://github.com/Zoultoetu/SAE5.02
 cd ~/SAE5.02/Deploiement_de_machine
 
 docker-compose up -d
