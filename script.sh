@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Étape 4 : Lancer les conteneurs Docker
+cd ~/SAE5.02/Deploiement_de_machine
+
 docker-compose up -d
 
-# Étape 5 : Créer le fichier d'inventaire
 cat <<EOF > ~/SAE5.02/Deploiement_de_machine/inventaire.ini
 [dns]
 192.168.0.2
