@@ -1,22 +1,5 @@
 #!/bin/bash
 
-# Étape 1 : Supprimer l'ancien répertoire si nécessaire
-if [ -d ~/SAE5.02 ]; then
-    echo "Le répertoire 'SAE5.02' existe déjà. Suppression..."
-    rm -rf ~/SAE5.02
-fi
-
-# Étape 2 : Cloner le dépôt Git
-git clone https://github.com/Zoultoetu/SAE5.02
-cd ~/SAE5.02
-
-# Étape 3 : Vérifier Docker Compose
-if ! command -v docker-compose &> /dev/null; then
-    echo "Docker Compose non trouvé. Installation..."
-    sudo apt update
-    sudo apt install docker-compose
-fi
-
 # Étape 4 : Lancer les conteneurs Docker
 docker-compose up -d
 
