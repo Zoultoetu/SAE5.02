@@ -1,11 +1,11 @@
 #!/bin/bash
-
+cd /home/toine-fa/
 git clone https://github.com/Zoultoetu/SAE5.02
-cd ~/SAE5.02/Deploiement_de_machine
+cd /home/toine-fa/SAE5.02/Deploiement_de_machine
 
 docker-compose up -d
 
-cat <<EOF > ~/SAE5.02/Deploiement_de_machine/inventaire.ini
+cat <<EOF > /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini
 [dns]
 192.168.0.2
 
@@ -33,7 +33,6 @@ ansible_user=root
 ansible_ssh_pass=root_password
 EOF
 
-# Étape 6 : Mettre à jour /etc/hosts
 cat <<EOF > /etc/hosts
 192.168.0.2    dns
 192.168.0.3    ad
@@ -44,6 +43,5 @@ cat <<EOF > /etc/hosts
 192.168.0.8    client
 EOF
 
-# Étape 7 : Lancer le playbook principal
-cd ~/SAE5.02/playbook  # Déplacement vers le dossier contenant les playbooks
-ansible-playbook -i ~/SAE5.02/Deploiement_de_machine/inventaire.ini main.yml
+cd /home/toine-fa/SAE5.02/playbook  # Déplacement vers le dossier contenant les playbooks
+ansible-playbook -i /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini main.yml
