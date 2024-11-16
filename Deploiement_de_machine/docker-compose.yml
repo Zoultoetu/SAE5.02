@@ -66,7 +66,6 @@ services:
     networks:
       internal_net:
         ipv4_address: 192.168.0.5
-    network_mode: host  # Permet à Home Assistant d'accéder directement au réseau de l'hôte (indispensable pour certaines intégrations réseau)
     environment:
       - PUID=1000               # ID utilisateur pour gérer les permissions
       - PGID=1000               # ID groupe pour gérer les permissions
