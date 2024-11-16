@@ -18,31 +18,21 @@ services:
     command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Active Directory avec Samba
-  ad:
-    image: dperson/samba
-    container_name: samba
-    environment:
-      TZ: 'Europe/Paris'  # Remplacez par le fuseau horaire approprié si nécessaire
+  samba:
+    image: crazymax/samba
     networks:
       internal_net:
         ipv4_address: 192.168.0.3
-    ports:
-      - "137:137/udp"  # Service NetBIOS
-      - "138:138/udp"  # Service NetBIOS
-      - "139:139/tcp"  # Partages SMB
-      - "445:445/tcp"  # Partages SMB
-    tmpfs:
-      - /tmp  # Répertoire temporaire en mémoire pour des performances accrues
-    restart: unless-stopped
-    stdin_open: true
-    tty: true
+    container_name: samba
+    network_mode: host
     volumes:
-      - /mnt:/mnt:z       # Partage du répertoire /mnt
-      - /mnt2:/mnt2:z     # Partage du répertoire /mnt2
-    command: >
-      -s "Public;/mnt;no;no;no"         # Partage public en lecture seule
-      -s "Private;/mnt2;yes;no;no;bob" # Partage privé, accessible à l'utilisateur "bob"
-      -u "bob;bobspasswd"              # Déclaration de l'utilisateur "bob" avec mot de passe "bobspasswd"
+      - ./smb:/data
+      - ./downloads:/downloads
+    environment:
+      - "TZ=$TIMEZONE"
+      - "SAMBA_LOG_LEVEL=0"
+    restart: always
+
 
   ldap_cli:
     image: dnknth/ldap-ui
