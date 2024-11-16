@@ -27,20 +27,19 @@ services:
         ipv4_address: 192.168.0.3
     environment:
       - TZ=Europe/Paris
-      - SAMBA_DOMAIN=domaine_toinefa  # Remplacez par le nom du domaine
-      - SAMBA_REALM=domaine.toinefa   # Remplacez par le nom du domaine
-      - SAMBA_ADMIN_PASSWORD=root  # Définir un mot de passe administrateur
+      - SAMBA_DOMAIN=domaine_toinefa
+      - SAMBA_REALM=domaine.toinefa
+      - SAMBA_ADMIN_PASSWORD=root
     ports:
-      - "389:389"    # LDAP
-      - "445:445"    # Partage de fichiers
-      - "3268:3268"  # Recherche GC
+      - "389:389"
+      - "445:445"
+      - "3268:3268"
     volumes:
       - ./config/ad:/etc/samba
     restart: always
-    # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+    command: "/sbin/tini -- /usr/sbin/smbd -D"
 
-  # Serveur LDAP
+
   ldap:
     image: osixia/openldap:latest
     container_name: ldap
@@ -49,19 +48,18 @@ services:
         ipv4_address: 192.168.0.4
     environment:
       - LDAP_ORGANISATION="Mon Organisation"
-      - LDAP_DOMAIN="domaine.local"  # Remplacez par le domaine LDAP
+      - LDAP_DOMAIN="domaine.local"
       - LDAP_ADMIN_PASSWORD=admin_password
     ports:
-      - "3489:389"    # Port LDAP
-      - "636:636"    # Port LDAPS (LDAP sécurisé)
+      - "3389:389"
+      - "636:636"
     volumes:
       - ./config/ldap:/var/lib/ldap
       - ./config/slapd.d:/etc/ldap/slapd.d
     restart: always
     # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start &&  /container/tool/run"
 
-  # Serveur Home Assistant
   home_assistant:
     image: homeassistant/home-assistant:stable
     container_name: home_assistant
@@ -75,8 +73,8 @@ services:
     volumes:
       - ./config/home_assistant:/config
     restart: always
-    # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
+
 
   # Serveur VPN OpenVPN
   openvpn:
