@@ -9,7 +9,6 @@ services:
         - data:/keys  # Utilisation du volume nommé "data"
     ports:
       - "53:53/udp"
-      - "53:53/tcp"
       - "10000:10000/tcp"
     networks:
       internal_net:
