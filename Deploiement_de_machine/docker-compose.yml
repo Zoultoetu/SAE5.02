@@ -8,8 +8,8 @@ services:
     volumes:
         - data:/keys  # Utilisation du volume nommé "data"
     ports:
-      - "54:54/udp"
-      - "53:53/tcp"
+      - "53:53/udp"
+      - "54:54/tcp"
       - "10000:10000/tcp"
     networks:
       internal_net:
@@ -26,9 +26,10 @@ services:
       - ./smb:/data
       - ./downloads:/downloads
     environment:
-      - "TZ=${TIMEZONE}"  # Définition de la variable TIMEZONE
+      - "TZ=$TIMEZONE"
       - "SAMBA_LOG_LEVEL=0"
     restart: always
+
 
   ldap_cli:
     image: dnknth/ldap-ui
@@ -62,6 +63,7 @@ services:
     restart: always
 
   # Serveur VPN OpenVPN
+
   openvpn-as:
     image: openvpn/openvpn-as
     container_name: openvpn-as
@@ -77,6 +79,7 @@ services:
     volumes:
       - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
     restart: always
+
 
   # Pare-feu OPNsense
   opnsense:
@@ -112,6 +115,3 @@ networks:
     ipam:
       config:
         - subnet: 192.168.0.0/24
-
-volumes:
-  data:  # Déclaration du volume nommé "data"
