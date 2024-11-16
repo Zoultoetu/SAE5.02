@@ -2,20 +2,22 @@ version: '3.8'
 
 services:
   # Serveur DNS
-  dns:
-    image: sameersbn/bind:latest
-    container_name: dns
+  bind9:
+    container_name: my-dns
+    image: internetsystemsconsortium/bind9:latest
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
-    environment:
-      - BIND_USER=root
     ports:
-      - "533:53/udp"  # Port DNS
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "127.0.0.1:953:953/tcp"
     volumes:
-      - ./config/dns:/data
-    restart: always
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+      - ./config/named.conf.options:/etc/bind/named.conf.options
+      - ./config/named.conf.local:/etc/bind/named.conf.local
+      - ./config/db.my.domain:/etc/bind/db.my.domain
+    restart: unless-stopped
+
 
   # Active Directory avec Samba
   samba:
