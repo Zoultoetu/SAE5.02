@@ -4,7 +4,7 @@ services:
   # Serveur DNS
   bind9:
     container_name: my-dns
-    image: internetsystemsconsortium/bind9:latest
+    image: internetsystemsconsortium/bind9:9.18
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
@@ -18,7 +18,7 @@ services:
       - ./config/db.my.domain:/etc/bind/db.my.domain
     restart: unless-stopped
 
-
+    
   # Active Directory avec Samba
   samba:
     image: crazymax/samba
