@@ -4,7 +4,7 @@ cd /home/toine-fa/
 git clone https://github.com/Zoultoetu/SAE5.02
 cd /home/toine-fa/SAE5.02/Deploiement_de_machine
 
-#docker-compose up -d
+docker-compose up -d
 
 cat <<EOF > /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini
 [dns]
