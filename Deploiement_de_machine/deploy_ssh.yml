@@ -1,0 +1,36 @@
+---
+- name: Installer et configurer SSH sur les conteneurs Docker
+  hosts: all
+  become: yes  # Nous devons être root pour installer des paquets et configurer SSH
+  tasks:
+    - name: Mettre à jour les paquets
+      apt:
+        update_cache: yes
+
+    - name: Installer OpenSSH Server
+      apt:
+        name: openssh-server
+        state: present
+
+    - name: Créer le répertoire nécessaire pour SSH
+      file:
+        path: /var/run/sshd
+        state: directory
+
+    - name: Autoriser la connexion root via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin yes'
+        state: present
+
+    - name: Ouvrir le port 22 dans le firewall
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Démarrer et activer le service SSH
+      service:
+        name: ssh
+        state: started
+        enabled: yes
