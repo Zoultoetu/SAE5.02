@@ -51,7 +51,7 @@ services:
       - LDAP_DOMAIN="domaine.local"
       - LDAP_ADMIN_PASSWORD=admin_password
     ports:
-      - "3390:389"
+      - "3391:389"
       - "636:636"
     volumes:
       - ./config/ldap:/var/lib/ldap
