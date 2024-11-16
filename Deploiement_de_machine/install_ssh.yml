@@ -1,36 +1,22 @@
 ---
 - name: Installer et configurer SSH sur les conteneurs Docker
   hosts: all
-  become: yes  # Nous devons être root pour installer des paquets et configurer SSH
+  become: true
   tasks:
-    - name: Mettre à jour les paquets
-      apt:
-        update_cache: yes
+    - name: Installer SSH dans le conteneur Docker
+      community.docker.docker_container_exec:
+        container: "{{ inventory_hostname }}"
+        cmd: "apt-get update && apt-get install -y openssh-server"
+      when: ansible_ssh_user == "root"  # Vérifie que l'utilisateur est root
 
-    - name: Installer OpenSSH Server
-      apt:
-        name: openssh-server
-        state: present
+    - name: Modifier la configuration de SSH pour autoriser l'accès root
+      community.docker.docker_container_exec:
+        container: "{{ inventory_hostname }}"
+        cmd: "sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config"
+      when: ansible_ssh_user == "root"
 
-    - name: Créer le répertoire nécessaire pour SSH
-      file:
-        path: /var/run/sshd
-        state: directory
-
-    - name: Autoriser la connexion root via SSH
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin yes'
-        state: present
-
-    - name: Ouvrir le port 22 dans le firewall
-      ufw:
-        rule: allow
-        name: OpenSSH
-
-    - name: Démarrer et activer le service SSH
-      service:
-        name: ssh
-        state: started
-        enabled: yes
+    - name: Redémarrer le service SSH dans le conteneur
+      community.docker.docker_container_exec:
+        container: "{{ inventory_hostname }}"
+        cmd: "service ssh restart"
+      when: ansible_ssh_user == "root"
