@@ -1,63 +1,51 @@
 ---
-# main.yml : Playbook principal pour configurer les services et activer SSH sur chaque machine
+# Playbook principal pour configurer les différents services
 
-- hosts: all
+- name: Configuration du serveur DNS
+  hosts: dns
   become: true
   tasks:
-    # Installer le serveur SSH sur chaque machine
-    - name: Installer SSH
-      apt:
-        name: openssh-server
-        state: present
-      when: ansible_connection == "docker"  # Vérifie si la connexion est via Docker (important pour les conteneurs)
+    - name: Déployer le serveur DNS
+      include_tasks: dns_setup.yml
 
-    # Autoriser la connexion root via SSH
-    - name: Permettre la connexion root via SSH
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin yes'
-      notify: Redémarrer SSH  # Si SSH est configuré, redémarre le service pour appliquer les changements
+- name: Configuration du serveur Active Directory
+  hosts: ad
+  become: true
+  tasks:
+    - name: Déployer le serveur Active Directory
+      include_tasks: ad_setup.yml
 
-    # Définir le mot de passe pour root
-    - name: Définir le mot de passe root
-      user:
-        name: root
-        password: "{{ 'root' | password_hash('sha512') }}"  # Utilisation d'un mot de passe haché pour plus de sécurité
+- name: Configuration du serveur LDAP
+  hosts: ldap
+  become: true
+  tasks:
+    - name: Déployer le serveur LDAP
+      include_tasks: ldap_setup.yml
 
-    # S'assurer que le service SSH est activé et démarré
-    - name: Démarrer et activer le service SSH
-      service:
-        name: ssh
-        state: started
-        enabled: true
+- name: Configuration de Home Assistant
+  hosts: home_assistant
+  become: true
+  tasks:
+    - name: Déployer Home Assistant
+      include_tasks: home_assistant_setup.yml
 
-  handlers:
-    # Redémarrer SSH si la configuration a été modifiée
-    - name: Redémarrer SSH
-      service:
-        name: ssh
-        state: restarted
+- name: Configuration du serveur OpenVPN
+  hosts: openvpn
+  become: true
+  tasks:
+    - name: Déployer le serveur OpenVPN
+      include_tasks: openvpn_setup.yml
 
-# Playbooks spécifiques à chaque service
-- hosts: dns
-  import_playbook: dns_setup.yml  # Importer le playbook de configuration pour le DNS
+- name: Configuration du pare-feu OPNsense
+  hosts: opnsense
+  become: true
+  tasks:
+    - name: Déployer le pare-feu OPNsense
+      include_tasks: opnsense_setup.yml
 
-- hosts: ad
-  import_playbook: ad_setup.yml  # Importer le playbook de configuration pour l'Active Directory
-
-- hosts: ldap
-  import_playbook: ldap_setup.yml  # Importer le playbook de configuration pour LDAP
-
-- hosts: home_assistant
-  import_playbook: home_assistant_setup.yml  # Importer le playbook de configuration pour Home Assistant
-
-- hosts: openvpn
-  import_playbook: openvpn_setup.yml  # Importer le playbook de configuration pour OpenVPN
-
-- hosts: opnsense
-  import_playbook: opnsense_setup.yml  # Importer le playbook de configuration pour OPNsense
-
-- hosts: client
-  import_playbook: client_setup.yml  # Importer le playbook de configuration pour le client (si nécessaire)
-
+- name: Configuration de la machine client
+  hosts: client
+  become: true
+  tasks:
+    - name: Configurer la machine client
+      include_tasks: client_setup.yml
