@@ -61,18 +61,19 @@ services:
     restart: always
 
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant:latest
+    image: homeassistant/home-assistant:stable
+    networks:
+      internal_net:
+        ipv4_address: 192.168.0.5
     container_name: homeassistant
-    network_mode: host
     environment:
-      - PUID=1000
-      - PGID=1000
       - TZ=Europe/Paris
+    ports:
+      - 8123:8123
     volumes:
-      - ./config:/config  # Dossier de configuration
-    devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0 # Exemple pour connecter un périphérique USB
-    restart: unless-stopped
+      - /opt/docker/ha/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
 
   # Serveur VPN OpenVPN
 
