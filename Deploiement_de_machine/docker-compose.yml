@@ -70,20 +70,19 @@ services:
     command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
 
   # Serveur VPN OpenVPN
-  
-  openvpn:
+
+  openvpn-as:
+    image: openvpn/openvpn-as
+    container_name: openvpn-as
     cap_add:
-     - NET_ADMIN
-    networks:
-      internal_net:
-        ipv4_address: 192.168.0.7
-    image: kylemanna/openvpn
-    container_name: openvpn
+      - NET_ADMIN
     ports:
-     - "1194:1194/udp"
-    restart: always
+      - "943:943"          # Port pour l'interface d'administration
+      - "8443:443"         # Port HTTPS
+      - "1194:1194/udp"    # Port UDP pour les connexions VPN
     volumes:
-     - ./openvpn-data/conf:/etc/openvpn
+      - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
+    restart: always
 
 
   # Pare-feu OPNsense
