@@ -38,25 +38,6 @@ services:
     restart: always
     command: "/sbin/tini -- /usr/sbin/smbd -D"
 
-  ldap:
-    image: bitnami/openldap:latest
-    container_name: ldap
-    networks:
-      internal_net:
-        ipv4_address: 192.168.0.4
-    environment:
-      - LDAP_ADMIN_USERNAME=admin
-      - LDAP_ADMIN_PASSWORD=admin
-      - LDAP_USERS=user01,user02,user03,user04,user05,user06,user07,user08,user09,user10,user11,user12,user13,user14,user15,user16,user17,user18,user19,user20,user21,user22,user23,user24,user25,user26,user27,user28,user29,user30,user31,user32,user33,user34,user35,user36,user37,user38,user39,user40,user41,user42,user43,user44,user45,user46,user47,user48,user49,user50
-      - LDAP_PASSWORDS=password1,password2,password3,password4,password5,password6,password7,password8,password9,password10,password11,password12,password13,password14,password15,password16,password17,password18,password19,password20,password21,password22,password23,password24,password25,password26,password27,password28,password29,password30,password31,password32,password33,password34,password35,password36,password37,password38,password39,password40,password41,password42,password43,password44,password45,password46,password47,password48,password49,password50
-      - LDAP_BASE_DN=dc=example,dc=org
-    ports:
-      - "1389:1389"
-      - "1636:1636"
-    volumes:
-      - ./config/ldap:/bitnami/openldap
-    restart: always
-
   ldap_cli:
     image: dnknth/ldap-ui
     container_name: ldap_cli
@@ -89,22 +70,21 @@ services:
     command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
 
   # Serveur VPN OpenVPN
+  
   openvpn:
-    image: kylemanna/openvpn:latest
-    container_name: openvpn
     cap_add:
-      - NET_ADMIN
+     - NET_ADMIN
     networks:
       internal_net:
         ipv4_address: 192.168.0.7
+    image: kylemanna/openvpn
+    container_name: openvpn
     ports:
-      - "1194:1194/udp"  # Port OpenVPN
-    volumes:
-      - ./config/openvpn:/etc/openvpn
-    environment:
-      - TZ=Europe/Paris
+     - "1194:1194/udp"
     restart: always
-    command: "ovpn_run"
+    volumes:
+     - ./openvpn-data/conf:/etc/openvpn
+
 
   # Pare-feu OPNsense
   opnsense:
