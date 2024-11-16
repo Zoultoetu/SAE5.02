@@ -61,19 +61,21 @@ services:
     restart: always
 
   home_assistant:
-    image: homeassistant/home-assistant:stable
-    container_name: home_assistant
+    image: lscr.io/linuxserver/homeassistant:latest  # Image officielle de Home Assistant
+    container_name: homeassistant
     networks:
       internal_net:
         ipv4_address: 192.168.0.5
+    network_mode: host  # Permet à Home Assistant d'accéder directement au réseau de l'hôte (indispensable pour certaines intégrations réseau)
     environment:
-      - TZ=Europe/Paris
-    ports:
-      - "8123:8123"  # Port Home Assistant
+      - PUID=1000               # ID utilisateur pour gérer les permissions
+      - PGID=1000               # ID groupe pour gérer les permissions
+      - TZ=Europe/Paris         # Remplacez par votre fuseau horaire (exemple : Europe/Paris)
     volumes:
-      - ./config/home_assistant:/config
-    restart: always
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
+      - ./config:/config        # Chemin local vers les données de configuration
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0 # Exemple pour connecter un périphérique USB (remplacez ou ajoutez si nécessaire)
+    restart: unless-stopped
 
   # Serveur VPN OpenVPN
 
