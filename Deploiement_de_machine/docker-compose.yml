@@ -24,7 +24,6 @@ services:
       internal_net:
         ipv4_address: 192.168.0.3
     container_name: samba
-    network_mode: host
     volumes:
       - ./smb:/data
       - ./downloads:/downloads
