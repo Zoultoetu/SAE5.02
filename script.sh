@@ -1,10 +1,7 @@
 #!/bin/bash
 
 # Réseau Docker
-docker network create \
-  --driver bridge \
-  --subnet=192.168.0.0/24 \
-  internal_net
+docker network create --driver bridge --subnet=192.168.0.0/24 internal_net
 
 # Serveur DNS
 docker run -d \
