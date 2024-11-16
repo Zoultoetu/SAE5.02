@@ -1,19 +1,28 @@
 version: '3.8'
 
 services:
-  # Serveur DNS    
+  # Serveur DNS
   dns:
     container_name: dns
-    image: abilioesteves/bind9:0.0.3
-    volumes:
-        - data:/keys  # Utilisation du volume nommé "data"
-    ports:
-      - "53:53/udp"
-      - "54:54/tcp"
-      - "10000:10000/tcp"
+
+    image: technitium/dns-server:latest
     networks:
       internal_net:
         ipv4_address: 192.168.0.3
+    ports:
+      - "5380:5380/tcp"  # DNS web console (HTTP)
+      - "53:53/udp"      # DNS service (UDP)
+      - "53:53/tcp"      # DNS service (TCP)
+    environment:
+      - DNS_SERVER_DOMAIN=dns-server
+      # Vous pouvez configurer d'autres variables d'environnement si nécessaire
+    volumes:
+      - config:/etc/dns  # Montée du volume pour la persistance des données de configuration
+    restart: unless-stopped
+    sysctls:
+      - net.ipv4.ip_local_port_range=1024 65000
+    
+
     
   # Active Directory avec Samba
   samba:
