@@ -4,22 +4,24 @@ services:
   # Serveur DNS
   dns:
     container_name: dns
-    hostname: dns
+
     image: technitium/dns-server:latest
+    networks:
+      internal_net:
+        ipv4_address: 192.168.0.3
     ports:
       - "5380:5380/tcp"  # DNS web console (HTTP)
       - "53:53/udp"      # DNS service (UDP)
       - "53:53/tcp"      # DNS service (TCP)
     environment:
-      - DNS_SERVER_DOMAIN=dns
+      - DNS_SERVER_DOMAIN=dns-server
       # Vous pouvez configurer d'autres variables d'environnement si nécessaire
     volumes:
       - config:/etc/dns  # Montée du volume pour la persistance des données de configuration
     restart: unless-stopped
     sysctls:
       - net.ipv4.ip_local_port_range=1024 65000
-    networks:
-      - internal_net  # Spécifier le réseau interne
+    
 
     
   # Active Directory avec Samba
