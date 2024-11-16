@@ -6,7 +6,7 @@ services:
     container_name: dns
     image: abilioesteves/bind9:0.0.3
     volumes:
-        - data:/keys  # Utilisation du volume nommé "data"
+      - data:/keys  # Utilisation du volume nommé "data"
     ports:
       - "5443:5443/udp"
       - "5553:5553/tcp"
@@ -14,20 +14,22 @@ services:
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
-    
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
+
   # Active Directory avec Samba
   samba:
     image: crazymax/samba
+    container_name: samba
     networks:
       internal_net:
         ipv4_address: 192.168.0.3
-    container_name: samba
     volumes:
       - ./smb:/data
       - ./downloads:/downloads
     environment:
       - "TZ=${TIMEZONE}"  # Définition de la variable TIMEZONE
       - "SAMBA_LOG_LEVEL=0"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
     restart: always
 
   ldap_cli:
@@ -45,21 +47,23 @@ services:
     volumes:
       - ./config/ldap:/bitnami/openldap
     restart: always
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
 
   homeassistant:
     image: homeassistant/home-assistant:stable
+    container_name: homeassistant
     networks:
       internal_net:
         ipv4_address: 192.168.0.5
-    container_name: homeassistant
     environment:
       - TZ=Europe/Paris
     ports:
-      - 8123:8123
+      - "8123:8123"
     volumes:
       - /opt/docker/ha/config:/config
       - /etc/localtime:/etc/localtime:ro
     restart: always
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
 
   # Serveur VPN OpenVPN
   openvpn-as:
@@ -77,6 +81,7 @@ services:
     volumes:
       - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
     restart: always
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
 
   # Pare-feu OPNsense
   opnsense:
@@ -92,7 +97,7 @@ services:
     volumes:
       - ./config/opnsense:/etc/nginx/conf.d
     restart: always
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
 
   # Machine Client
   client:
@@ -103,7 +108,7 @@ services:
         ipv4_address: 192.168.0.8
     environment:
       - DISPLAY
-    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
     restart: always
 
 networks:
