@@ -4,7 +4,7 @@ services:
   # Serveur DNS    
   dns:
     build:
-      context: ./dns  # Répertoire où se trouve le Dockerfile
+      context: /home/toine-fa/SAE5.02/Dockerfile/dns  # Répertoire où se trouve le Dockerfile
     container_name: dns
     image: abilioesteves/bind9:0.0.3
     volumes:
@@ -20,7 +20,7 @@ services:
   # Active Directory avec Samba
   samba:
     build:
-      context: ./samba
+      context: /home/toine-fa/SAE5.02/Dockerfile/samba
     image: crazymax/samba
     networks:
       internal_net:
@@ -36,7 +36,7 @@ services:
 
   ldap_cli:
     build:
-      context: ./ldap_cli
+      context: /home/toine-fa/SAE5.02/Dockerfile/ldap_cli
     image: dnknth/ldap-ui
     container_name: ldap_cli
     networks:
@@ -54,7 +54,7 @@ services:
 
   homeassistant:
     build:
-      context: ./homeassistant
+      context: /home/toine-fa/SAE5.02/Dockerfile/homeassistant
     image: homeassistant/home-assistant:stable
     networks:
       internal_net:
@@ -72,7 +72,7 @@ services:
   # Serveur VPN OpenVPN
   openvpn-as:
     build:
-      context: ./openvpn-as
+      context: /home/toine-fa/SAE5.02/Dockerfile/openvpn-as
     image: openvpn/openvpn-as
     container_name: openvpn-as
     cap_add:
@@ -91,7 +91,7 @@ services:
   # Pare-feu OPNsense
   opnsense:
     build:
-      context: ./opnsense
+      context: /home/toine-fa/SAE5.02/Dockerfile/opnsense
     image: nginx:latest  # Placeholder pour simuler un pare-feu avec des règles de proxy
     container_name: opnsense
     networks:
@@ -109,7 +109,7 @@ services:
   # Machine Client
   client:
     build:
-      context: ./client
+      context: /home/toine-fa/SAE5.02/Dockerfile/client
     image: debian:latest
     container_name: client
     networks:
