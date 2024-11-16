@@ -60,20 +60,18 @@ services:
       - ./config/ldap:/bitnami/openldap
     restart: always
 
-  home_assistant:
-    image: lscr.io/linuxserver/homeassistant:latest  # Image officielle de Home Assistant
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
     container_name: homeassistant
-    networks:
-      internal_net:
-        ipv4_address: 192.168.0.5
+    network_mode: host
     environment:
-      - PUID=1000               # ID utilisateur pour gérer les permissions
-      - PGID=1000               # ID groupe pour gérer les permissions
-      - TZ=Europe/Paris         # Remplacez par votre fuseau horaire (exemple : Europe/Paris)
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
     volumes:
-      - ./config:/config        # Chemin local vers les données de configuration
+      - ./config:/config  # Dossier de configuration
     devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0 # Exemple pour connecter un périphérique USB (remplacez ou ajoutez si nécessaire)
+      - /dev/ttyUSB0:/dev/ttyUSB0 # Exemple pour connecter un périphérique USB
     restart: unless-stopped
 
   # Serveur VPN OpenVPN
