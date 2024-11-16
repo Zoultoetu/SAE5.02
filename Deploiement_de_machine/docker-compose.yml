@@ -20,23 +20,29 @@ services:
   # Active Directory avec Samba
   ad:
     image: dperson/samba
-    container_name: ad
-    networks:
-      internal_net:
-        ipv4_address: 192.168.0.3
+    container_name: samba
     environment:
-      - TZ=Europe/Paris
-      - SAMBA_DOMAIN=domaine_toinefa
-      - SAMBA_REALM=domaine.toinefa
-      - SAMBA_ADMIN_PASSWORD=root
+      TZ: 'Europe/Paris'  # Remplacez par le fuseau horaire approprié si nécessaire
+    networks:
+      default:
+        ipv4_address: 192.168.0.3  # Optionnel, ajoutez une IP statique si requis
     ports:
-      - "389:389"
-      - "445:445"
-      - "3268:3268"
+      - "137:137/udp"  # Service NetBIOS
+      - "138:138/udp"  # Service NetBIOS
+      - "139:139/tcp"  # Partages SMB
+      - "445:445/tcp"  # Partages SMB
+    tmpfs:
+      - /tmp  # Répertoire temporaire en mémoire pour des performances accrues
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
     volumes:
-      - ./config/ad:/etc/samba
-    restart: always
-    command: "/sbin/tini -- /usr/sbin/smbd -D"
+      - /mnt:/mnt:z       # Partage du répertoire /mnt
+      - /mnt2:/mnt2:z     # Partage du répertoire /mnt2
+    command: >
+      -s "Public;/mnt;no;no;no"         # Partage public en lecture seule
+      -s "Private;/mnt2;yes;no;no;bob" # Partage privé, accessible à l'utilisateur "bob"
+      -u "bob;bobspasswd"              # Déclaration de l'utilisateur "bob" avec mot de passe "bobspasswd"
 
   ldap_cli:
     image: dnknth/ldap-ui
@@ -80,6 +86,9 @@ services:
       - "943:943"          # Port pour l'interface d'administration
       - "8443:443"         # Port HTTPS
       - "1194:1194/udp"    # Port UDP pour les connexions VPN
+    networks:
+      internal_net:
+        ipv4_address: 192.168.0.7
     volumes:
       - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
     restart: always
@@ -107,7 +116,7 @@ services:
     container_name: client
     networks:
       internal_net:
-        ipv4_address: 192.168.0.9
+        ipv4_address: 192.168.0.4
     environment:
       - DISPLAY
     command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
