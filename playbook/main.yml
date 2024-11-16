@@ -36,12 +36,12 @@
         state: started
         enabled: true
 
-  handlers:
+  #handlers:
     # Redémarrer SSH si la configuration a été modifiée
-    - name: Redémarrer SSH
-      service:
-        name: ssh
-        state: restarted
+   # - name: Redémarrer SSH
+    #  service:
+     #   name: ssh
+      #  state: restarted
 
 # Configuration des serveurs
 - name: Configuration du serveur DNS
