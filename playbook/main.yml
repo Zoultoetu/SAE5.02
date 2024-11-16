@@ -1,6 +1,42 @@
----
-# Playbook principal pour configurer les différents services
+# main.yml : Playbook principal pour configurer les services et activer SSH sur chaque machine
 
+- hosts: all
+  become: true
+  tasks:
+    # Installer le serveur SSH sur chaque machine
+    - name: Installer SSH
+      apt:
+        name: openssh-server
+        state: present
+      when: ansible_connection == "docker"  # Vérifie si la connexion est via Docker (important pour les conteneurs)
+
+    # Autoriser la connexion root via SSH
+    - name: Permettre la connexion root via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify: Redémarrer SSH  # Si SSH est configuré, redémarre le service pour appliquer les changements
+
+    # Définir le mot de passe pour root
+    - name: Définir le mot de passe root
+      user:
+        name: root
+        password: "{{ 'root' | password_hash('sha512') }}"  # Utilisation d'un mot de passe haché pour plus de sécurité
+
+    # S'assurer que le service SSH est activé et démarré
+    - name: Démarrer et activer le service SSH
+      service:
+        name: ssh
+        state: started
+        enabled: true
+
+  handlers:
+    # Redémarrer SSH si la configuration a été modifiée
+    - name: Redémarrer SSH
+      service:
+        name: ssh
+        state: restarted
 - name: Configuration du serveur DNS
   hosts: dns
   become: true
