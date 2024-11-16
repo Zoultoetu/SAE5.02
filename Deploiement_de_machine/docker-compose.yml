@@ -47,7 +47,7 @@ services:
     volumes:
       - ./config/ldap:/bitnami/openldap
     restart: always
-    command: bash -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Installation et configuration SSH
+    command: sh -c "apt-get update && apt-get install -y openssh-server && sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart && tail -f /dev/null"  # Utilisation de sh au lieu de bash
 
   homeassistant:
     image: homeassistant/home-assistant:stable
