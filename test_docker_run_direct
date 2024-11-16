@@ -1,0 +1,37 @@
+###
+# Réseau Docker
+docker network create --driver bridge --subnet=192.168.0.0/24 internal_net
+
+# Fonction pour configurer SSH root login
+configure_ssh() {
+  docker exec -it $1 bash -c "sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config && service ssh restart"
+}
+
+# Serveur DNS
+docker run -d --name dns --network internal_net --ip 192.168.0.2 -e BIND_USER=root -p 533:53/udp -v ./config/dns:/data --restart always sameersbn/bind:latest -it bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+configure_ssh dns
+
+# Active Directory avec Samba
+docker run -d--name ad --network internal_net --ip 192.168.0.3 -e TZ=Europe/Paris -e SAMBA_DOMAIN=domaine_toinefa -e SAMBA_REALM=domaine.toinefa -e SAMBA_ADMIN_PASSWORD=root -p 389:389 -p 445:445 -p 3268:3268 -v ./config/ad:/etc/samba --restart always dperson/samba -it "/sbin/tini -- /usr/sbin/smbd -D"
+configure_ssh ad
+
+# LDAP
+docker run -d --name ldap --network internal_net --ip 192.168.0.4 -e LDAP_ORGANISATION="Mon Organisation" -e LDAP_DOMAIN="domaine.toinefa" -e LDAP_ADMIN_PASSWORD=root -p 3391:389 -p 636:636 -v ./config/ldap:/var/lib/ldap -v ./config/slapd.d:/etc/ldap/slapd.d --restart always osixia/openldap:latest -it bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /container/tool/run"
+configure_ssh ldap
+
+# Home Assistant
+docker run -d --name home_assistant --network internal_net --ip 192.168.0.5 -e TZ=Europe/Paris -p 8123:8123 -v ./config/home_assistant:/config --restart always homeassistant/home-assistant:stable -it bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
+configure_ssh home_assistant
+
+# Serveur VPN OpenVPN
+docker run -d --name openvpn --cap-add NET_ADMIN --network internal_net --ip 192.168.0.6 -e TZ=Europe/Paris -p 1194:1194/udp -v ./config/openvpn:/etc/openvpn --restart always -it  kylemanna/openvpn:latest ovpn_run
+configure_ssh openvpn
+
+# Pare-feu OPNsense
+docker run -d --name opnsense --network internal_net --ip 192.168.0.7 -e TZ=Europe/Paris -p 8080:80 -v ./config/opnsense:/etc/nginx/conf.d --restart always -it nginx:latest bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
+configure_ssh opnsense
+
+# Machine Client
+docker run -d --name client --network internal_net --ip 192.168.0.8 -e DISPLAY  --restart always -it debian:latest bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
+configure_ssh client
+####

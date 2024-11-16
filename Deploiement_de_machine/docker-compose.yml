@@ -15,7 +15,6 @@ services:
     volumes:
       - ./config/dns:/data
     restart: always
-    # Installer SSH sur ce conteneur
     command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Active Directory avec Samba
@@ -39,33 +38,47 @@ services:
     restart: always
     command: "/sbin/tini -- /usr/sbin/smbd -D"
 
-
   ldap:
-    image: osixia/openldap:latest
+    image: bitnami/openldap:latest
     container_name: ldap
     networks:
       internal_net:
         ipv4_address: 192.168.0.4
     environment:
-      - LDAP_ORGANISATION="Mon Organisation"
-      - LDAP_DOMAIN="domaine.local"
-      - LDAP_ADMIN_PASSWORD=admin_password
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin
+      - LDAP_USERS=user01,user02,user03,user04,user05,user06,user07,user08,user09,user10,user11,user12,user13,user14,user15,user16,user17,user18,user19,user20,user21,user22,user23,user24,user25,user26,user27,user28,user29,user30,user31,user32,user33,user34,user35,user36,user37,user38,user39,user40,user41,user42,user43,user44,user45,user46,user47,user48,user49,user50
+      - LDAP_PASSWORDS=password1,password2,password3,password4,password5,password6,password7,password8,password9,password10,password11,password12,password13,password14,password15,password16,password17,password18,password19,password20,password21,password22,password23,password24,password25,password26,password27,password28,password29,password30,password31,password32,password33,password34,password35,password36,password37,password38,password39,password40,password41,password42,password43,password44,password45,password46,password47,password48,password49,password50
+      - LDAP_BASE_DN=dc=example,dc=org
     ports:
-      - "3391:389"
-      - "636:636"
+      - "1389:1389"
+      - "1636:1636"
     volumes:
-      - ./config/ldap:/var/lib/ldap
-      - ./config/slapd.d:/etc/ldap/slapd.d
+      - ./config/ldap:/bitnami/openldap
     restart: always
-    # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start &&  /container/tool/run"
+
+  ldap_cli:
+    image: dnknth/ldap-ui
+    container_name: ldap_cli
+    networks:
+      internal_net:
+        ipv4_address: 192.168.0.5
+    environment:
+      - LDAP_URL=ldap://ldap:1389
+      - BASE_DN=dc=example,dc=org
+      - BIND_PATTERN=%s
+    ports:
+      - "1234:5000"
+    volumes:
+      - ./config/ldap:/bitnami/openldap
+    restart: always
 
   home_assistant:
     image: homeassistant/home-assistant:stable
     container_name: home_assistant
     networks:
       internal_net:
-        ipv4_address: 192.168.0.5
+        ipv4_address: 192.168.0.6
     environment:
       - TZ=Europe/Paris
     ports:
@@ -75,7 +88,6 @@ services:
     restart: always
     command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
 
-
   # Serveur VPN OpenVPN
   openvpn:
     image: kylemanna/openvpn:latest
@@ -84,7 +96,7 @@ services:
       - NET_ADMIN
     networks:
       internal_net:
-        ipv4_address: 192.168.0.6
+        ipv4_address: 192.168.0.7
     ports:
       - "1194:1194/udp"  # Port OpenVPN
     volumes:
@@ -100,7 +112,7 @@ services:
     container_name: opnsense
     networks:
       internal_net:
-        ipv4_address: 192.168.0.7
+        ipv4_address: 192.168.0.8
     environment:
       - TZ=Europe/Paris
     ports:
@@ -108,7 +120,6 @@ services:
     volumes:
       - ./config/opnsense:/etc/nginx/conf.d
     restart: always
-    # Ajouter SSH sur ce conteneur
     command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Machine Client
@@ -117,10 +128,10 @@ services:
     container_name: client
     networks:
       internal_net:
-        ipv4_address: 192.168.0.8
+        ipv4_address: 192.168.0.9
     environment:
       - DISPLAY
-    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start "
+    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
     restart: always
 
 networks:
