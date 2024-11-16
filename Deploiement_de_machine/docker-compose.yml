@@ -24,8 +24,8 @@ services:
     environment:
       TZ: 'Europe/Paris'  # Remplacez par le fuseau horaire approprié si nécessaire
     networks:
-      default:
-        ipv4_address: 192.168.0.3  # Optionnel, ajoutez une IP statique si requis
+      internal_net:
+        ipv4_address: 192.168.0.3
     ports:
       - "137:137/udp"  # Service NetBIOS
       - "138:138/udp"  # Service NetBIOS
