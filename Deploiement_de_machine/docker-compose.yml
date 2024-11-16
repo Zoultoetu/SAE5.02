@@ -16,7 +16,7 @@ services:
       - ./config/dns:/data
     restart: always
     # Installer SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /bin/bash"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Active Directory avec Samba
   ad:
@@ -38,7 +38,7 @@ services:
       - ./config/ad:/etc/samba
     restart: always
     # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /bin/bash"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Serveur LDAP
   ldap:
@@ -59,7 +59,7 @@ services:
       - ./config/slapd.d:/etc/ldap/slapd.d
     restart: always
     # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /bin/bash"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Serveur Home Assistant
   home_assistant:
@@ -76,7 +76,7 @@ services:
       - ./config/home_assistant:/config
     restart: always
     # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /bin/bash"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Serveur VPN OpenVPN
   openvpn:
@@ -111,7 +111,7 @@ services:
       - ./config/opnsense:/etc/nginx/conf.d
     restart: always
     # Ajouter SSH sur ce conteneur
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /bin/bash"
+    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Machine Client
   client:
@@ -122,7 +122,7 @@ services:
         ipv4_address: 192.168.0.8
     environment:
       - DISPLAY
-    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start && /bin/bash"
+    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start "
     restart: always
 
 networks:
