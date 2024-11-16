@@ -3,8 +3,8 @@
 - hosts: all
   become: true
   tasks:
-    # Vérifier si sshpass est installé (nécessaire pour les connexions SSH avec mot de passe)
-    - name: Installer sshpass si nécessaire
+    # Installer sshpass sur chaque machine cible (si nécessaire)
+    - name: Installer sshpass sur la machine distante
       apt:
         name: sshpass
         state: present
