@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   # Serveur DNS    
-  dns:
-    container_name: dns
+  dns_server:
+    container_name: dns_server
     image: abilioesteves/bind9:0.0.3
     volumes:
         - data:/keys
