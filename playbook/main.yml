@@ -3,19 +3,19 @@
 - hosts: all
   become: true
   tasks:
+    # Vérifier si sshpass est installé (nécessaire pour les connexions SSH avec mot de passe)
+    - name: Installer sshpass si nécessaire
+      apt:
+        name: sshpass
+        state: present
+      when: ansible_ssh_pass is defined
+
     # Installer le serveur SSH sur chaque machine
     - name: Installer SSH
       apt:
         name: openssh-server
         state: present
       when: ansible_connection == "docker"  # Vérifie si la connexion est via Docker (important pour les conteneurs)
-
-    # Vérifier si sshpass est installé (pour utiliser des mots de passe dans SSH)
-    - name: Installer sshpass si nécessaire
-      apt:
-        name: sshpass
-        state: present
-      when: ansible_ssh_user is defined and ansible_ssh_pass is defined
 
     # Autoriser la connexion root via SSH
     - name: Permettre la connexion root via SSH
