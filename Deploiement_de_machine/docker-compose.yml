@@ -10,7 +10,7 @@ services:
     volumes:
         - data:/keys  # Utilisation du volume nommé "data"
     ports:
-      - "53:5443/udp"
+      - "5443:5443/udp"
       - "5553:5553/tcp"
       - "10000:10000/tcp"
     networks:
