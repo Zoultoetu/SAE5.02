@@ -11,7 +11,7 @@ services:
     environment:
       - BIND_USER=root
     ports:
-      - "53:53/udp"  # Port DNS
+      - "533:53/udp"  # Port DNS
     volumes:
       - ./config/dns:/data
     restart: always
