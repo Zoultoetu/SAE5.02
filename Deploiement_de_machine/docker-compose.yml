@@ -2,11 +2,11 @@ version: '3.8'
 
 services:
   # Serveur DNS    
-  dns_server:
-    container_name: dns_server
+  dns:
+    container_name: dns
     image: abilioesteves/bind9:0.0.3
     volumes:
-        - data:/keys
+        - data:/keys  # Utilisation du volume nommé "data"
     ports:
       - "53:53/udp"
       - "53:53/tcp"
@@ -26,10 +26,9 @@ services:
       - ./smb:/data
       - ./downloads:/downloads
     environment:
-      - "TZ=$TIMEZONE"
+      - "TZ=${TIMEZONE}"  # Définition de la variable TIMEZONE
       - "SAMBA_LOG_LEVEL=0"
     restart: always
-
 
   ldap_cli:
     image: dnknth/ldap-ui
@@ -63,7 +62,6 @@ services:
     restart: always
 
   # Serveur VPN OpenVPN
-
   openvpn-as:
     image: openvpn/openvpn-as
     container_name: openvpn-as
@@ -79,7 +77,6 @@ services:
     volumes:
       - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
     restart: always
-
 
   # Pare-feu OPNsense
   opnsense:
@@ -115,3 +112,6 @@ networks:
     ipam:
       config:
         - subnet: 192.168.0.0/24
+
+volumes:
+  data:  # Déclaration du volume nommé "data"
