@@ -13,6 +13,7 @@ docker run -d \
   -v ./config/dns:/data \
   --restart always \
   sameersbn/bind:latest \
+  -it \
   bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
 # Active Directory avec Samba
@@ -30,6 +31,7 @@ docker run -d \
   -v ./config/ad:/etc/samba \
   --restart always \
   dperson/samba \
+  -it \
   "/sbin/tini -- /usr/sbin/smbd -D"
 
 # LDAP
@@ -46,6 +48,7 @@ docker run -d \
   -v ./config/slapd.d:/etc/ldap/slapd.d \
   --restart always \
   osixia/openldap:latest \
+  -it \
   bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /container/tool/run"
 
 # Home Assistant
@@ -58,6 +61,7 @@ docker run -d \
   -v ./config/home_assistant:/config \
   --restart always \
   homeassistant/home-assistant:stable \
+  -it \
   bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && /init"
 
 # Serveur VPN OpenVPN
@@ -70,6 +74,7 @@ docker run -d \
   -p 1194:1194/udp \
   -v ./config/openvpn:/etc/openvpn \
   --restart always \
+  -it \
   kylemanna/openvpn:latest \
   ovpn_run
 
@@ -82,6 +87,7 @@ docker run -d \
   -p 8080:80 \
   -v ./config/opnsense:/etc/nginx/conf.d \
   --restart always \
+  -it \
   nginx:latest \
   bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
@@ -92,6 +98,7 @@ docker run -d \
   --ip 192.168.0.8 \
   -e DISPLAY \
   --restart always \
+  -it \
   debian:latest \
   bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
 
