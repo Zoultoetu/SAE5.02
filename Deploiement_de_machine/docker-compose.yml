@@ -49,7 +49,7 @@ services:
     container_name: ldap_cli
     networks:
       internal_net:
-        ipv4_address: 192.168.0.5
+        ipv4_address: 192.168.0.4
     environment:
       - LDAP_URL=ldap://ldap:1389
       - BASE_DN=dc=example,dc=org
@@ -65,7 +65,7 @@ services:
     container_name: home_assistant
     networks:
       internal_net:
-        ipv4_address: 192.168.0.6
+        ipv4_address: 192.168.0.5
     environment:
       - TZ=Europe/Paris
     ports:
@@ -88,7 +88,7 @@ services:
       - "1194:1194/udp"    # Port UDP pour les connexions VPN
     networks:
       internal_net:
-        ipv4_address: 192.168.0.7
+        ipv4_address: 192.168.0.6
     volumes:
       - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
     restart: always
@@ -100,7 +100,7 @@ services:
     container_name: opnsense
     networks:
       internal_net:
-        ipv4_address: 192.168.0.8
+        ipv4_address: 192.168.0.7
     environment:
       - TZ=Europe/Paris
     ports:
@@ -116,7 +116,7 @@ services:
     container_name: client
     networks:
       internal_net:
-        ipv4_address: 192.168.0.4
+        ipv4_address: 192.168.0.8
     environment:
       - DISPLAY
     command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
