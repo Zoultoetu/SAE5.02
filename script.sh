@@ -44,5 +44,7 @@ cat <<EOF > /etc/hosts
 192.168.0.8    client
 EOF
 
+ansible-playbook -i /home/toine-fa/SAE5.02/Deploiement_de_machine/inventory.ini install_ssh.yml
+
 cd /home/toine-fa/SAE5.02/playbook  # Déplacement vers le dossier contenant les playbooks
 ansible-playbook -i /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini main.yml
