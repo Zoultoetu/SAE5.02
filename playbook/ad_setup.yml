@@ -1,3 +1,4 @@
+#ad_setup.yml
 - name: Configure Active Directory (Samba)
   hosts: ad
   become: true

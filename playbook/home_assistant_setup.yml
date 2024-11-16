@@ -1,3 +1,4 @@
+#home_assistant_setup.yml
 - name: Configure Home Assistant with LDAP authentication
   hosts: home_assistant
   become: true

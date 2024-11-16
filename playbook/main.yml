@@ -1,5 +1,3 @@
-# main.yml : Playbook principal pour configurer les services et activer SSH sur chaque machine
-
 - hosts: all
   become: true
   tasks:
@@ -45,6 +43,7 @@
         name: ssh
         state: restarted
 
+# Configuration des serveurs
 - name: Configuration du serveur DNS
   hosts: dns
   become: true
