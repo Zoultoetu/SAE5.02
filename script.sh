@@ -3,7 +3,8 @@ cd /home/toine-fa/
 git clone https://github.com/Zoultoetu/SAE5.02
 cd /home/toine-fa/SAE5.02/Deploiement_de_machine
 
-# Assurez-vous que tous les fichiers de configuration sont présents
+docker-compose up -d
+
 cat <<EOF > /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini
 [dns]
 192.168.0.2
@@ -27,10 +28,10 @@ cat <<EOF > /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini
 192.168.0.8
 
 [all:vars]
+ansible_connection=ssh
 ansible_user=root
 ansible_ssh_pass=root_password
 EOF
-
 
 cat <<EOF > /etc/hosts
 192.168.0.2    dns
