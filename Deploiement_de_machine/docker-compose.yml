@@ -1,22 +1,23 @@
 version: '3.8'
 
 services:
-  # Serveur DNS    
+  # Serveur DNS
   dns:
     build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/dns  # Répertoire où se trouve le Dockerfile
+      context: /home/toine-fa/SAE5.02/Dockerfile/dns
     container_name: dns
     image: abilioesteves/bind9:0.0.3
     volumes:
-        - data:/keys  # Utilisation du volume nommé "data"
+      - data:/keys
     ports:
       - "5443:5443/udp"
       - "5553:5553/tcp"
       - "10000:10000/tcp"
+      - "2222:22"  # Port SSH exposé sur l'hôte (port 2222 pour ce service)
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
-    
+
   # Active Directory avec Samba
   samba:
     build:
@@ -30,9 +31,11 @@ services:
       - ./smb:/data
       - ./downloads:/downloads
     environment:
-      - "TZ=${TIMEZONE}"  # Définition de la variable TIMEZONE
+      - "TZ=${TIMEZONE}"
       - "SAMBA_LOG_LEVEL=0"
     restart: always
+    ports:
+      - "2223:22"  # Port SSH exposé sur l'hôte (port 2223 pour ce service)
 
   ldap_cli:
     build:
@@ -48,6 +51,7 @@ services:
       - BIND_PATTERN=%s
     ports:
       - "1234:5000"
+      - "2224:22"  # Port SSH exposé sur l'hôte (port 2224 pour ce service)
     volumes:
       - ./config/ldap:/bitnami/openldap
     restart: always
@@ -64,6 +68,7 @@ services:
       - TZ=Europe/Paris
     ports:
       - 8123:8123
+      - "2225:22"  # Port SSH exposé sur l'hôte (port 2225 pour ce service)
     volumes:
       - /opt/docker/ha/config:/config
       - /etc/localtime:/etc/localtime:ro
@@ -78,21 +83,22 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "943:943"          # Port pour l'interface d'administration
-      - "8443:443"         # Port HTTPS
-      - "1194:1194/udp"    # Port UDP pour les connexions VPN
+      - "943:943"
+      - "8443:443"
+      - "1194:1194/udp"
+      - "2226:22"  # Port SSH exposé sur l'hôte (port 2226 pour ce service)
     networks:
       internal_net:
         ipv4_address: 192.168.0.6
     volumes:
-      - ~/docker/openvpn-as:/openvpn # Volume pour la persistance des données
+      - ~/docker/openvpn-as:/openvpn
     restart: always
 
   # Pare-feu OPNsense
   opnsense:
     build:
       context: /home/toine-fa/SAE5.02/Dockerfile/opnsense
-    image: nginx:latest  # Placeholder pour simuler un pare-feu avec des règles de proxy
+    image: nginx:latest
     container_name: opnsense
     networks:
       internal_net:
@@ -100,7 +106,8 @@ services:
     environment:
       - TZ=Europe/Paris
     ports:
-      - "8080:80"  # Port HTTP pour accéder au pare-feu simulé
+      - "8080:80"
+      - "2227:22"  # Port SSH exposé sur l'hôte (port 2227 pour ce service)
     volumes:
       - ./config/opnsense:/etc/nginx/conf.d
     restart: always
@@ -118,6 +125,8 @@ services:
     environment:
       - DISPLAY
     command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
+    ports:
+      - "2228:22"  # Port SSH exposé sur l'hôte (port 2228 pour ce service)
     restart: always
 
 networks:
@@ -128,4 +137,4 @@ networks:
         - subnet: 192.168.0.0/24
 
 volumes:
-  data:  # Déclaration du volume nommé "data"
+  data:
