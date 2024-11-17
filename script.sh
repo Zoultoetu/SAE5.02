@@ -21,7 +21,9 @@ echo "Installation de SSH dans les conteneurs..."
 
 for container in "${!containers[@]}" 
 do
+  echo "Configuration de SSH dans le conteneur $container (${containers[$container]})..."
   docker exec -ti "$container" bash -c "
+    apt-get update && \
     apt-get install -y openssh-server && \
     mkdir -p /var/run/sshd && \
     echo 'root:root' | chpasswd && \
