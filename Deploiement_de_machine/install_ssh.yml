@@ -3,10 +3,11 @@
   hosts: all
   become: true
   tasks:
-    - name: Installer SSH dans le conteneur Docker
+    - name: Installer SSH
       ansible.builtin.package:
-          name: SSH
+          name: ssh
           state: present
+    - name: Installer SSH dans le conteneur Docker
       community.docker.docker_container_exec:
         container: "{{ inventory_hostname }}"
         cmd: "apt-get update && apt-get install -y openssh-server"
@@ -23,3 +24,4 @@
         container: "{{ inventory_hostname }}"
         cmd: "service ssh restart"
       when: ansible_ssh_user == "root"
+      
