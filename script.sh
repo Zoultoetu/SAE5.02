@@ -6,6 +6,31 @@ cd /home/toine-fa/SAE5.02/Deploiement_de_machine
 
 docker-compose up -d
 
+declare -A containers
+containers=(
+  ["dns"]="192.168.0.2"
+  ["ad"]="192.168.0.3"
+  ["ldap"]="192.168.0.4"
+  ["home_assistant"]="192.168.0.5"
+  ["openvpn"]="192.168.0.6"
+  ["opnsense"]="192.168.0.7"
+  ["client"]="192.168.0.8"
+)
+
+echo "Installation de SSH dans les conteneurs..."
+
+for container in "${!containers[@]}"; do
+  docker exec -ti "$container" bash -c "
+    apt-get update && \
+    apt-get install -y openssh-server && \
+    mkdir -p /var/run/sshd && \
+    echo 'root:your_password_here' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    service ssh start
+  "
+  echo "SSH configuré sur le conteneur $container (${containers[$container]})"
+done
+
 cat <<EOF > /etc/hosts
 192.168.0.2    dns
 192.168.0.3    ad
