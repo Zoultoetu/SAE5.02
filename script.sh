@@ -19,7 +19,8 @@ containers=(
 
 echo "Installation de SSH dans les conteneurs..."
 
-for container in "${!containers[@]}" do
+for container in "${!containers[@]}" 
+do
   docker exec -ti "$container" bash -c "
     apt-get install -y openssh-server && \
     mkdir -p /var/run/sshd && \
