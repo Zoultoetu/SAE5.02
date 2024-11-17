@@ -12,17 +12,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Configurer le mot de passe administrateur pour LDAP via debconf
-RUN debconf-set-selections <<< "slapd slapd/password1 password password" \
-    && debconf-set-selections <<< "slapd slapd/password2 password password" \
-    && debconf-set-selections <<< "slapd slapd/allow_weak_crypto boolean true" \
+RUN debconf-set-selections <<< 'slapd slapd/password1 password root' \
+    && debconf-set-selections <<< 'slapd slapd/password2 password root' \
+    && debconf-set-selections <<< 'slapd slapd/allow_weak_crypto boolean true' \
     && dpkg-reconfigure -f noninteractive slapd
 
 # Créer les répertoires nécessaires et démarrer le service SSH
 RUN mkdir /var/run/sshd
 
-# Activer SSH pour la connexion root et l authentification par mot de passe
-RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
-    && echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+# Activer SSH pour la connexion root et l'authentification par mot de passe
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
+    && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
 # Démarrer SSH et slapd
 CMD service ssh start && service slapd start && tail -f /dev/null
