@@ -4,6 +4,9 @@
   become: true
   tasks:
     - name: Installer SSH dans le conteneur Docker
+      ansible.builtin.package:
+          name: SSH
+          state: present
       community.docker.docker_container_exec:
         container: "{{ inventory_hostname }}"
         cmd: "apt-get update && apt-get install -y openssh-server"
