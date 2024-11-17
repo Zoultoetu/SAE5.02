@@ -26,7 +26,7 @@ services:
     networks:
       internal_net:
         ipv4_address: 192.168.0.3
-    container_name: samba
+    container_name: ad
     volumes:
       - ./smb:/data
       - ./downloads:/downloads
@@ -41,7 +41,7 @@ services:
     build:
       context: /home/toine-fa/SAE5.02/Dockerfile/ldap_cli
     image: dnknth/ldap-ui
-    container_name: ldap_cli
+    container_name: ldap
     networks:
       internal_net:
         ipv4_address: 192.168.0.4
@@ -63,7 +63,7 @@ services:
     networks:
       internal_net:
         ipv4_address: 192.168.0.5
-    container_name: homeassistant
+    container_name: home_assistant
     environment:
       - TZ=Europe/Paris
     ports:
@@ -78,8 +78,8 @@ services:
   openvpn:
     build:
       context: /home/toine-fa/SAE5.02/Dockerfile/openvpn-as
-    image: openvpn/openvpn-as
-    container_name: openvpn-as
+    image: openvpn/openvpn
+    container_name: openvpn
     cap_add:
       - NET_ADMIN
     ports:
