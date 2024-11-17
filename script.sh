@@ -19,12 +19,11 @@ containers=(
 
 echo "Installation de SSH dans les conteneurs..."
 
-for container in "${!containers[@]}"; do
+for container in "${!containers[@]}" do
   docker exec -ti "$container" bash -c "
-    apt-get update && \
     apt-get install -y openssh-server && \
     mkdir -p /var/run/sshd && \
-    echo 'root:your_password_here' | chpasswd && \
+    echo 'root:root' | chpasswd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     service ssh start
   "
