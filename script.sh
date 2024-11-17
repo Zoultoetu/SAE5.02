@@ -17,7 +17,7 @@ cat <<EOF > /etc/hosts
 EOF
 
 printf "test ping"
-ansible all -i /chemin/vers/inventory.ini -m ping
+ansible all -i /chemin/vers/inventaire.ini -m ping
 printf "test connexion ssh"
 ansible-playbook -i /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini install_ssh.yml
 printf "test débogage"
