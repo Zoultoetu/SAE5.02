@@ -3,7 +3,9 @@ version: '3.8'
 services:
   # Serveur DNS avec Bind9
   dns:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/dns  # Dossier où se trouve le Dockerfile pour DNS
+      dockerfile: Dockerfile
     container_name: dns
     networks:
       internal_net:
@@ -18,13 +20,13 @@ services:
       - ./keys:/etc/bind/keys
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    command: bash -c "apt-get update && apt-get install -y bind9 bind9utils openssh-server && \
-                      service ssh start && named -f"
     restart: always
 
   # Active Directory (Samba)
   ad:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/samba  # Dossier où se trouve le Dockerfile pour Samba
+      dockerfile: Dockerfile
     container_name: ad
     networks:
       internal_net:
@@ -35,13 +37,13 @@ services:
       - ./smb:/etc/samba
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    command: bash -c "apt-get update && apt-get install -y samba openssh-server && \
-                      service ssh start && service smbd start"
     restart: always
 
   # Serveur LDAP
   ldap:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/ldap_cli  # Dossier où se trouve le Dockerfile pour LDAP
+      dockerfile: Dockerfile
     container_name: ldap
     networks:
       internal_net:
@@ -54,13 +56,13 @@ services:
       - ./ldap_config:/etc/ldap/slapd.d
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    command: bash -c "apt-get update && apt-get install -y slapd ldap-utils openssh-server && \
-                      service ssh start && service slapd start"
     restart: always
 
   # Home Assistant
   home_assistant:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/homeassistant  # Dossier où se trouve le Dockerfile pour Home Assistant
+      dockerfile: Dockerfile
     container_name: home_assistant
     networks:
       internal_net:
@@ -72,13 +74,13 @@ services:
       - ./homeassistant:/config
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    command: bash -c "apt-get update && apt-get install -y openssh-server && \
-                      service ssh start && python3 -m homeassistant --config /config"
     restart: always
 
   # Serveur OpenVPN
   openvpn:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/openvpn-as  # Dossier où se trouve le Dockerfile pour OpenVPN
+      dockerfile: Dockerfile
     container_name: openvpn
     networks:
       internal_net:
@@ -90,13 +92,13 @@ services:
       - ./openvpn:/etc/openvpn
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    command: bash -c "apt-get update && apt-get install -y openvpn openssh-server && \
-                      service ssh start"
     restart: always
 
   # Pare-feu OPNsense (simulé)
   opnsense:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/opnsense  # Dossier où se trouve le Dockerfile pour OPNsense
+      dockerfile: Dockerfile
     container_name: opnsense
     networks:
       internal_net:
@@ -108,13 +110,13 @@ services:
       - ./opnsense_config:/etc/nginx/conf.d
     environment:
       - DEBIAN_FRONTEND=noninteractive
-    command: bash -c "apt-get update && apt-get install -y nginx openssh-server && \
-                      service ssh start && nginx -g 'daemon off;'"
     restart: always
 
   # Machine Client
   client:
-    image: ubuntu:20.04  # Image Ubuntu Server
+    build:
+      context: ./Dockerfile/client  # Dossier où se trouve le Dockerfile pour Client
+      dockerfile: Dockerfile
     container_name: client
     networks:
       internal_net:
@@ -123,8 +125,6 @@ services:
       - "2228:22"  # Port SSH exposé sur l'hôte
     environment:
       - DISPLAY
-    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && \
-                      service ssh start"
     restart: always
 
 networks:

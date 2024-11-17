@@ -1,7 +1,15 @@
-FROM debian:latest
+# Utiliser l'image de base Ubuntu 20.04
+FROM ubuntu:20.04
 
-# Installer SSH
-RUN apt-get update && apt-get install -y openssh-server
+# Mettre à jour les paquets et installer OpenSSH et l'environnement XFCE
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    xfce4 \
+    curl \
+    vim \
+    net-tools \
+    iputils-ping \
+    lsb-release
 
 # Créer le répertoire pour SSH
 RUN mkdir /var/run/sshd
@@ -10,5 +18,11 @@ RUN mkdir /var/run/sshd
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
-# Démarrer SSH
-CMD ["/usr/sbin/sshd", "-D"]
+# Définir un mot de passe pour l'utilisateur root (par exemple "password")
+RUN echo 'root:password' | chpasswd
+
+# Exposer le port SSH
+EXPOSE 22
+
+# Lancer le serveur SSH et l'environnement XFCE
+CMD service ssh start && startx

@@ -1,14 +1,33 @@
-FROM abilioesteves/bind9:0.0.3
+# Utiliser l'image de base Ubuntu
+FROM ubuntu:20.04
 
-# Installer SSH
-RUN apt-get update && apt-get install -y openssh-server
+# Mettre à jour les packages et installer Bind9 et OpenSSH
+RUN apt-get update && apt-get install -y \
+    bind9 \
+    bind9utils \
+    openssh-server \
+    curl \
+    vim \
+    net-tools
 
 # Créer le répertoire pour SSH
 RUN mkdir /var/run/sshd
 
-# Activer la connexion root et l'authentification par mot de passe
+# Configurer SSH pour permettre la connexion root et l'authentification par mot de passe
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
-# Démarrer SSH
-CMD ["/usr/sbin/sshd", "-D"]
+# Définir un mot de passe pour l'utilisateur root (par exemple "password")
+RUN echo 'root:password' | chpasswd
+
+# Exposer les ports pour SSH (22) et Bind9 (53)
+EXPOSE 22
+EXPOSE 5553/udp
+EXPOSE 5443/tcp
+EXPOSE 10000/tcp  
+
+# Si tu as une interface d'administration Web
+
+# Lancer SSH et Bind9
+CMD service ssh start && named -f
+
