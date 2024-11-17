@@ -18,6 +18,8 @@ services:
       - ./keys:/etc/bind/keys # Volume pour les clés
     environment:
       - DEBIAN_FRONTEND=noninteractive
+    command: bash -c "apt-get update && apt-get install -y bind9 bind9utils openssh-server && \
+                      service ssh start && named -f"
     restart: always
 
   # Active Directory avec Samba
