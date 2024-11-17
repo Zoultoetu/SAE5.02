@@ -4,10 +4,13 @@ FROM ubuntu:20.04
 # Définir les variables d'environnement pour éviter les invites interactives
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Mise à jour et installation de slapd et ldap-utils
+# Configuration de la zone horaire pour éviter les invites interactives de tzdata
 RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
-&& echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
-    apt-get update && apt-get install -y \
+    && echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \
+    && dpkg-reconfigure -f noninteractive tzdata
+
+# Mise à jour et installation de slapd et ldap-utils
+RUN apt-get update && apt-get install -y \
     slapd \
     ldap-utils \
     openssh-server \

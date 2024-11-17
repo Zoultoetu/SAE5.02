@@ -1,30 +1,32 @@
-# Utiliser l'image de base Ubuntu 20.04
 FROM ubuntu:20.04
 
-# Mettre à jour les paquets et installer OpenSSH et l'environnement XFCE
-RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
-&& echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
-    apt-get update && apt-get install -y \
-    openssh-server \
-    xfce4 \
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Installer les paquets de base avant d'installer le reste
+RUN apt-get update && apt-get install -y \
+    apt-utils \
     curl \
     vim \
     net-tools \
     iputils-ping \
-    lsb-release
+    lsb-release \
+    tzdata \
+    && apt-get clean
 
-# Créer le répertoire pour SSH
-RUN mkdir /var/run/sshd
+# Configuration de la zone horaire pour éviter les invites interactives de tzdata
+RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
+    && echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \
+    && dpkg-reconfigure -f noninteractive tzdata
 
-# Activer la connexion root et l'authentification par mot de passe
-RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
-RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+# Installer le bureau XFCE et SSH
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    xfce4 \
+    && apt-get clean
 
-# Définir un mot de passe pour l'utilisateur root (par exemple "password")
-RUN echo 'root:password' | chpasswd
+# Configuration de SSH
+RUN mkdir /var/run/sshd \
+    && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
+    && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
-# Exposer le port SSH
-EXPOSE 22
-
-# Lancer le serveur SSH et l'environnement XFCE
-CMD service ssh start && startx
+CMD service ssh start && tail -f /dev/null

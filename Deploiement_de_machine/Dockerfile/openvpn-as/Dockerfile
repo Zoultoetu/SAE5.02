@@ -1,10 +1,14 @@
 # Utiliser l'image de base Ubuntu 20.04
 FROM ubuntu:20.04
 
-# Mettre à jour les paquets et installer OpenVPN et SSH
+# Configuration de la zone horaire pour éviter les invites interactives de tzdata
 RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
-&& echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
-    apt-get update && apt-get install -y \
+    && echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \
+    && dpkg-reconfigure -f noninteractive tzdata
+
+    
+# Mettre à jour les paquets et installer OpenVPN et SSH
+RUN apt-get update && apt-get install -y \
     openssh-server \
     openvpn \
     curl \
