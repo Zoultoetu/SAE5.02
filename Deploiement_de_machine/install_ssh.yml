@@ -3,10 +3,6 @@
   hosts: all
   become: true
   tasks:
-    - name: Installer SSH
-      ansible.builtin.package:
-          name: ssh
-          state: present
     - name: Installer SSH dans le conteneur Docker
       community.docker.docker_container_exec:
         container: "{{ inventory_hostname }}"
