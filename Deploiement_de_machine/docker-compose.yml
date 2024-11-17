@@ -1,136 +1,130 @@
 version: '3.8'
 
 services:
-  # Serveur DNS
+  # Serveur DNS avec Bind9
   dns:
-    image: ubuntu:20.04  # Vous pouvez remplacer par une version plus récente si nécessaire
+    image: ubuntu:20.04  # Image Ubuntu Server
     container_name: dns
-    ports:
-      - "5443:5443/udp"   # Port DNS UDP
-      - "5553:5553/tcp"   # Port DNS TCP
-      - "10000:10000/tcp" # Port d'administration (si utilisé par Bind)
-      - "2222:22"         # Port SSH exposé sur l'hôte
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
+    ports:
+      - "5443:5443/udp"   # Port DNS UDP
+      - "5553:5553/tcp"   # Port DNS TCP
+      - "10000:10000/tcp" # Port d'administration
+      - "2222:22"         # Port SSH exposé sur l'hôte
     volumes:
-      - ./bind:/etc/bind      # Montage de la configuration Bind
-      - ./keys:/etc/bind/keys # Volume pour les clés
+      - ./bind:/etc/bind
+      - ./keys:/etc/bind/keys
     environment:
       - DEBIAN_FRONTEND=noninteractive
     command: bash -c "apt-get update && apt-get install -y bind9 bind9utils openssh-server && \
                       service ssh start && named -f"
     restart: always
 
-  # Active Directory avec Samba
+  # Active Directory (Samba)
   ad:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/samba
-    image: crazymax/samba
+    image: ubuntu:20.04  # Image Ubuntu Server
+    container_name: ad
     networks:
       internal_net:
         ipv4_address: 192.168.0.3
-    container_name: ad
-    volumes:
-      - ./smb:/data
-      - ./downloads:/downloads
-    environment:
-      - "TZ=${TIMEZONE}"
-      - "SAMBA_LOG_LEVEL=0"
-    restart: always
     ports:
-      - "2223:22"  # Port SSH exposé sur l'hôte (port 2223 pour ce service)
+      - "2223:22"  # Port SSH exposé sur l'hôte
+    volumes:
+      - ./smb:/etc/samba
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: bash -c "apt-get update && apt-get install -y samba openssh-server && \
+                      service ssh start && service smbd start"
+    restart: always
 
+  # Serveur LDAP
   ldap:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/ldap_cli
-    image: dnknth/ldap-ui
+    image: ubuntu:20.04  # Image Ubuntu Server
     container_name: ldap
     networks:
       internal_net:
         ipv4_address: 192.168.0.4
-    environment:
-      - LDAP_URL=ldap://ldap:1389
-      - BASE_DN=dc=example,dc=org
-      - BIND_PATTERN=%s
     ports:
-      - "1234:5000"
-      - "2224:22"  # Port SSH exposé sur l'hôte (port 2224 pour ce service)
+      - "1389:389"  # Port LDAP
+      - "2224:22"   # Port SSH exposé sur l'hôte
     volumes:
-      - ./config/ldap:/bitnami/openldap
+      - ./ldap_data:/var/lib/ldap
+      - ./ldap_config:/etc/ldap/slapd.d
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: bash -c "apt-get update && apt-get install -y slapd ldap-utils openssh-server && \
+                      service ssh start && service slapd start"
     restart: always
 
+  # Home Assistant
   home_assistant:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/homeassistant
-    image: homeassistant/home-assistant:stable
+    image: ubuntu:20.04  # Image Ubuntu Server
+    container_name: home_assistant
     networks:
       internal_net:
         ipv4_address: 192.168.0.5
-    container_name: home_assistant
-    environment:
-      - TZ=Europe/Paris
     ports:
-      - 8123:8123
-      - "2225:22"  # Port SSH exposé sur l'hôte (port 2225 pour ce service)
+      - "8123:8123"  # Interface Web Home Assistant
+      - "2225:22"    # Port SSH exposé sur l'hôte
     volumes:
-      - /opt/docker/ha/config:/config
-      - /etc/localtime:/etc/localtime:ro
+      - ./homeassistant:/config
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: bash -c "apt-get update && apt-get install -y openssh-server && \
+                      service ssh start && python3 -m homeassistant --config /config"
     restart: always
 
-  # Serveur VPN OpenVPN
+  # Serveur OpenVPN
   openvpn:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/openvpn-as
-    image: openvpn/openvpn
+    image: ubuntu:20.04  # Image Ubuntu Server
     container_name: openvpn
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "943:943"
-      - "8443:443"
-      - "1194:1194/udp"
-      - "2226:22"  # Port SSH exposé sur l'hôte (port 2226 pour ce service)
     networks:
       internal_net:
         ipv4_address: 192.168.0.6
+    ports:
+      - "1194:1194/udp"  # Port VPN UDP
+      - "2226:22"        # Port SSH exposé sur l'hôte
     volumes:
-      - ~/docker/openvpn-as:/openvpn
+      - ./openvpn:/etc/openvpn
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: bash -c "apt-get update && apt-get install -y openvpn openssh-server && \
+                      service ssh start"
     restart: always
 
-  # Pare-feu OPNsense
+  # Pare-feu OPNsense (simulé)
   opnsense:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/opnsense
-    image: nginx:latest
+    image: ubuntu:20.04  # Image Ubuntu Server
     container_name: opnsense
     networks:
       internal_net:
         ipv4_address: 192.168.0.7
-    environment:
-      - TZ=Europe/Paris
     ports:
-      - "8080:80"
-      - "2227:22"  # Port SSH exposé sur l'hôte (port 2227 pour ce service)
+      - "8080:80"    # Interface Web pour simulation
+      - "2227:22"    # Port SSH exposé sur l'hôte
     volumes:
-      - ./config/opnsense:/etc/nginx/conf.d
+      - ./opnsense_config:/etc/nginx/conf.d
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: bash -c "apt-get update && apt-get install -y nginx openssh-server && \
+                      service ssh start && nginx -g 'daemon off;'"
     restart: always
-    command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start"
 
   # Machine Client
   client:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/client
-    image: debian:latest
+    image: ubuntu:20.04  # Image Ubuntu Server
     container_name: client
     networks:
       internal_net:
         ipv4_address: 192.168.0.8
+    ports:
+      - "2228:22"  # Port SSH exposé sur l'hôte
     environment:
       - DISPLAY
-    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
-    ports:
-      - "2228:22"  # Port SSH exposé sur l'hôte (port 2228 pour ce service)
+    command: bash -c "apt-get update && apt-get install -y xfce4 openssh-server && \
+                      service ssh start"
     restart: always
 
 networks:
@@ -141,4 +135,11 @@ networks:
         - subnet: 192.168.0.0/24
 
 volumes:
-  data:
+  bind:
+  keys:
+  smb:
+  ldap_data:
+  ldap_config:
+  homeassistant:
+  openvpn:
+  opnsense_config:
