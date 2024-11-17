@@ -2,7 +2,9 @@
 FROM ubuntu:20.04
 
 # Mettre à jour les paquets et installer SSH et Samba
-RUN apt-get update && apt-get install -y \
+RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
+&& echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
+    apt-get update && apt-get install -y \
     openssh-server \
     samba \
     curl \

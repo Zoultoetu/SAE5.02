@@ -2,7 +2,9 @@
 FROM ubuntu:20.04
 
 # Mettre à jour les packages et installer Bind9 et OpenSSH
-RUN apt-get update && apt-get install -y \
+RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
+    && echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
+    apt-get update && apt-get install -y \
     bind9 \
     bind9utils \
     openssh-server \

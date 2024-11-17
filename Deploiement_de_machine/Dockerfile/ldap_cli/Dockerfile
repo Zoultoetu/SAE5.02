@@ -5,7 +5,9 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Mise à jour et installation de slapd et ldap-utils
-RUN apt-get update && apt-get install -y \
+RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
+&& echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
+    apt-get update && apt-get install -y \
     slapd \
     ldap-utils \
     openssh-server \

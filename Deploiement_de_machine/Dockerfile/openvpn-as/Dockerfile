@@ -2,7 +2,9 @@
 FROM ubuntu:20.04
 
 # Mettre à jour les paquets et installer OpenVPN et SSH
-RUN apt-get update && apt-get install -y \
+RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
+&& echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \ 
+    apt-get update && apt-get install -y \
     openssh-server \
     openvpn \
     curl \
@@ -22,6 +24,7 @@ RUN echo 'root:password' | chpasswd
 
 # Exposer le port SSH
 EXPOSE 22
+EXPOSE 1194
 
 # Commande pour démarrer OpenVPN
 CMD service ssh start && openvpn --config /etc/openvpn/openvpn.conf
