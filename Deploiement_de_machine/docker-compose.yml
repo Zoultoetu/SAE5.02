@@ -3,20 +3,22 @@ version: '3.8'
 services:
   # Serveur DNS
   dns:
-    build:
-      context: /home/toine-fa/SAE5.02/Dockerfile/dns
+    image: ubuntu:20.04  # Vous pouvez remplacer par une version plus récente si nécessaire
     container_name: dns
-    image: abilioesteves/bind9:0.0.3
-    volumes:
-      - data:/keys
     ports:
-      - "5443:5443/udp"
-      - "5553:5553/tcp"
-      - "10000:10000/tcp"
-      - "2222:22"  # Port SSH exposé sur l'hôte (port 2222 pour ce service)
+      - "5443:5443/udp"   # Port DNS UDP
+      - "5553:5553/tcp"   # Port DNS TCP
+      - "10000:10000/tcp" # Port d'administration (si utilisé par Bind)
+      - "2222:22"         # Port SSH exposé sur l'hôte
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
+    volumes:
+      - ./bind:/etc/bind      # Montage de la configuration Bind
+      - ./keys:/etc/bind/keys # Volume pour les clés
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    restart: always
 
   # Active Directory avec Samba
   ad:
