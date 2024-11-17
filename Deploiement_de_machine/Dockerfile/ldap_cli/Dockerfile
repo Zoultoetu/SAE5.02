@@ -1,28 +1,28 @@
-# Utiliser l'image de base Ubuntu 20.04
+# Utilisation de l'image de base Ubuntu
 FROM ubuntu:20.04
 
-# Mettre à jour les paquets et installer SSH, OpenLDAP
+# Définir les variables d'environnement pour éviter les invites interactives
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Mise à jour et installation de slapd et ldap-utils
 RUN apt-get update && apt-get install -y \
-    openssh-server \
     slapd \
     ldap-utils \
-    curl \
-    vim \
-    net-tools
+    openssh-server \
+    && apt-get clean
 
-# Créer le répertoire pour SSH
+# Configurer le mot de passe administrateur pour LDAP via debconf
+RUN debconf-set-selections <<< "slapd slapd/password1 password password" \
+    && debconf-set-selections <<< "slapd slapd/password2 password password" \
+    && debconf-set-selections <<< "slapd slapd/allow_weak_crypto boolean true" \
+    && dpkg-reconfigure -f noninteractive slapd
+
+# Créer les répertoires nécessaires et démarrer le service SSH
 RUN mkdir /var/run/sshd
 
-# Activer la connexion root et l'authentification par mot de passe
-RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
-RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+# Activer SSH pour la connexion root et l authentification par mot de passe
+RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config \
+    && echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 
-# Définir un mot de passe pour l'utilisateur root
-RUN echo 'root:password' | chpasswd
-
-# Exposer le port SSH
-EXPOSE 22
-EXPOSE 389
-
-# Commande pour démarrer OpenLDAP
-CMD service ssh start && service slapd start
+# Démarrer SSH et slapd
+CMD service ssh start && service slapd start && tail -f /dev/null
