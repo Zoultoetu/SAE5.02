@@ -1,52 +1,12 @@
 - hosts: all
   become: true
   tasks:
-    # Installer sshpass sur chaque machine cible (si nécessaire)
-    - name: Installer sshpass sur la machine distante
-      apt:
-        name: sshpass
-        state: present
-      when: ansible_ssh_pass is defined
-
-    # Installer le serveur SSH sur chaque machine
-    - name: Installer SSH
-      apt:
-        name: openssh-server
-        state: present
-      when: ansible_connection == "docker"  # Vérifie si la connexion est via Docker (important pour les conteneurs)
-
-    # Autoriser la connexion root via SSH
-    - name: Permettre la connexion root via SSH
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin yes'
-      notify: Redémarrer SSH  # Si SSH est configuré, redémarre le service pour appliquer les changements
-
-    # Définir le mot de passe pour root
-    - name: Définir le mot de passe root
-      user:
-        name: root
-        password: "{{ 'root' | password_hash('sha512') }}"  # Utilisation d'un mot de passe haché pour plus de sécurité
-
-    # S'assurer que le service SSH est activé et démarré
-    - name: Démarrer et activer le service SSH
-      service:
-        name: ssh
-        state: started
-        enabled: true
-
-  handlers:
-    # Redémarrer SSH si la configuration a été modifiée
-    - name: Redémarrer SSH
-      service:
-        name: ssh
-        state: restarted
 
 # Configuration des serveurs
 - name: Configuration du serveur DNS
   hosts: dns
   become: true
+  use: "service"
   tasks:
     - name: Déployer le serveur DNS
       include_tasks: dns_setup.yml
@@ -54,6 +14,7 @@
 - name: Configuration du serveur Active Directory
   hosts: ad
   become: true
+  use: "service"
   tasks:
     - name: Déployer le serveur Active Directory
       include_tasks: ad_setup.yml
@@ -61,6 +22,7 @@
 - name: Configuration du serveur LDAP
   hosts: ldap
   become: true
+  use: "service"
   tasks:
     - name: Déployer le serveur LDAP
       include_tasks: ldap_setup.yml
@@ -68,6 +30,7 @@
 - name: Configuration de Home Assistant
   hosts: home_assistant
   become: true
+  use: "service"
   tasks:
     - name: Déployer Home Assistant
       include_tasks: home_assistant_setup.yml
@@ -75,6 +38,7 @@
 - name: Configuration du serveur OpenVPN
   hosts: openvpn
   become: true
+  use: "service"
   tasks:
     - name: Déployer le serveur OpenVPN
       include_tasks: openvpn_setup.yml
@@ -82,6 +46,7 @@
 - name: Configuration du pare-feu OPNsense
   hosts: opnsense
   become: true
+  use: "service"
   tasks:
     - name: Déployer le pare-feu OPNsense
       include_tasks: opnsense_setup.yml
@@ -89,6 +54,7 @@
 - name: Configuration de la machine client
   hosts: client
   become: true
+  use: "service"
   tasks:
     - name: Configurer la machine client
       include_tasks: client_setup.yml

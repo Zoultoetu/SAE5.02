@@ -35,3 +35,49 @@ configure_ssh opnsense
 docker run -d --name client --network internal_net --ip 192.168.0.8 -e DISPLAY  --restart always -it debian:latest bash -c "apt-get update && apt-get install -y xfce4 openssh-server && service ssh start"
 configure_ssh client
 ####
+
+
+test main.yml
+
+    # Installer sshpass sur chaque machine cible (si nécessaire)
+    - name: Installer sshpass sur la machine distante
+      apt:
+        name: sshpass
+        state: present
+      use: "service"
+      when: ansible_ssh_pass is defined
+
+    # Installer le serveur SSH sur chaque machine
+    - name: Installer SSH
+      apt:
+        name: openssh-server
+        state: present
+      when: ansible_connection == "docker"  # Vérifie si la connexion est via Docker (important pour les conteneurs)
+
+    # Autoriser la connexion root via SSH
+    - name: Permettre la connexion root via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify: Redémarrer SSH  # Si SSH est configuré, redémarre le service pour appliquer les changements
+
+    # Définir le mot de passe pour root
+    - name: Définir le mot de passe root
+      user:
+        name: root
+        password: "{{ 'root' | password_hash('sha512') }}"  # Utilisation d'un mot de passe haché pour plus de sécurité
+
+    # S'assurer que le service SSH est activé et démarré
+    - name: Démarrer et activer le service SSH
+      service:
+        name: ssh
+        state: started
+        enabled: true
+
+  handlers:
+    # Redémarrer SSH si la configuration a été modifiée
+    - name: Redémarrer SSH
+      service:
+        name: ssh
+        state: restarted
