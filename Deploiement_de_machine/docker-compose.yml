@@ -18,7 +18,7 @@ services:
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
-    restart: no
+    restart: "no"
 
   # Active Directory (Samba)
   ad:
