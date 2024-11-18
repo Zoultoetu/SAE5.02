@@ -29,4 +29,4 @@ RUN mkdir /var/run/sshd \
     && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
     && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
-CMD service ssh start
+CMD service ssh start && tail -f /dev/null
