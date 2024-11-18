@@ -18,8 +18,6 @@ services:
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
-    environment:
-      - DEBIAN_FRONTEND=noninteractive
     restart: always
 
   # Active Directory (Samba)
