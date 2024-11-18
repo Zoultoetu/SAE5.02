@@ -19,4 +19,4 @@ RUN mkdir -p /etc/bind/zones
 EXPOSE 53/udp 53/tcp 22
 
 # Démarrer Bind9 et SSH
-CMD service ssh start && named -f
+CMD service ssh start && service bind9 start named -f
