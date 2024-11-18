@@ -12,6 +12,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Mise à jour et installation de slapd et ldap-utils
 RUN apt-get update && apt-get install -y \
     slapd \
+    iputils-ping \
     ldap-utils \
     openssh-server \
     && apt-get clean
