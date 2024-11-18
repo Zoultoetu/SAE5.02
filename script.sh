@@ -27,7 +27,8 @@ do
     apt-get install -y openssh-server && \
     mkdir -p /var/run/sshd && \
     echo 'root:root' | chpasswd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
+    && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config\
     service ssh start
   "
   echo "SSH configuré sur le conteneur $container (${containers[$container]})"

@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
 
 # Configurer SSH
 RUN mkdir /var/run/sshd && echo 'root:password' | chpasswd
-RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
-    && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+#RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
+#    && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
 # Configurer Bind9 (par défaut)
 RUN mkdir -p /etc/bind/zones
