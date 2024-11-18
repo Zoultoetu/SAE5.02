@@ -16,5 +16,5 @@ RUN apt-get update && apt-get install -y openssh-server samba curl vim net-tools
 EXPOSE 22
 
 # Commande pour démarrer Samba
-#CMD service ssh start && service smbd start && tail -f /dev/null
-CMD tail -f /dev/null
+CMD service ssh start && service smbd start && tail -f /dev/null
+#CMD tail -f /dev/null
