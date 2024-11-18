@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
     openssh-server \
     && apt-get clean
 
+# Préparer les volumes pour la configuration dynamique
+VOLUME ["/etc/bind"]
+
 # Configuration du service SSH pour permettre les connexions root et l'authentification par mot de passe
 RUN mkdir /var/run/sshd \
     && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \

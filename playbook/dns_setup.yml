@@ -7,6 +7,7 @@
       apt:
         name: bind9
         state: present
+        update_cache: yes
 
     - name: Configure Bind for local domain
       template:
@@ -34,8 +35,4 @@
         - { ip: "192.168.0.8", hostname: "client" }
       notify: Restart Bind
 
-  handlers:
-    - name: Restart Bind
-      service:
-        name: bind9
-        state: restarted
+    - name: Set
