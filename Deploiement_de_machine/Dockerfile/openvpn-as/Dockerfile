@@ -31,4 +31,4 @@ EXPOSE 22
 EXPOSE 1194
 
 # Commande pour démarrer OpenVPN
-CMD service ssh start && openvpn --config /etc/openvpn/openvpn.conf
+CMD service ssh start && openvpn --config /etc/openvpn/openvpn.conf && tail -f /dev/null

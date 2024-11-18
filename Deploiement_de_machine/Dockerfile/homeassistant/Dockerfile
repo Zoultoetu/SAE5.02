@@ -30,4 +30,4 @@ RUN echo 'root:password' | chpasswd
 EXPOSE 22
 EXPOSE 8123
 # Commande pour démarrer Home Assistant
-CMD service ssh start && python3 -m homeassistant --config /config
+CMD service ssh start && python3 -m homeassistant --config /config && tail -f /dev/null

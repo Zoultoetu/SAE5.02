@@ -29,4 +29,4 @@ RUN echo 'root:password' | chpasswd
 EXPOSE 22
 
 # Commande pour démarrer Samba
-CMD service ssh start && service smbd start
+CMD service ssh start && service smbd start && tail -f /dev/null

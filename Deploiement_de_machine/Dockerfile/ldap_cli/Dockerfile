@@ -30,4 +30,4 @@ RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
     && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
 # Démarrer SSH et slapd
-CMD service ssh start && service slapd start
+CMD service ssh start && service slapd start && tail -f /dev/null

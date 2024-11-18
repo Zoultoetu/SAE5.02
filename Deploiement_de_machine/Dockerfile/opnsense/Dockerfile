@@ -30,4 +30,4 @@ EXPOSE 22
 EXPOSE 80
 
 # Commande pour démarrer Nginx et SSH
-CMD service ssh start && nginx -g 'daemon off;'
+CMD service ssh start && nginx -g 'daemon off;' && tail -f /dev/null

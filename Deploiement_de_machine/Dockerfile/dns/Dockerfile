@@ -28,4 +28,4 @@ RUN mkdir /var/run/sshd \
     && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
 # Démarrer les services nécessaires (SSH, bind9, etc.)
-CMD service ssh start && service bind9 start
+CMD service ssh start && service bind9 start && tail -f /dev/null
