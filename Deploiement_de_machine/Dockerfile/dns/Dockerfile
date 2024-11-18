@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y bind9 bind9utils bind9-doc openssh-serv
 
 # Configurer SSH
 RUN mkdir /var/run/sshd && echo 'root:root' | chpasswd
-RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
+    && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
 # Configurer Bind9 (par défaut)
 RUN mkdir -p /etc/bind/zones
