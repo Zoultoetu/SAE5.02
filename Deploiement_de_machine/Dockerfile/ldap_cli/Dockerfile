@@ -5,9 +5,9 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Configuration de la zone horaire pour éviter les invites interactives de tzdata
-RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
-    && echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \
-    && dpkg-reconfigure -f noninteractive tzdata
+#RUN echo "tzdata tzdata/Areas select Europe" | debconf-set-selections \
+ #   && echo "tzdata tzdata/Zones/Europe select Paris" | debconf-set-selections \
+  #  && dpkg-reconfigure -f noninteractive tzdata
 
 # Mise à jour et installation de slapd et ldap-utils
 RUN apt-get update && apt-get install -y \
