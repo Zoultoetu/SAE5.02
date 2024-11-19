@@ -16,5 +16,6 @@ RUN mkdir -p /etc/bind/zones
 EXPOSE 5443/udp 5553/tcp 22 10000
 
 # Démarrer Bind9 et SSH
-CMD service ssh start && service bind9 start && tail -f /dev/null
+#CMD service ssh start && service bind9 start && tail -f /dev/null
+CMD service ssh start && tail -f /dev/null
 #CMD tail -f /dev/null
