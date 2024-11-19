@@ -13,6 +13,6 @@ RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
 RUN mkdir -p /etc/bind/zones
 
 # Exposer les ports pour Bind9 (DNS) et SSH
-EXPOSE 5443/udp 5553/tcp 22 10000
+EXPOSE 53/udp 53/tcp 22 10000
 
 CMD service ssh start && /usr/sbin/named -f -g && tail -f /dev/null
