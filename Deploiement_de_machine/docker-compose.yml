@@ -11,10 +11,10 @@ services:
       internal_net:
         ipv4_address: 192.168.0.2
     ports:
-      - "5443:53/udp"   # Port DNS UDP
-      - "5553:53/tcp"   # Port DNS TCP
+      - "53:53/udp"
+      - "53:53/tcp"
+      - "2222:22"
       - "10000:10000/tcp" # Port d'administration
-      - "2222:22"         # Port SSH exposé sur l'hôte
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
