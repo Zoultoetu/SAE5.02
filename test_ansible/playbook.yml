@@ -14,7 +14,7 @@
     - name: Copier le fichier docker-compose.yml
       copy:
         src: docker-compose.yml
-        dest: /home/{{ ansible_user }}/docker-compose.yml
+        dest: /home/{{ lookup('env', 'USER') }}/docker-compose.yml
 
     - name: Lancer Docker Compose
       command: docker-compose up -d

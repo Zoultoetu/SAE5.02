@@ -9,7 +9,7 @@ docker-compose up -d
 ansible-playbook -i inventory.yml playbook.yml
 
 printf "test ping"
-ansible all -i inventory.yml -m ping
+ansible-playbook -i inventory.yml playbook.yml --extra-vars "ansible_user=toine-fa"
 
 
 #printf "test connexion ssh"

@@ -4,6 +4,7 @@ all:
       hosts:
         localhost:
           ansible_connection: local
+          ansible_user: toine-fa
     bind9_container:
       hosts:
         bind9:
