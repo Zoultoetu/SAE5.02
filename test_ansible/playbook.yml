@@ -10,6 +10,12 @@
           - docker-compose
         state: present
         update_cache: yes
+        
+    - name: Créer le répertoire de destination
+      file:
+        path: /root/test_ansible
+        state: directory
+        mode: '0755'
 
     - name: Copier le fichier docker-compose.yml
       copy:
