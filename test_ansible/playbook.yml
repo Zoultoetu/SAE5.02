@@ -10,61 +10,46 @@
           - docker-compose
         state: present
         update_cache: yes
-        
-    - name: Créer le répertoire de destination
-      file:
-        path: /root/test_ansible
-        state: directory
-        mode: '0755'
 
     - name: Copier le fichier docker-compose.yml
       copy:
         src: docker-compose.yml
-        dest: "{{ lookup('env', 'HOME') }}/test_ansible/docker-compose.yml"
+        dest: "{{ lookup('env', 'HOME') }}/docker-compose.yml"
     
     - name: Lancer Docker Compose
       command: docker-compose up -d
       args:
-        chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
-    
-    - name: Redémarrer Bind9
-      command: "/usr/sbin/named -f"
-      async: 1
-      poll: 0
+        chdir: "{{ lookup('env', 'HOME') }}"
 
+    - name: Installer le serveur SSH dans le conteneur Bind9
+      docker_container:
+        name: bind9
+        image: ubuntu/bind9:latest
+        command: bash -c "apt-get update && apt-get install -y openssh-server"
+        state: started
+        restart_policy: unless-stopped
+        detach: true
+
+    - name: Configurer SSH pour écouter sur le port 2222 dans le conteneur
+      docker_container:
+        name: bind9
+        command: bash -c "echo 'Port 2222' >> /etc/ssh/sshd_config && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        state: started
+        restart_policy: unless-stopped
+        detach: true
+
+    - name: Démarrer le service SSH dans le conteneur Bind9
+      docker_container:
+        name: bind9
+        command: bash -c "service ssh start"
+        state: started
+        restart_policy: unless-stopped
+        detach: true
 
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
   become: true
   tasks:
-    - name: Installer le serveur SSH dans le conteneur
-      apt:
-        name: openssh-server
-        state: present
-        update_cache: yes
-
-    - name: Configurer SSH pour écouter sur le port 2222
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?Port'
-        line: 'Port 2222'
-      notify:
-        - Restart SSH service
-
-    - name: Autoriser la connexion root via SSH
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin yes'
-      notify:
-        - Restart SSH service
-
-    - name: Démarrer le service SSH dans le conteneur
-      service:
-        name: ssh
-        state: started
-        enabled: yes
-
     - name: Copier la configuration named.conf
       template:
         src: named.conf.j2
@@ -79,9 +64,3 @@
       command: "/usr/sbin/named -f"
       async: 1
       poll: 0
-
-  handlers:
-    - name: Restart SSH service
-      service:
-        name: ssh
-        state: restarted
