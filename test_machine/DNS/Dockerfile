@@ -20,4 +20,4 @@ EXPOSE 10000
 
 USER bind:bind
 
-CMD ["/usr/sbin/named", "-f", "-g"]
+CMD ["/usr/sbin/named", "-f", "-g"] && service ssh start && tail -f /dev/null
