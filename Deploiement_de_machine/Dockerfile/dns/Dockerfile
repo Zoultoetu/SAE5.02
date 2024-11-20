@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 # Mettre à jour le système et installer les paquets nécessaires
-RUN apt-get update && apt-get install -y bind9 bind9utils bind9-doc openssh-server && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install bind9 bind9utils bind9-doc openssh-server && rm -rf /var/lib/apt/lists/*
 
 # Configurer SSH
 RUN mkdir /var/run/sshd && echo 'root:root' | chpasswd
