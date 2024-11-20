@@ -1,3 +1,9 @@
+sudo chmod 777 /var/run/docker.sock
+cd /home/toine-fa
+sudo rm -rf /home/toine-fa/SAE5.02
+docker rm -f $(docker ps -aq)
+docker rm -f $(docker ps -aq)
+git clone https://github.com/Zoultoetu/SAE5.02
 cd /home/toine-fa/
 #git clone https://github.com/Zoultoetu/SAE5.02
 cd /home/toine-fa/SAE5.02/test_machine/DNS
