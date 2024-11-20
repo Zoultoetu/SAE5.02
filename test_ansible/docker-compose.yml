@@ -12,9 +12,10 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
       - "2222:22"  # SSH exposé
-    command: ["tail", "-f", "/dev/null"]  # Garder le conteneur actif sans exiger sshd
     networks:
       - internal_net
+    command: ["tail", "-f", "/dev/null"]  # Garder le conteneur actif sans exiger sshd
+    restart: always
 
 volumes:
   internal_net:
