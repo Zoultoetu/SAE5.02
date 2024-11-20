@@ -28,7 +28,9 @@
         chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
     
     - name: Redémarrer Bind9
-      command: docker exec bind9 /usr/sbin/named -f
+      command: "/usr/sbin/named -f"
+      async: 1
+      poll: 0
 
 
 - name: Configurer Bind9 dans le conteneur
