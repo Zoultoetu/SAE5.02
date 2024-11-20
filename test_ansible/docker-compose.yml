@@ -18,4 +18,4 @@ services:
 
 volumes:
   internal_net:
-    driver: local
+    driver: bridge
