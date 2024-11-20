@@ -5,9 +5,9 @@ services:
     image: debian:latest
     container_name: bind9
     hostname: bind9
-    volumes:
-      - bind-config:/etc/bind
-      - bind-cache:/var/cache/bind
+    #volumes:
+      #- bind-config:/etc/bind
+      #- bind-cache:/var/cache/bind
     ports:
       - "53:53/tcp"
       - "53:53/udp"
