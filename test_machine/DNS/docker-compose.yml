@@ -14,7 +14,7 @@ services:
       - "1053:53/udp"
       - "1053:53/tcp"
       - "2222:22"
-      #- "10000:10000/tcp" # Port d'administration
+      - "10000:10000/tcp" # Port d'administration
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
