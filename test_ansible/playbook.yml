@@ -10,7 +10,7 @@
           - docker-compose
         state: present
         update_cache: yes
-        
+
     - name: Créer le répertoire de destination
       file:
         path: /root/test_ansible
@@ -27,8 +27,11 @@
       args:
         chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
     
-    - name: Redémarrer Bind9
-      command: docker exec bind9 /usr/sbin/named -f
+    - name: Redémarrer Bind9 via service
+      service:
+        name: bind9
+        state: restarted
+        use : "service"
 
 
 - name: Configurer Bind9 dans le conteneur
