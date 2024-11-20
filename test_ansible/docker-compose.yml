@@ -17,5 +17,5 @@ services:
       - internal_net
 
 volumes:
-  bind-config:
+  reseau_local:
     driver: local
