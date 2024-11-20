@@ -15,7 +15,9 @@
       copy:
         src: docker-compose.yml
         dest: "{{ lookup('env', 'HOME') }}/docker-compose.yml"
-
+    - name: Supprimer le conteneur Bind9 existant (s'il existe)
+      shell: docker rm -f bind9
+      ignore_errors: true
     - name: Lancer Docker Compose
       args:
         chdir: "{{ lookup('env', 'HOME') }}"
