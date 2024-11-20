@@ -1,16 +1,16 @@
-version: '3.7'
+version: '3.9'
 
 services:
   bind9:
-    image: internetsystemsconsortium/bind9:9.16
+    image: internetsystemsconsortium/bind9:latest  # Utiliser la version 'latest' ou une autre version valide
     container_name: bind9
     networks:
-      - internal_net  # Référence au réseau défini ci-dessous
+      - bind_network
     ports:
       - "53:53/tcp"
       - "53:53/udp"
     restart: always
 
 networks:
-  internal_net:  # Définition du réseau "internal_net"
+  bind_network:
     driver: bridge
