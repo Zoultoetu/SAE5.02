@@ -22,16 +22,24 @@
         src: docker-compose.yml
         dest: "{{ lookup('env', 'HOME') }}/test_ansible/docker-compose.yml"
     
-    - name: Lancer Docker Compose
+    - name: Lancer Docker Compose en mode détaché
       command: docker-compose up -d
       args:
         chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
     
+    - name: Attendre que le conteneur Bind9 soit prêt
+      wait_for:
+        host: "127.0.0.1"
+        port: "2222"
+        state: started
+        timeout: 60
+        delay: 10
+
     - name: Installer openssh-server dans le conteneur Bind9
       docker_container:
         name: bind9
         image: ubuntu/bind9:latest
-        command: bash -c "apt-get update && apt-get install -y openssh-server"
+        command: bash -c "apt-get update && apt-get install -y openssh-server && service ssh start && tail -f /dev/null"
         state: started
         restart_policy: unless-stopped
         detach: true
@@ -53,19 +61,6 @@
         state: started
         restart_policy: unless-stopped
         detach: true
-
-    - name: Attendre que le service SSH soit prêt
-      wait_for:
-        host: "127.0.0.1"
-        port: "2222"
-        state: started
-        timeout: 60
-        delay: 10
-
-    - name: Vérifier que Bind9 fonctionne
-      command: "/usr/sbin/named -f"
-      async: 1
-      poll: 0
 
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
