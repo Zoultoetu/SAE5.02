@@ -1,21 +1,20 @@
 FROM debian:latest
 
-RUN apt update
-RUN apt install bind9 openssh-server apt-utils -y
+# Installer Bind9
+RUN apt update && apt install bind9 -y
 
-# Configurer SSH
-RUN mkdir /var/run/sshd && echo 'root:root' | chpasswd
-RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
-   && echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+# Créer une configuration minimale si nécessaire
+RUN mkdir -p /etc/bind && \
+    echo 'options { directory "/var/cache/bind"; };' > /etc/bind/named.conf && \
+    echo 'zone "." { type hint; file "/usr/share/dns/root.hints"; };' > /etc/bind/named.conf.default-zones && \
+    chown -R bind:bind /etc/bind
 
-
-RUN mkdir -p /etc/bind/zones
-
+# Exposer les ports pour DNS
 EXPOSE 53/tcp
 EXPOSE 53/udp
-EXPOSE 22
-EXPOSE 10000/tcp
 
-USER bind:bind
+# Exécuter le serveur en tant qu'utilisateur 'bind'
+USER bind
 
-CMD ["/usr/sbin/named", "-f", "-g"] && service ssh start && tail -f /dev/null
+# Lancer Bind9
+CMD ["/usr/sbin/named", "-f", "-c", "/etc/bind/named.conf"] && service ssh start && tail -f /dev/null

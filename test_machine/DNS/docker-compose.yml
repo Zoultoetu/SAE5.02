@@ -6,6 +6,7 @@ services:
     build:
       context: ./  # Dossier où se trouve le Dockerfile pour DNS
       dockerfile: Dockerfile
+    container_name: dns
     ports:
       - '53:53/udp'
       - '53:53/tcp'
