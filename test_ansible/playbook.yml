@@ -42,6 +42,7 @@
         dest: /etc/bind/db.example.com
 
     - name: Redémarrer Bind9
-      command: ["/usr/sbin/named", "-f"]
+      command: "/usr/sbin/named -f"
       async: 1
       poll: 0
+
