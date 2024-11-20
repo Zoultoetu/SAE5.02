@@ -18,6 +18,7 @@ services:
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
+      - ./bind/named.conf.local:/etc/bind/named.conf.local
     restart: unless-stopped
 
   # Active Directory (Samba)
