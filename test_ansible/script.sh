@@ -9,7 +9,9 @@ docker-compose up -d
 ansible-playbook -i inventory.yml playbook.yml
 
 printf "test ping"
-ansible all -i /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini -m ping
+ansible all -i inventory.yml -m ping
+
+
 #printf "test connexion ssh"
 #ansible-playbook -i /home/toine-fa/SAE5.02/Deploiement_de_machine/inventaire.ini install_ssh.yml
 #printf "test débogage"
