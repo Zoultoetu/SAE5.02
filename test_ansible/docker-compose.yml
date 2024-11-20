@@ -1,16 +1,24 @@
-version: '3.9'
+version: '3.8'
 
 services:
   bind9:
-    image: ubuntu/bind9:latest  # Utiliser la version 'latest' ou une autre version valide
-    container_name: bind9
-    networks:
-      - bind_network
+    image: ubuntu/bind9:latest  # Utilisation de l'image Ubuntu Bind9
+    container_name: bind9  # Nom unique du conteneur
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-    restart: always
+      - "53:53/udp"        # Port DNS UDP
+      - "53:53/tcp"        # Port DNS TCP
+      - "2222:22"          # Port SSH pour configuration avec Ansible
+    environment:
+      TZ: "Europe/Paris"   # Configuration du fuseau horaire
+    networks:
+      - bind_network       # Ajout au réseau défini ci-dessous
+    volumes:
+      - bind9_data:/etc/bind  # Montage des données persistantes
+
+volumes:
+  bind9_data:
+    driver: local           # Volume pour stocker les données persistantes
 
 networks:
   bind_network:
-    driver: bridge
+    driver: bridge          # Réseau interne pour les services

@@ -14,12 +14,16 @@
     - name: Copier le fichier docker-compose.yml
       copy:
         src: docker-compose.yml
-        dest: "{{ lookup('env', 'HOME') }}/docker-compose.yml"
+        dest: "{{ lookup('env', 'HOME') }}/test_ansible/docker-compose.yml"
     
     - name: Lancer Docker Compose
-      args:
-        chdir: "{{ lookup('env', 'HOME') }}"
       command: docker-compose up -d
+      args:
+        chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
+    
+    - name: Redémarrer Bind9
+      command: docker exec bind9 /usr/sbin/named -f
+
 
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
@@ -42,7 +46,6 @@
         dest: /etc/bind/db.example.com
 
     - name: Redémarrer Bind9
-      command: "/usr/sbin/named -f"
-      async: 1
-      poll: 0
+      command: docker exec bind9 /usr/sbin/named -f
+
 
