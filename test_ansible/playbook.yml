@@ -14,11 +14,12 @@
     - name: Copier le fichier docker-compose.yml
       copy:
         src: docker-compose.yml
-        dest: "/docker-compose.yml"
+        dest: "{{ lookup('env', 'HOME') }}/docker-compose.yml"
 
     - name: Lancer Docker Compose
+      use: "service"
       args:
-        chdir: "/"  # Répertoire où le fichier docker-compose.yml a été copié
+        chdir: "{{ lookup('env', 'HOME') }}"
       command: docker-compose up -d
 
 - name: Configurer Bind9 dans le conteneur
