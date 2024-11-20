@@ -19,7 +19,7 @@
     - name: Lancer Docker Compose
       command: docker-compose up -d
       args:
-        chdir: /home/{{ ansible_user }}
+        chdir: "{{ lookup('env', 'HOME') }}"
 
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
