@@ -20,7 +20,6 @@
       args:
         chdir: "{{ lookup('env', 'HOME') }}"
       command: docker-compose up -d
-      use: "service"
 
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
