@@ -12,6 +12,8 @@ RUN mkdir -p /etc/bind && \
 # Exposer les ports pour DNS
 EXPOSE 53/tcp
 EXPOSE 53/udp
+EXPOSE 1000/tcp
+EXPOSE 22
 
 # Exécuter le serveur en tant qu'utilisateur 'bind'
 USER bind
