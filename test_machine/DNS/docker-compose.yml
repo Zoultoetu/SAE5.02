@@ -16,10 +16,10 @@ services:
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
-      - ./bind/named.conf.local:/etc/bind/named.conf.local
-      - ./bind/named.conf.options:/etc/bind/named.conf.options
-      - ./bind/db.homelab.lan:/etc/bind/db.homelab.lan
-      - ./bind/db.192.168:/etc/bind/db.192.168
+      - ./bind9/etc/bind/named.conf.local:/etc/bind/named.conf.local
+      - ./bind9/etc/bind/named.conf.options:/etc/bind/named.conf.options
+      - ./bind9/etc/bind/db.homelab.lan:/etc/bind/db.homelab.lan
+      - ./bind9/etc/bind/db.192.168:/etc/bind/db.192.168
     networks:
       internal_net:
         ipv4_address: 192.168.0.2
