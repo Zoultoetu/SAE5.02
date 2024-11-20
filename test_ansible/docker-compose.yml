@@ -11,8 +11,8 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "2222:22"  # SSH pour Ansible
-    command: ["/usr/sbin/sshd", "-D"]
+      - "2222:22"  # SSH exposé
+    command: ["tail", "-f", "/dev/null"]  # Garder le conteneur actif sans exiger sshd
 
 volumes:
   bind-config:
