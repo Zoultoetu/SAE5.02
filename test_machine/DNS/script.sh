@@ -1,6 +1,6 @@
 cd /home/toine-fa/
 #git clone https://github.com/Zoultoetu/SAE5.02
-cd /home/toine-fa/SAE5.02/test_machine/dns
+cd /home/toine-fa/SAE5.02/test_machine/DNS
 docker-compose build
 docker-compose up -d
 
@@ -36,4 +36,4 @@ cat <<EOF > /etc/hosts
 EOF
 
 printf "test ping"
-ansible all -i /home/toine-fa/SAE5.02/test_machine/scriptdns.sh/inventaire.ini -m ping
+ansible all -i /home/toine-fa/SAE5.02/test_machine/DNS/inventaire.ini -m ping
