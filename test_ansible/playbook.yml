@@ -54,7 +54,15 @@
         restart_policy: unless-stopped
         detach: true
 
-    - name: Vérifier si Bind9 fonctionne
+    - name: Attendre que le service SSH soit prêt
+      wait_for:
+        host: "127.0.0.1"
+        port: "2222"
+        state: started
+        timeout: 60
+        delay: 10
+
+    - name: Vérifier que Bind9 fonctionne
       command: "/usr/sbin/named -f"
       async: 1
       poll: 0
