@@ -14,11 +14,11 @@
     - name: Copier le fichier docker-compose.yml
       copy:
         src: docker-compose.yml
-        dest: "/home/{{ ansible_user }}/docker-compose.yml"
+        dest: "/home/root/docker-compose.yml"
 
     - name: Lancer Docker Compose
       args:
-        chdir: "/home/{{ ansible_user }}"  # Répertoire où le fichier docker-compose.yml a été copié
+        chdir: "/home/root"  # Répertoire où le fichier docker-compose.yml a été copié
       command: docker-compose up -d
 
 - name: Configurer Bind9 dans le conteneur
