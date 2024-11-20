@@ -27,12 +27,6 @@ done
 
 cat <<EOF > /etc/hosts
 192.168.0.2    dns
-192.168.0.3    ad
-192.168.0.4    ldap
-192.168.0.5    home_assistant
-192.168.0.6    openvpn
-192.168.0.7    opnsense
-192.168.0.8    client
 EOF
 
 printf "test ping"

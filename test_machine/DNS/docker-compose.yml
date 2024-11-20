@@ -6,20 +6,25 @@ services:
     build:
       context: ./  # Dossier où se trouve le Dockerfile pour DNS
       dockerfile: Dockerfile
-    container_name: dns
-    networks:
-      internal_net:
-        ipv4_address: 192.168.0.2
     ports:
-      - "1053:53/udp"
-      - "1053:53/tcp"
+      - '53:53/udp'
+      - '53:53/tcp'
       - "2222:22"
       - "10000:10000/tcp" # Port d'administration
+    restart: unless-stopped
     volumes:
       - ./bind:/etc/bind
       - ./keys:/etc/bind/keys
       - ./bind/named.conf.local:/etc/bind/named.conf.local
-    restart: unless-stopped
+      - ./bind9/etc/bind/named.conf.local:/etc/bind/named.conf.local
+      - ./bind9/etc/bind/named.conf.options:/etc/bind/named.conf.options
+      - ./bind9/etc/bind/db.homelab.lan:/etc/bind/db.homelab.lan
+      - ./bind9/etc/bind/db.192.168:/etc/bind/db.192.168
+    networks:
+      internal_net:
+        ipv4_address: 192.168.0.2
+
+
 
 networks:
   internal_net:
