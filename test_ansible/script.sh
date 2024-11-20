@@ -6,10 +6,10 @@ cd /home/toine-fa/SAE5.02/test_ansible
 docker-compose build
 docker-compose up -d
 
-#ansible-playbook -i inventory.yml playbook.yml
+ansible-playbook -i inventory.yml playbook.yml
 
-printf "\n test ping"
-ansible-playbook -i inventory.yml playbook.yml --extra-vars "ansible_user=toine-fa"
+#printf "\n test ping"
+#ansible-playbook -i inventory.yml playbook.yml --extra-vars "ansible_user=toine-fa"
 
 
 #printf "test connexion ssh"
