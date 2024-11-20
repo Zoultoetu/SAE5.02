@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Serveur DNS avec Bind9
+  dns:
+    build:
+      context: ./Dockerfile/dns  # Dossier où se trouve le Dockerfile pour DNS
+      dockerfile: Dockerfile
+    container_name: dns
+    networks:
+      internal_net:
+        ipv4_address: 192.168.0.2
+    ports:
+      - "1053:53/udp"
+      - "1053:53/tcp"
+      - "2222:22"
+      #- "10000:10000/tcp" # Port d'administration
+    volumes:
+      - ./bind:/etc/bind
+      - ./keys:/etc/bind/keys
+      - ./bind/named.conf.local:/etc/bind/named.conf.local
+    restart: unless-stopped
+
+networks:
+  internal_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+
+volumes:
+  bind:
+  keys:
+  smb:
+  ldap_data:
+  ldap_config:
+  homeassistant:
+  openvpn:
+  opnsense_config:
