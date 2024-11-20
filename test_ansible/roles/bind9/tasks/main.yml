@@ -1,0 +1,22 @@
+---
+# Toutes les tâches pour configurer Bind9
+- name: Installer Bind9
+  apt:
+    name: bind9
+    state: present
+    update_cache: yes
+
+- name: Copier la configuration Bind9
+  template:
+    src: named.conf.j2
+    dest: /etc/bind/named.conf
+
+- name: Copier les fichiers de zone
+  template:
+    src: db.example.com.j2
+    dest: /etc/bind/db.example.com
+
+- name: Redémarrer Bind9
+  command: ["/usr/sbin/named", "-f"]
+  async: 1
+  poll: 0

@@ -1,0 +1,19 @@
+options {
+    directory "/var/cache/bind";
+    allow-query { any; };
+    recursion yes;
+
+    forwarders {
+        8.8.8.8; 8.8.4.4;
+    };
+};
+
+zone "{{ bind_zone_name }}" {
+    type master;
+    file "/etc/bind/db.{{ bind_zone_name }}";
+};
+
+zone "." {
+    type hint;
+    file "/usr/share/dns/root.hints";
+};

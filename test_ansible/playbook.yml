@@ -1,0 +1,47 @@
+---
+- name: Déployer Bind9 avec Docker et Ansible
+  hosts: docker_host
+  become: true
+  tasks:
+    - name: Installer Docker et Docker Compose si nécessaire
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+        update_cache: yes
+
+    - name: Copier le fichier docker-compose.yml
+      copy:
+        src: docker-compose.yml
+        dest: /home/{{ ansible_user }}/docker-compose.yml
+
+    - name: Lancer Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /home/{{ ansible_user }}
+
+- name: Configurer Bind9 dans le conteneur
+  hosts: bind9_container
+  become: true
+  tasks:
+    - name: Installer Bind9 dans le conteneur
+      apt:
+        name: bind9
+        state: present
+        update_cache: yes
+
+    - name: Copier la configuration named.conf
+      template:
+        src: named.conf.j2
+        dest: /etc/bind/named.conf
+
+    - name: Copier la configuration db.example.com
+      template:
+        src: db.example.com.j2
+        dest: /etc/bind/db.example.com
+
+    - name: Redémarrer Bind9
+      command: ["/usr/sbin/named", "-f"]
+      async: 1
+      poll: 0
