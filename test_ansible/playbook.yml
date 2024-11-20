@@ -9,7 +9,7 @@
           - docker-compose
         state: present
         update_cache: yes
-        
+
     - name: Créer le répertoire de destination
       file:
         path: /root/test_ansible
@@ -41,6 +41,11 @@
         name: openssh-server
         state: present
         update_cache: yes
+
+    - name: Créer le répertoire nécessaire pour SSH
+      file:
+        path: /var/run/sshd
+        state: directory
 
     - name: Configurer SSH pour écouter sur le port 2222
       lineinfile:
