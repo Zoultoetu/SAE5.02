@@ -4,7 +4,7 @@ services:
   # Serveur DNS avec Bind9
   dns:
     build:
-      context: ./Dockerfile/dns  # Dossier où se trouve le Dockerfile pour DNS
+      context: ./  # Dossier où se trouve le Dockerfile pour DNS
       dockerfile: Dockerfile
     container_name: dns
     networks:
