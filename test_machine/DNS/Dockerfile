@@ -1,5 +1,3 @@
-
-
 FROM debian:latest
 
 RUN apt update
@@ -16,7 +14,7 @@ RUN mkdir -p /etc/bind/zones
 EXPOSE 53/tcp
 EXPOSE 53/udp
 EXPOSE 22
-EXPOSE 10000
+EXPOSE 10000/tcp
 
 USER bind:bind
 
