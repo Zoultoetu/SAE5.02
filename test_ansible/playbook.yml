@@ -17,9 +17,9 @@
         dest: "{{ lookup('env', 'HOME') }}/docker-compose.yml"
 
     - name: Lancer Docker Compose
-      command: docker-compose up -d
       args:
         chdir: "{{ lookup('env', 'HOME') }}"
+        command: docker-compose up -d
 
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
