@@ -1,22 +1,16 @@
-version: "3.9"
+version: '3.7'
 
 services:
   bind9:
-    image: debian:latest
+    image: internetsystemsconsortium/bind9:9.16
     container_name: bind9
-    hostname: bind9
-    #volumes:
-      #- bind-config:/etc/bind
-      #- bind-cache:/var/cache/bind
+    networks:
+      - internal_net  # Référence au réseau défini ci-dessous
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "2222:22"  # SSH exposé
-    networks:
-      - internal_net
-    command: ["tail", "-f", "/dev/null"]  # Garder le conteneur actif sans exiger sshd
     restart: always
 
-volumes:
-  internal_net:
+networks:
+  internal_net:  # Définition du réseau "internal_net"
     driver: bridge
