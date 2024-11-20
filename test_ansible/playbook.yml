@@ -26,13 +26,15 @@
       args:
         chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
     
-    - name: Redémarrer Bind9
-      command: "/usr/sbin/named -f"
-      async: 1
-      poll: 0
+    - name: Attendre que le conteneur soit prêt (pour SSH)
+      wait_for:
+        host: 127.0.0.1
+        port: 2222
+        state: started
+        delay: 10
+        timeout: 30
 
-
-- name: Configurer Bind9 dans le conteneur
+- name: Configurer SSH dans le conteneur
   hosts: bind9_container
   become: true
   tasks:
@@ -68,21 +70,6 @@
         name: ssh
         state: started
         enabled: yes
-
-    - name: Copier la configuration named.conf
-      template:
-        src: named.conf.j2
-        dest: /etc/bind/named.conf
-
-    - name: Copier la configuration db.example.com
-      template:
-        src: db.example.com.j2
-        dest: /etc/bind/db.example.com
-
-    - name: Redémarrer Bind9
-      command: "/usr/sbin/named -f"
-      async: 1
-      poll: 0
 
   handlers:
     - name: Restart SSH service
