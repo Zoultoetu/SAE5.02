@@ -37,11 +37,33 @@
   hosts: bind9_container
   become: true
   tasks:
-    - name: Installer Bind9 dans le conteneur
+    - name: Installer le serveur SSH dans le conteneur
       apt:
-        name: bind9
+        name: openssh-server
         state: present
         update_cache: yes
+
+    - name: Configurer SSH pour écouter sur le port 2222
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?Port'
+        line: 'Port 2222'
+      notify:
+        - Restart SSH service
+
+    - name: Autoriser la connexion root via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify:
+        - Restart SSH service
+
+    - name: Démarrer le service SSH dans le conteneur
+      service:
+        name: ssh
+        state: started
+        enabled: yes
 
     - name: Copier la configuration named.conf
       template:
@@ -54,6 +76,12 @@
         dest: /etc/bind/db.example.com
 
     - name: Redémarrer Bind9
-      command: docker exec bind9 /usr/sbin/named -f
+      command: "/usr/sbin/named -f"
+      async: 1
+      poll: 0
 
-
+  handlers:
+    - name: Restart SSH service
+      service:
+        name: ssh
+        state: restarted
