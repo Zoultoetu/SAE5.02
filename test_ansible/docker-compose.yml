@@ -17,5 +17,5 @@ services:
       - internal_net
 
 volumes:
-  reseau_local:
+  internal_net:
     driver: local
