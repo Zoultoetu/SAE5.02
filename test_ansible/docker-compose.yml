@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   bind9:
-    image: ubuntu/bind9:latest  # Utilisation de l'image Ubuntu Bind9
+    build:
+      context: ./dockerfile  # Indique que le Dockerfile se trouve dans ce répertoire
     container_name: bind9  # Nom unique du conteneur
     ports:
       - "53:53/udp"        # Port DNS UDP
@@ -18,8 +19,6 @@ services:
       - type: bind
         source: /home/toine-fa/SAE5.02/test_ansible/roles/bind9/named.conf
         target: /etc/bind/named.conf
-    #command: apt-get update && apt-get install -y ssh
-
 
 volumes:
   bind9_data:
