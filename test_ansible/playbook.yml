@@ -67,6 +67,7 @@
 
     - name: Démarrer le service SSH dans le conteneur
       service:
+        use: "service"
         name: ssh
         state: started
         enabled: yes
