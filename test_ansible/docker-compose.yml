@@ -16,7 +16,7 @@ services:
       - ./zones:/var/lib/bind
       - bind9_data:/etc/bind  # Montage des données persistantes
       - type: bind
-        source: ./named.conf
+        source: /root/test_ansible/roles/bind9/named.conf
         target: /etc/bind/named.conf
 
 volumes:
