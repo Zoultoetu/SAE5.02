@@ -18,7 +18,7 @@ services:
       - type: bind
         source: /home/toine-fa/SAE5.02/test_ansible/roles/bind9/named.conf
         target: /etc/bind/named.conf
-    command: bash -c " apt-get update && apt-get install -y ssh"
+    command: apt-get update && apt-get install -y ssh
 
 
 volumes:
