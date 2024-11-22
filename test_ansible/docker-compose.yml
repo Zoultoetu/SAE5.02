@@ -13,7 +13,11 @@ services:
     networks:
       - bind_network       # Ajout au réseau défini ci-dessous
     volumes:
+      - ./zones:/var/lib/bind
       - bind9_data:/etc/bind  # Montage des données persistantes
+      - type: bind
+        source: ./named.conf
+        target: /etc/bind/named.conf
 
 volumes:
   bind9_data:

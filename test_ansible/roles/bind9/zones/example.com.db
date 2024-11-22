@@ -1,0 +1,9 @@
+@                               1D IN SOA   example.com. root.example.com. (
+                                    2023020100    ; serial (yyyymmdd##)
+                                    3H    ; refresh
+                                    15M   ; retry
+                                    1W    ; expiry
+                                    1D )  ; minimum ttl
+@                                 1D  IN  NS      example.com.
+example.com.                      1D  IN  A       127.0.0.1
+example.com.                      1D  IN  AAAA    ::1
