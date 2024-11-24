@@ -15,16 +15,3 @@ all:
           ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 
-all:
-  children:
-    bind9_container:
-      hosts:
-        192.168.0.2:
-          ansible_user: root
-          ansible_ssh_pass: "VotreMotDePasse"  # Si vous utilisez un mot de passe
-          ansible_ssh_private_key_file: /chemin/vers/cle/privée  # Si vous utilisez une clé SSH
-    docker_host:
-      hosts:
-        dns:
-          ansible_user: root
-          ansible_ssh_pass: "VotreMotDePasse"  # Facultatif si vous avez une clé SSH
