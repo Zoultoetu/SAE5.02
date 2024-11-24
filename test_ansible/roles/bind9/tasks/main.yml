@@ -36,17 +36,15 @@
 - name: Vérifier la validité des fichiers de zone
   command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
 
-# Lister les conteneurs Docker en cours d'exécution qui correspondent au nom du conteneur Bind9
+# Nouvelle tâche pour redémarrer le conteneur Docker Bind9
 - name: Lister les conteneurs Docker en cours d'exécution pour Bind9
-  command: docker container ls
+  command: docker container ls --filter name={{ container_name }} --format "{{ '{{' }}.Names{{ '}}' }}"
   register: running_containers
 
-# Vérifier que des conteneurs ont été trouvés
 - name: Afficher les conteneurs Docker en cours d'exécution
   debug:
     msg: "{{ running_containers.stdout_lines }}"
 
-# Si des conteneurs sont trouvés, les redémarrer
 - name: Redémarrer le conteneur Docker Bind9
   docker_container:
     name: "{{ item }}"
@@ -55,14 +53,7 @@
   when: running_containers.stdout_lines | length > 0
   become: true
 
-# Si aucun conteneur n'est trouvé, afficher un message d'erreur
 - name: Avertir si aucun conteneur Docker n'a été trouvé
   debug:
     msg: "Aucun conteneur Docker pour Bind9 trouvé. Assurez-vous que le conteneur est en cours d'exécution."
   when: running_containers.stdout_lines | length == 0
-
-#- name: Démarrer ou redémarrer Bind9
-  # service:
-    # use : "service"
-    # name: named
-    # state: restarted
