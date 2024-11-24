@@ -28,53 +28,14 @@
     
     - name: Attendre que le conteneur soit prêt (pour SSH)
       wait_for:
-        host: 127.0.0.1
+        host: 192.168.0.2
         port: 2222
         state: started
         delay: 10
         timeout: 30
 
-- name: Configurer SSH dans le conteneur
+- name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
   become: true
   tasks:
-    - name: Installer le serveur SSH dans le conteneur
-      apt:
-        name: openssh-server
-        state: present
-        update_cache: yes
-
-    - name: Créer le répertoire nécessaire pour SSH
-      file:
-        path: /var/run/sshd
-        state: directory
-
-    - name: Configurer SSH pour écouter sur le port 2222
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?Port'
-        line: 'Port 2222'
-      notify:
-        - Restart SSH service
-
-    - name: Autoriser la connexion root via SSH
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin yes'
-      notify:
-        - Restart SSH service
-
-    - name: Démarrer le service SSH dans le conteneur
-      service:
-        use: "service"
-        name: ssh
-        state: started
-        enabled: yes
-
-  handlers:
-    - name: Restart SSH service
-      service:
-        use: "service"
-        name: ssh
-        state: restarted
+    - include_tasks: tasks/main.yml

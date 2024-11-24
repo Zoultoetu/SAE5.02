@@ -1,0 +1,18 @@
+$TTL    604800  ; Durée de vie par défaut des enregistrements DNS
+@       IN      SOA     ns.{{ bind_zone_name }}. admin.{{ bind_zone_name }}. (
+                        1         ; Numéro de série
+                        604800    ; Intervalle de rafraîchissement
+                        86400     ; Intervalle de nouvelle tentative
+                        2419200   ; Expiration
+                        604800 )  ; Durée négative du cache
+
+; Serveur DNS principal
+@       IN      NS      ns.{{ bind_zone_name }}.
+
+; Enregistrements A (adresses IPv4)
+ns      IN      A       {{ bind_nameserver_ip }}    ; Serveur DNS
+web     IN      A       {{ bind_site_web_ip }}      ; Site Web
+mail    IN      A       {{ bind_serveur_mail_ip }}  ; Serveur Mail
+
+; Enregistrements MX (Serveur de messagerie)
+@       IN      MX      10 mail.{{ bind_zone_name }}. ; Priorité 10 pour le serveur mail

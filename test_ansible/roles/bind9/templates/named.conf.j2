@@ -1,19 +1,19 @@
 options {
-    directory "/var/cache/bind";
-    allow-query { any; };
-    recursion yes;
+    directory "/var/cache/bind";  # Répertoire où sont stockés les fichiers de zone
+    allow-query { any; };         # Autorise toutes les requêtes
+    recursion yes;                # Permet les requêtes récursives
 
     forwarders {
-        8.8.8.8; 8.8.4.4;
+        8.8.8.8; 8.8.4.4;         # DNS de Google pour la redirection des requêtes externes
     };
 };
 
 zone "{{ bind_zone_name }}" {
-    type master;
-    file "/etc/bind/db.{{ bind_zone_name }}";
+    type master;                  # Indique que cette zone est de type maître
+    file "/etc/bind/db.{{ bind_zone_name }}";  # Chemin vers le fichier de zone
 };
 
 zone "." {
-    type hint;
+    type hint;                    # Zone racine
     file "/usr/share/dns/root.hints";
 };

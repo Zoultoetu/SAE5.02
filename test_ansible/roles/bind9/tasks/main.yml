@@ -1,34 +1,37 @@
 ---
-# Toutes les tâches pour configurer Bind9
-- name: Installer Bind9
-  apt:
-    name: bind9
-    state: present
-    update_cache: yes
-
-- name: Copier la configuration Bind9
-  template:
-    src: named.conf.j2
-    dest: /etc/bind/named.conf
-
-- name: Copier les fichiers de zone
-  template:
-    src: db.example.com.j2
-    dest: /etc/bind/db.example.com
-
-- name: Redémarrer Bind9
-  service:
-    name: bind9
-    state: restarted
-
-- name: Installer SSH et Bind9
+# Configuration de Bind9
+- name: Installer Bind9 et SSH
   apt:
     name:
       - bind9
+      - bind9utils
+      - bind9-doc
       - openssh-server
     state: present
     update_cache: yes
 
+- name: Copier la configuration principale de Bind9
+  template:
+    src: named.conf.j2
+    dest: /etc/bind/named.conf
+
+- name: Copier les fichiers de zones DNS
+  template:
+    src: db.Zone_A.j2
+    dest: /etc/bind/db.{{ bind_zone_name }}
+
+- name: Vérifier la validité des fichiers de configuration
+  command: named-checkconf /etc/bind/named.conf
+
+- name: Vérifier la validité des fichiers de zone
+  command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
+
+- name: Démarrer ou redémarrer Bind9
+  service:
+    name: bind9
+    state: restarted
+
+# Configuration SSH
 - name: Configurer SSH pour root
   lineinfile:
     path: /etc/ssh/sshd_config
@@ -36,4 +39,7 @@
     line: 'PermitRootLogin yes'
 
 - name: Démarrer le serveur SSH
-  command: service ssh start
+  service:
+    name: ssh
+    state: started
+    enabled: yes

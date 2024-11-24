@@ -12,12 +12,13 @@ services:
     environment:
       TZ: "Europe/Paris"   # Configuration du fuseau horaire
     networks:
-      - bind_network       # Ajout au réseau défini ci-dessous
+      bind_network:
+        ipv4_address: 192.168.0.2  # Adresse IP statique assignée
     volumes:
       - ./zones:/var/lib/bind
-      - bind9_data:/etc/bind  # Montage des données persistantes
+      - bind9_data:/etc/bind  # Données persistantes
       - type: bind
-        source: /home/toine-fa/SAE5.02/test_ansible/roles/bind9/named.conf
+        source: ./named.conf
         target: /etc/bind/named.conf
 
 volumes:
@@ -27,3 +28,6 @@ volumes:
 networks:
   bind_network:
     driver: bridge          # Réseau interne pour les services
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24

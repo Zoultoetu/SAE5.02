@@ -8,7 +8,7 @@ all:
     bind9_container:
       hosts:
         bind9:
-          ansible_host: 127.0.0.1
+          ansible_host: 192.168.0.2  # IP fixe définie dans docker-compose
           ansible_port: 2222
           ansible_user: root
           ansible_ssh_pass: root
