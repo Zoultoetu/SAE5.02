@@ -1,7 +1,7 @@
 - name: Afficher les variables chargées
   debug:
-    var: bind_zone_name
-    
+    var: Zone_A
+
 - name: Installer Bind9 et SSH
   apt:
     name:
