@@ -2,7 +2,7 @@
   debug:
     var: Zone_A
 
-- name: Installer Bind9 et SSH
+- name: Installer Bind9
   apt:
     name:
       - bind9
@@ -36,22 +36,8 @@
 - name: Vérifier la validité des fichiers de zone
   command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
 
-- name: Démarrer ou redémarrer Bind9
-  service:
-    use : "service"
-    name: named
-    state: restarted
-
-# Configuration SSH
-- name: Configurer SSH pour root
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^PermitRootLogin'
-    line: 'PermitRootLogin yes'
-
-- name: Démarrer le serveur SSH
-  service:
-    use : "service"
-    name: ssh
-    state: started
-    enabled: yes
+# - name: Démarrer ou redémarrer Bind9
+  # service:
+    # use : "service"
+    # name: named
+    # state: restarted
