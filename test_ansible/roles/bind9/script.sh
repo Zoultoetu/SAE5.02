@@ -13,6 +13,6 @@ docker-compose build
 docker-compose up -d
 
 # Exécuter Ansible
-ansible-playbook -i inventaire.yml playbook.yml -vvv
+ansible-playbook -i inventaire.ini playbook.yml -vvv
 
 
