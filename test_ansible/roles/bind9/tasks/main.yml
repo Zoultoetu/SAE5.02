@@ -6,6 +6,7 @@
 - name: Installer Bind9 et SSH
   apt:
     name:
+      - update
       - bind9
       - bind9utils
       - bind9-doc
@@ -19,6 +20,7 @@
   template:
     src: templates/named.conf.j2
     dest: /etc/bind/named.conf
+  become: true
 
 - name: Copier les fichiers de zones DNS
   template:
