@@ -41,5 +41,3 @@
   become: true
   tasks:
     - include_tasks: tasks/main.yml
-  roles:
-    - bind9
