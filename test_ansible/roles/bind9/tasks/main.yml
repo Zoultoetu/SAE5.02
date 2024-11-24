@@ -36,6 +36,10 @@
 - name: Vérifier la validité des fichiers de zone
   command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
 
+- name: Redémarrer le conteneur Docker contenant Bind9
+  docker_container:
+    name: bind9
+    state: restarted
 
 #- name: Démarrer ou redémarrer Bind9
   # service:
