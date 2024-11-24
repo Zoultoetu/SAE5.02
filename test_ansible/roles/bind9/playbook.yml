@@ -12,7 +12,7 @@
 
     - name: Créer le répertoire de destination
       file:
-        path: /root/test_ansible
+        path: /root/test_ansible/roles/bind9
         state: directory
         mode: '0755'
 
