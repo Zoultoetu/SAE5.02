@@ -39,7 +39,7 @@
 - name: Redémarrer le conteneur Docker contenant Bind9
   docker_container:
     name: bind9
-    state: restarted
+    state: stop
 
 #- name: Démarrer ou redémarrer Bind9
   # service:
