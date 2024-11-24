@@ -12,6 +12,8 @@
       - openssh-server
     state: present
     update_cache: yes
+- name: Charger les variables pour Bind9
+  include_vars: vars/main.yml
 
 - name: Copier la configuration principale de Bind9
   template:

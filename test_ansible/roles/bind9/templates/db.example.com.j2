@@ -1,11 +1,11 @@
 $TTL    604800
-@       IN      SOA     ns.{{ bind_zone_name }}. admin.{{ bind_zone_name }}. (
+@       IN      SOA     ns.{{ Zone_B }}. admin.{{ Zone_B }}. (
                         1         ; Serial
                         604800    ; Refresh
                         86400     ; Retry
                         2419200   ; Expire
                         604800 )  ; Negative Cache TTL
 
-@       IN      NS      ns.{{ bind_zone_name }}.
+@       IN      NS      ns.{{ Zone_B }}.
 ns      IN      A       {{ bind_nameserver_ip }}
 www     IN      A       {{ bind_www_ip }}
