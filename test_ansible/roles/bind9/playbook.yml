@@ -19,12 +19,14 @@
     - name: Copier le fichier docker-compose.yml
       copy:
         src: docker-compose.yml
-        dest: "{{ lookup('env', 'HOME') }}/test_ansible/docker-compose.yml"
-    
-    - name: Lancer Docker Compose
-      command: docker-compose up -d
-      args:
-        chdir: "{{ lookup('env', 'HOME') }}/test_ansible"
+        dest: "{{ lookup('env', 'HOME') }}/test_ansible/roles/bind9/docker-compose.yml"
+
+    - name: Mettre à jour le chemin source dans docker-compose.yml
+      lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/test_ansible/roles/bind9/docker-compose.yml"
+        regexp: '/root/test_ansible/named.conf'
+        line: '/home/toine-fa/SAE5.02/test_ansible/roles/bind9/named.conf'
+
     
     - name: Attendre que le conteneur soit prêt (pour SSH)
       wait_for:
