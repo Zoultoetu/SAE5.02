@@ -36,7 +36,12 @@
 - name: Vérifier la validité des fichiers de zone
   command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
 
-# - name: Démarrer ou redémarrer Bind9
+- name: 
+      ansible.builtin.service:
+        name: bind9
+        state: restarted
+
+#- name: Démarrer ou redémarrer Bind9
   # service:
     # use : "service"
     # name: named
