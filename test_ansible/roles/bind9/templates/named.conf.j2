@@ -8,9 +8,9 @@ options {
     };
 };
 
-zone "{{ bind_zone_name }}" {
+zone "{{ Zone_A }}" {
     type master;                  # Indique que cette zone est de type maître
-    file "/etc/bind/db.{{ bind_zone_name }}";  # Chemin vers le fichier de zone
+    file "/etc/bind/db.{{ Zone_A }}";  # Chemin vers le fichier de zone
 };
 
 zone "." {
