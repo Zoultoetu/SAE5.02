@@ -31,7 +31,7 @@
     - name: Attendre que le conteneur soit prêt (pour SSH)
       wait_for:
         host: 192.168.0.2
-        port: 2222
+        port: 22
         state: started
         delay: 10
         timeout: 30
