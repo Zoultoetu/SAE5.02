@@ -39,5 +39,7 @@
 - name: Configurer Bind9 dans le conteneur
   hosts: bind9_container
   become: true
+  vars_files:
+    - roles/bind9/vars/main.yml
   tasks:
     - include_tasks: tasks/main.yml
