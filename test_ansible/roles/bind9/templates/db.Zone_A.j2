@@ -10,9 +10,8 @@ $TTL    604800  ; Durée de vie par défaut des enregistrements DNS
 @       IN      NS      ns.{{ Zone_A }}.
 
 ; Enregistrements A (adresses IPv4)
-ns      IN      A       {{ bind_nameserver_ip }}    ; Serveur DNS
-web     IN      A       {{ bind_site_web_ip }}      ; Site Web
-mail    IN      A       {{ bind_serveur_mail_ip }}  ; Serveur Mail
+ns      IN      A       {{ dns }}    ; Serveur DNS
+
 
 ; Enregistrements MX (Serveur de messagerie)
 @       IN      MX      10 mail.{{ Zone_A }}. ; Priorité 10 pour le serveur mail
