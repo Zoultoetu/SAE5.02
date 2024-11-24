@@ -38,7 +38,8 @@
 
 - name: Démarrer ou redémarrer Bind9
   service:
-    name: bind9
+    use : "service"
+    name: named
     state: restarted
 
 # Configuration SSH
@@ -50,6 +51,7 @@
 
 - name: Démarrer le serveur SSH
   service:
+    use : "service"
     name: ssh
     state: started
     enabled: yes
