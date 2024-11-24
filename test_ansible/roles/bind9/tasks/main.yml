@@ -43,7 +43,7 @@
 
 - name: restart DNS system
   ansible.builtin.service:
-    name: "{{ bind9_service_name }}"
+    name: bind
     state: restarted
 
 - name: reload DNS system
