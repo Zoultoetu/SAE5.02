@@ -10,7 +10,7 @@ $TTL    604800  ; Durée de vie par défaut des enregistrements DNS
 @       IN      NS      ns.{{ Zone_A }}.
 
 ; Enregistrements A (adresses IPv4)
-ns      IN      A       {{ dns }}    ; Serveur DNS
+ns      IN      A       {{ bind_nameserver_ip }}    ; Serveur DNS
 
 
 ; Enregistrements MX (Serveur de messagerie)
