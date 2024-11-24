@@ -1,70 +1,44 @@
----
-- name: Gérer la configuration de Bind9 dans Docker
-  hosts: 192.168.0.2
+- name: Afficher les variables chargées
+  debug:
+    var: Zone_A
+
+- name: Installer Bind9
+  apt:
+    name:
+      - bind9
+      - bind9utils
+      - bind9-doc
+      - openssh-server
+    state: present
+    update_cache: yes
+
+- name: Charger les variables pour Bind9
+  include_vars: vars/main.yml
+
+- name: Copier la configuration principale de Bind9
+  template:
+    src: templates/named.conf.j2
+    dest: /etc/bind/named.conf
+    owner: root
+    group: bind
+    mode: '0644'
+    unsafe_writes: true
   become: true
-  vars:
-    # Définir le nom du conteneur Docker pour Bind9
-    container_name: "bind9"  # Remplace par le nom réel de ton conteneur Docker
 
-  tasks:
-    - name: Afficher les variables chargées
-      debug:
-        var: Zone_A
+- name: Copier les fichiers de zones DNS
+  template:
+    src: db.Zone_A.j2
+    dest: /etc/bind/db.{{ bind_zone_name }}
 
-    - name: Installer Bind9
-      apt:
-        name:
-          - bind9
-          - bind9utils
-          - bind9-doc
-          - openssh-server
-        state: present
-        update_cache: yes
+- name: Vérifier la validité des fichiers de configuration
+  command: named-checkconf /etc/bind/named.conf
 
-    - name: Charger les variables pour Bind9
-      include_vars: vars/main.yml
+- name: Vérifier la validité des fichiers de zone
+  command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
 
-    - name: Copier la configuration principale de Bind9
-      template:
-        src: templates/named.conf.j2
-        dest: /etc/bind/named.conf
-        owner: root
-        group: bind
-        mode: '0644'
-        unsafe_writes: true
-      become: true
 
-    - name: Copier les fichiers de zones DNS
-      template:
-        src: db.Zone_A.j2
-        dest: /etc/bind/db.{{ bind_zone_name }}
-
-    - name: Vérifier la validité des fichiers de configuration
-      command: named-checkconf /etc/bind/named.conf
-
-    - name: Vérifier la validité des fichiers de zone
-      command: named-checkzone {{ bind_zone_name }} /etc/bind/db.{{ bind_zone_name }}
-
-    # Nouvelle tâche pour lister les conteneurs Docker en cours d'exécution
-    - name: Lister les conteneurs Docker en cours d'exécution pour Bind9
-      command: docker container ls --filter name={{ container_name }} --format "{{ '{{' }}.Names{{ '}}' }}"
-      register: running_containers
-
-    # Afficher les conteneurs Docker en cours d'exécution
-    - name: Afficher les conteneurs Docker en cours d'exécution
-      debug:
-        msg: "{{ running_containers.stdout_lines }}"
-
-    # Redémarrer le conteneur Docker Bind9 si trouvé
-    - name: Redémarrer le conteneur Docker Bind9
-      docker_container:
-        name: "{{ item }}"
-        state: restarted
-      loop: "{{ running_containers.stdout_lines }}"
-      when: running_containers.stdout_lines | length > 0
-
-    # Avertir si aucun conteneur Docker n'a été trouvé
-    - name: Avertir si aucun conteneur Docker n'a été trouvé
-      debug:
-        msg: "Aucun conteneur Docker pour Bind9 trouvé. Assurez-vous que le conteneur est en cours d'exécution."
-      when: running_containers.stdout_lines | length == 0
+#- name: Démarrer ou redémarrer Bind9
+  # service:
+    # use : "service"
+    # name: named
+    # state: restarted
