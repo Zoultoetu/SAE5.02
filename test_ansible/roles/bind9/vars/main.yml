@@ -1,4 +1,4 @@
 bind_zone_name: "Zone_A"
-bind_nameserver_ip: "192.168.1.10"  # Adresse IP du serveur DNS
-bind_site_web_ip: "192.168.1.20"    # Adresse IP du site web
-bind_serveur_mail_ip: "192.168.1.30" # Adresse IP du serveur mail
+bind_nameserver_ip: "192.168.1.10"
+bind_www_ip: "192.168.1.20"
+bind_mail_ip: "192.168.1.30"

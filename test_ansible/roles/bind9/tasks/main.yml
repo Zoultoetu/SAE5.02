@@ -1,5 +1,8 @@
 ---
 # Configuration de Bind9
+- name: Afficher les variables chargées
+  debug:
+    var: bind_zone_name
 - name: Installer Bind9 et SSH
   apt:
     name:
