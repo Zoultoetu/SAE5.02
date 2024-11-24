@@ -17,7 +17,7 @@
 
 - name: Copier la configuration principale de Bind9
   template:
-    src: named.conf.j2
+    src: templates/named.conf.j2
     dest: /etc/bind/named.conf
 
 - name: Copier les fichiers de zones DNS
