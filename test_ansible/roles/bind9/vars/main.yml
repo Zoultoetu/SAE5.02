@@ -1,4 +1,5 @@
 bind_zone_name: "Zone_A"
+Zone_A: "exemple.com"
 bind_nameserver_ip: "192.168.1.10"
 bind_www_ip: "192.168.1.20"
 bind_mail_ip: "192.168.1.30"

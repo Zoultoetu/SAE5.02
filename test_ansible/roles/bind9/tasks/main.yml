@@ -1,18 +1,21 @@
----
 # Configuration de Bind9
+- name: Mettre à jour le cache APT
+  apt:
+    update_cache: yes
+
 - name: Afficher les variables chargées
   debug:
     var: bind_zone_name
 - name: Installer Bind9 et SSH
   apt:
     name:
-      - update
       - bind9
       - bind9utils
       - bind9-doc
       - openssh-server
     state: present
     update_cache: yes
+
 - name: Charger les variables pour Bind9
   include_vars: vars/main.yml
 
