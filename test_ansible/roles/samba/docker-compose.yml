@@ -3,25 +3,23 @@ version: '3.8'
 services:
   ad:
     build:
-      context: .  # Dossier où se trouve le Dockerfile pour Samba
+      context: .  # Le dossier avec le Dockerfile
     container_name: ad
     environment:
-      TZ: "Europe/Paris"   # Configuration du fuseau horaire
+      TZ: "Europe/Paris"
     networks:
       internal_net:
         ipv4_address: 192.168.0.3
     ports:
       - "2223:22"  # Port SSH exposé sur l'hôte
+      - "88:88"
+      - "389:389"
     volumes:
       - ./smb:/etc/samba
 
-volumes:
-  bind9_data:
-    driver: local           # Volume pour stocker les données persistantes
-
 networks:
   internal_net:
-    driver: bridge          # Réseau interne pour les services
+    driver: bridge
     ipam:
       config:
         - subnet: 192.168.0.0/24
