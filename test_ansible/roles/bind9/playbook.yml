@@ -25,7 +25,7 @@
       lineinfile:
         path: "{{ lookup('env', 'HOME') }}/test_ansible/roles/bind9/docker-compose.yml"
         regexp: '/root/test_ansible/named.conf'
-        line: '/home/toine-fa/SAE5.02/test_ansible/roles/bind9/named.conf'
+        line: './SAE5.02/test_ansible/roles/bind9/named.conf'
 
     
     - name: Attendre que le conteneur soit prêt (pour SSH)
