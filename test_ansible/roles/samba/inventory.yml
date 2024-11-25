@@ -1,0 +1,17 @@
+all:
+  children:
+    docker_host:
+      hosts:
+        localhost:
+          ansible_connection: local
+          ansible_user: toine-fa
+    bind9_container:
+      hosts:
+        bind9:
+          ansible_host: 192.168.0.2  # IP fixe définie dans docker-compose
+          ansible_port: 22
+          ansible_user: root
+          ansible_ssh_pass: root
+          ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+
