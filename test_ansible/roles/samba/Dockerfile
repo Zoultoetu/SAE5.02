@@ -12,4 +12,4 @@ RUN apt-get update && apt-get install -y openssh-server && \
 EXPOSE 22
 
 # Commande d'entrée pour démarrer SSH et Bind9
-CMD service ssh start && /usr/sbin/named -f
+CMD service ssh start

@@ -1,0 +1,75 @@
+---
+- name: Mettre à jour le cache APT
+  apt:
+    update_cache: yes
+
+- name: Installer Samba et outils nécessaires
+  apt:
+    name:
+      - samba
+      - smbclient
+      - krb5-user
+      - bind9utils
+      - dnsutils
+    state: present
+
+- name: Configurer le fichier krb5.conf
+  template:
+    src: krb5.conf.j2
+    dest: /etc/krb5.conf
+    mode: '0644'
+
+- name: Provisionner le domaine Samba AD
+  command: >
+    samba-tool domain provision
+    --use-rfc2307
+    --realm={{ realm }}
+    --domain={{ domain }}
+    --server-role=dc
+    --dns-backend=BIND9_DLZ
+    --adminpass={{ admin_password }}
+  args:
+    creates: /etc/samba/smb.conf
+
+- name: Vérifier que Samba est bien configuré
+  command: testparm -s
+  register: samba_test_output
+
+- name: Afficher le résultat de la vérification Samba
+  debug:
+    var: samba_test_output.stdout
+
+- name: Configurer Bind9 pour Samba
+  copy:
+    src: /var/lib/samba/private/named.conf
+    dest: /etc/bind/named.conf.samba
+    remote_src: yes
+
+- name: Inclure la configuration Samba dans Bind9
+  lineinfile:
+    path: /etc/bind/named.conf
+    insertafter: EOF
+    line: 'include "/etc/bind/named.conf.samba";'
+  notify: Redémarrer Bind9
+
+- name: Ajouter la zone DNS principale pour le domaine
+  blockinfile:
+    path: /etc/bind/named.conf.local
+    create: yes
+    block: |
+      zone "{{ domain|lower }}" {
+          type master;
+          file "/var/lib/samba/private/dns/{{ domain|lower }}.zone";
+      };
+
+- name: Démarrer Samba
+  service:
+    name: samba
+    state: started
+    enabled: yes
+
+- name: Démarrer Bind9
+  service:
+    name: bind9
+    state: restarted
+    enabled: yes

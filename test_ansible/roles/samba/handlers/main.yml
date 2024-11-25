@@ -1,0 +1,5 @@
+---
+- name: Redémarrer Bind9
+  service:
+    name: dns
+    state: restarted

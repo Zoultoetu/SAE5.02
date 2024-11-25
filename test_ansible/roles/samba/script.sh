@@ -15,6 +15,6 @@ docker-compose up -d
 # Exécuter Ansible
 ansible-playbook -i inventaire.ini playbook.yml
 
-docker stop bind9
+docker stop ad
 
-docker start bind9
+docker start ad

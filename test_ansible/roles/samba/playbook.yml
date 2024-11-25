@@ -1,45 +1,5 @@
-- name: Déployer Bind9 avec Docker et Ansible
-  hosts: docker_host
-  become: true
-  tasks:
-    - name: Installer Docker et Docker Compose si nécessaire
-      apt:
-        name:
-          - docker.io
-          - docker-compose
-        state: present
-        update_cache: yes
-
-    - name: Créer le répertoire de destination
-      file:
-        path: /root/test_ansible/roles/bind9
-        state: directory
-        mode: '0755'
-
-    - name: Copier le fichier docker-compose.yml
-      copy:
-        src: docker-compose.yml
-        dest: "{{ lookup('env', 'HOME') }}/test_ansible/roles/bind9/docker-compose.yml"
-
-    - name: Mettre à jour le chemin source dans docker-compose.yml
-      lineinfile:
-        path: "{{ lookup('env', 'HOME') }}/test_ansible/roles/bind9/docker-compose.yml"
-        regexp: '/root/test_ansible/named.conf'
-        line: './SAE5.02/test_ansible/roles/bind9/named.conf'
-
-    
-    - name: Attendre que le conteneur soit prêt (pour SSH)
-      wait_for:
-        host: 192.168.0.2
-        port: 22
-        state: started
-        delay: 10
-        timeout: 30
-
-- name: Configurer Bind9 dans le conteneur
-  hosts: bind9_container
-  become: true
-  vars_files:
-    - roles/bind9/vars/main.yml
-  tasks:
-    - include_tasks: tasks/main.yml
+---
+- name: Configurer Samba en tant qu'Active Directory
+  hosts: samba-ad
+  roles:
+    - samba
