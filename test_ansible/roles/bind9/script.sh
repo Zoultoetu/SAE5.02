@@ -18,8 +18,8 @@ docker-compose up -d
 echo "=== Exécution de la configuration DNS avec Ansible ==="
 ansible-playbook -i inventaire.ini playbook.yml
 
-docker stop bind9
-docker start bind9
+docker stop dns
+docker start dns
 
 # Lancer la configuration de l'AD après DNS
 echo "=== Passage à la configuration de l'Active Directory (AD) ==="
