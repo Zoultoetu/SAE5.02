@@ -37,7 +37,7 @@
         timeout: 30
 
 - name: Configurer Bind9 dans le conteneur
-  hosts: bind9_container
+  hosts: dns
   become: true
   vars_files:
     - roles/bind9/vars/main.yml
