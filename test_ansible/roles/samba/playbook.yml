@@ -2,4 +2,4 @@
 - name: Configurer Samba en tant qu'Active Directory
   hosts: ad
   roles:
-    - ad
+    - samba
