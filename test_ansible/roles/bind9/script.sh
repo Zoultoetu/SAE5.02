@@ -1,5 +1,5 @@
 #!/bin/bash
-chmod 777 ~/SAE5.02/test_ansible/roles/samba/script.sh
+chmod 777 ~/SAE5.02/test_ansible/roles/samba/
 # Répertoire de base pour Bind9
 BASE_DIR_DNS="./SAE5.02/test_ansible/roles/bind9"
 
