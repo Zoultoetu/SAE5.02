@@ -1,5 +1,5 @@
 ---
 - name: Configurer Samba en tant qu'Active Directory
-  hosts: samba-ad
+  hosts: ad
   roles:
-    - samba
+    - ad
