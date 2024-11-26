@@ -1,5 +1,5 @@
 #!/bin/bash
-chmod 777 ./SAE5.02/
+chmod 777 ~/SAE5.02/test_ansible/roles/samba/script.sh
 # Répertoire de base pour Bind9
 BASE_DIR_DNS="./SAE5.02/test_ansible/roles/bind9"
 
@@ -24,4 +24,4 @@ docker start dns
 # Lancer la configuration de l'AD après DNS
 echo "=== Passage à la configuration de l'Active Directory (AD) ==="
 cd "$BASE_DIR_AD"
-./script.sh  # Appel du script de configuration de l'AD
+~/SAE5.02/test_ansible/roles/samba/script.sh  # Appel du script de configuration de l'AD
