@@ -23,4 +23,5 @@ docker start dns
 
 # Lancer la configuration de l'AD après DNS
 echo "=== Passage à la configuration de l'Active Directory (AD) ==="
-../script.sh  # Appel du script de configuration de l'AD
+cd "$BASE_DIR_AD"
+./script.sh  # Appel du script de configuration de l'AD
