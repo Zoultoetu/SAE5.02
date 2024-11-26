@@ -4,7 +4,7 @@ services:
   ad:
     build:
       context: .  # Le dossier avec le Dockerfile
-    container_name: ad
+    container_name: samba
     environment:
       TZ: "Europe/Paris"
     networks:
