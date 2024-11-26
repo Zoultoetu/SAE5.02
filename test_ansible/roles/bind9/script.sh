@@ -4,7 +4,7 @@ chmod 777 ~/SAE5.02/test_ansible/roles/samba/script.sh
 BASE_DIR_DNS="./SAE5.02/test_ansible/roles/bind9"
 
 # Répertoire de base pour l'AD
-BASE_DIR_AD="./SAE5.02/test_ansible/roles/samba"
+BASE_DIR_AD="/home/toine-fa/SAE5.02/test_ansible/roles/bind9/script.sh"
 
 echo "=== Réinitialisation des conteneurs et volumes DNS ==="
 docker rm -f bind9 2>/dev/null || true
@@ -24,4 +24,4 @@ docker start dns
 # Lancer la configuration de l'AD après DNS
 echo "=== Passage à la configuration de l'Active Directory (AD) ==="
 cd "$BASE_DIR_AD"
-~/SAE5.02/test_ansible/roles/samba/script.sh  # Appel du script de configuration de l'AD
+./script.sh  # Appel du script de configuration de l'AD
