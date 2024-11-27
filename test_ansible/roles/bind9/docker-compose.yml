@@ -26,8 +26,8 @@ volumes:
     driver: local           # Volume pour stocker les données persistantes
 
 networks:
-  internal_net:
-    driver: bridge          # Réseau interne pour les services
+  shared_net:
+    driver: bridge
     ipam:
       config:
-        - subnet: 192.168.0.0/24
+        - subnet: 192.168.0.0/24  # Sous-réseau commun

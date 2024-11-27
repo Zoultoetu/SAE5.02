@@ -1,3 +1,5 @@
+# docker-compose.yml
+
 version: '3.8'
 
 services:
@@ -18,8 +20,8 @@ services:
       - ./smb:/etc/samba
 
 networks:
-  internal_net:
+  shared_net:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.0.0/24
+        - subnet: 192.168.0.0/24  # Sous-réseau commun
