@@ -25,9 +25,9 @@ volumes:
   bind9_data:
     driver: local           # Volume pour stocker les données persistantes
 
-# networks:
-#   shared_net:
-#     driver: bridge
-#     ipam:
-#       config:
-#         - subnet: 192.168.0.0/24  # Sous-réseau commun
+networks:
+  shared_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24  # Sous-réseau commun
