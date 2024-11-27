@@ -1,5 +1,7 @@
 #!/bin/bash
 chmod 777 ~/SAE5.02/test_ansible/roles/samba/script.sh
+docker network create --driver bridge --subnet=192.168.0.0/24 shared_net
+
 # Répertoire de base pour Bind9
 BASE_DIR_DNS="./SAE5.02/test_ansible/roles/bind9"
 
