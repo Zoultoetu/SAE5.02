@@ -20,13 +20,18 @@ docker-compose build
 docker-compose up -d
 
 echo "=== Exécution de la configuration DNS et AD avec Ansible ==="
-ansible-playbook -i inventaire.ini "/home/toine-fa/SAE5.02/test_ansible/roles/bind9/playbook.yml"
-ansible-playbook -i inventaire.ini "/home/toine-fa/SAE5.02/test_ansible/roles/samba/playbook.yml"
 
-
+cd ../../.. # Retour au répertoire racine du projet
+ansible-playbook -i inventaire.ini "$BIND9_DIR/playbook.yml"
 docker stop dns
 docker start dns
 
+ansible-playbook -i inventaire.ini "$SAMBA_DIR/playbook.yml"
+
+docker stop dns
+docker start dns
+docker stop ad
+docker start ad
 # Lancer la configuration de l'AD après DNS
 # echo "=== Passage à la configuration de l'Active Directory (AD) ==="
 # cd "/home/toine-fa/SAE5.02/test_ansible/roles/samba"
