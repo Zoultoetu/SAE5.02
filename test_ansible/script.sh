@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Répertoire de base pour Bind9
-BIND9_DIR="./SAE5.02/test_ansible/roles/bind9"
-SAMBA_DIR="./SAE5.02/test_ansible/roles/samba"
+BIND9_DIR="./test_ansible/roles/bind9"
+SAMBA_DIR="./test_ansible/roles/samba"
 
 echo "=== Réinitialisation des conteneurs et volumes Bind9 ==="
 cd "$BIND9_DIR"
