@@ -20,6 +20,7 @@ docker-compose build
 docker-compose up -d
 
 echo "=== Exécution de la configuration DNS et AD avec Ansible ==="
+cd ~
 ansible-playbook -i inventaire.ini "$BIND9_DIR/playbook.yml"
 ansible-playbook -i inventaire.ini "$SAMBA_DIR/playbook.yml"
 
