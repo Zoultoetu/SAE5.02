@@ -10,7 +10,7 @@ services:
     environment:
       TZ: "Europe/Paris"
     networks:
-      internal_net:
+      shared_net:
         ipv4_address: 192.168.0.3
     ports:
       - "2223:22"  # Port SSH exposé sur l'hôte
@@ -19,9 +19,9 @@ services:
     volumes:
       - ./smb:/etc/samba
 
-networks:
-  shared_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.0.0/24  # Sous-réseau commun
+# networks:
+#   shared_net:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 192.168.0.0/24  # Sous-réseau commun

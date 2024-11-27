@@ -12,7 +12,7 @@ services:
     environment:
       TZ: "Europe/Paris"   # Configuration du fuseau horaire
     networks:
-      internal_net:
+      shared_net:
         ipv4_address: 192.168.0.2  # Adresse IP statique assignée
     volumes:
       - ./zones:/var/lib/bind
@@ -25,9 +25,9 @@ volumes:
   bind9_data:
     driver: local           # Volume pour stocker les données persistantes
 
-networks:
-  shared_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.0.0/24  # Sous-réseau commun
+# networks:
+#   shared_net:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 192.168.0.0/24  # Sous-réseau commun
