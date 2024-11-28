@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: "VotreNom"
+  description: "Rôle pour configurer Samba en tant que contrôleur de domaine AD."
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Debian
+      versions:
+        - "10"  # Debian Buster
+        - "11"  # Debian Bullseye
+dependencies: []

@@ -3,9 +3,9 @@
 version: '3.8'
 
 services:
-  ad:
+  samba_ad:
     build:
-      context: .  # Le dossier avec le Dockerfile
+      context: .  # Le répertoire contenant le Dockerfile
     container_name: ad
     environment:
       TZ: "Europe/Paris"
@@ -19,9 +19,6 @@ services:
     volumes:
       - ./smb:/etc/samba
 
-# networks:
-#   shared_net:
-#     driver: bridge
-#     ipam:
-#       config:
-#         - subnet: 192.168.0.0/24  # Sous-réseau commun
+networks:
+  internal_net:
+    external: true  # Utiliser le même réseau que Bind9
