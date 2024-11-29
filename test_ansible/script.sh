@@ -15,6 +15,7 @@ docker-compose build
 docker-compose up -d
 
 echo "=== Passage à la configuration de Samba AD ==="
+cd ~
 cd "$SAMBA_DIR"
 pwd
 docker rm -f ad 2>/dev/null || true
