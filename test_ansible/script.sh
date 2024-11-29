@@ -18,6 +18,8 @@ echo "=== Passage à la configuration de Samba AD ==="
 cd "$SAMBA_DIR"
 pwd
 docker rm -f ad 2>/dev/null || true
+
+echo "=== Préparation et démarrage de Samba ==="
 docker-compose build
 docker-compose up -d
 
