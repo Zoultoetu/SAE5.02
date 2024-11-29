@@ -19,6 +19,10 @@ services:
     volumes:
       - ./smb:/etc/samba
 
+volumes:
+  ad_data:
+    driver: local 
+
 networks:
   shared_net:
     external: true  # Utiliser le même réseau que Bind9
