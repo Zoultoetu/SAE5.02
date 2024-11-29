@@ -1,11 +1,6 @@
 ---
-- name: Mettre à jour le cache APT
-  apt:
-    update_cache: yes
-
 - name: Installer Samba et outils nécessaires
   apt:
-    update_cache: yes
     name:
       - samba
       - smbclient
