@@ -1,5 +1,5 @@
 - name: Déployer Samba AD avec Docker et Ansible
-  hosts: docker_host
+  hosts: ad
   become: true
   tasks:
     - name: Installer Docker et Docker Compose si nécessaire
@@ -32,7 +32,7 @@
         port: 22
         state: started
         delay: 10
-        timeout: 30
+        timeout: 60
 
 - name: Configurer Samba dans le conteneur
   hosts: ad
