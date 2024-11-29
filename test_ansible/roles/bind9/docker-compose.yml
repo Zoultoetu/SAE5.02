@@ -22,7 +22,7 @@ services:
         target: /etc/bind/named.conf
   ad:
     build:
-      context: .
+      context: /home/toine-fa/SAE5.02/test_ansible/roles/samba
     container_name: ad  # Nom unique du conteneur
     ports:
       - "2223:22"         # Port SSH pour configuration avec Ansible
@@ -40,11 +40,11 @@ services:
         ipv4_address: 192.168.0.3  # Adresse IP statique assignée
 
     volumes:
-      - ./smb:/etc/samba            # Configuration Samba
+      - /home/toine-fa/SAE5.02/test_ansible/roles/samba/smb:/etc/samba            # Configuration Samba
       - samba_data:/var/lib/samba   # Données persistantes Samba
       - samba_krb:/etc/krb5.conf    # Configuration Kerberos
       - type: bind
-        source: ./smb.conf
+        source: /home/toine-fa/SAE5.02/test_ansible/roles/samba/smb.conf
         target: /etc/samba/smb.conf  # Fichier de configuration Samba
 
 volumes:

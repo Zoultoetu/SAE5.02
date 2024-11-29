@@ -14,14 +14,14 @@ echo "=== Préparation et démarrage de Bind9 ==="
 docker-compose build
 docker-compose up -d
 
-echo "=== Passage à la configuration de Samba AD ==="
-cd "/home/toine-fa/$SAMBA_DIR"
-pwd
-docker rm -f ad 2>/dev/null || true
+# echo "=== Passage à la configuration de Samba AD ==="
+# cd "/home/toine-fa/$SAMBA_DIR"
+# pwd
+# docker rm -f ad 2>/dev/null || true
 
-echo "=== Préparation et démarrage de Samba ==="
-docker-compose build
-docker-compose up -d
+# echo "=== Préparation et démarrage de Samba ==="
+# docker-compose build
+# docker-compose up -d
 
 echo "=== Exécution de la configuration DNS et AD avec Ansible ==="
 
