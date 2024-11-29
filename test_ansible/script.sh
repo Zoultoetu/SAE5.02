@@ -4,15 +4,15 @@
 BIND9_DIR="./SAE5.02/test_ansible/roles/bind9"
 SAMBA_DIR="./SAE5.02/test_ansible/roles/samba"
 
-echo "=== Réinitialisation des conteneurs et volumes Bind9 ==="
-cd "$BIND9_DIR"
-pwd
-docker rm -f bind9 2>/dev/null || true
-docker volume prune -f 2>/dev/null || true
+# echo "=== Réinitialisation des conteneurs et volumes Bind9 ==="
+# cd "$BIND9_DIR"
+# pwd
+# docker rm -f bind9 2>/dev/null || true
+# docker volume prune -f 2>/dev/null || true
 
-echo "=== Préparation et démarrage de Bind9 ==="
-docker-compose build
-docker-compose up -d
+# echo "=== Préparation et démarrage de Bind9 ==="
+# docker-compose build
+# docker-compose up -d
 
 echo "=== Passage à la configuration de Samba AD ==="
 cd "/home/toine-fa/$SAMBA_DIR"
