@@ -1,5 +1,5 @@
 # Dockerfile
-FROM ubuntu:20.04
+FROM ubuntu:latest
 
 # Met à jour le système et installe OpenSSH Server
 RUN apt-get update && apt-get install -y openssh-server && \
@@ -13,5 +13,5 @@ RUN apt-get update && apt-get install -y openssh-server && \
 EXPOSE 22
 
 # Commande d'entrée pour démarrer SSH
-CMD service ssh start && bash
+CMD service ssh start && tail -f /dev/null
 
