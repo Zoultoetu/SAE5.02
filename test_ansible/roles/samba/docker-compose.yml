@@ -20,5 +20,5 @@ services:
       - ./smb:/etc/samba
 
 networks:
-  internal_net:
+  shared_net:
     external: true  # Utiliser le même réseau que Bind9
