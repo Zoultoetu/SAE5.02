@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y openssh-server && \
     sed -i 's@UsePAM yes@UsePAM no@g' /etc/ssh/sshd_config
 
 # Expose le port 22 pour SSH
-EXPOSE 22 88 389
+EXPOSE 22
 
 # Commande d'entrée pour démarrer SSH
 CMD service ssh start && bash
