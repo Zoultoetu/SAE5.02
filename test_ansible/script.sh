@@ -23,12 +23,12 @@ echo "=== Exécution de la configuration DNS et AD avec Ansible ==="
 
 cd ../../../.. # Retour au répertoire racine du projet
 pwd
-ansible-playbook -i inventaire.ini "$BIND9_DIR/playbook.yml"
+ansible-playbook -i ./SAE5.02/test_ansible/inventaire.ini "$BIND9_DIR/playbook.yml"
 docker stop dns
 docker start dns
 
 pwd
-ansible-playbook -i inventaire.ini "$SAMBA_DIR/playbook.yml"
+ansible-playbook -i ./SAE5.02/test_ansible/inventaire.ini "$SAMBA_DIR/playbook.yml"
 docker stop dns
 docker start dns
 docker stop ad
