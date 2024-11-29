@@ -32,7 +32,7 @@ docker stop dns
 docker start dns
 pwd
 
-ansible-playbook -i ./SAE5.02/test_ansible/inventaire.ini "$SAMBA_DIR/playbook.yml" -vvv
+ansible-playbook -i ./SAE5.02/test_ansible/inventaire.ini "$SAMBA_DIR/playbook.yml"
 docker stop dns
 docker start dns
 docker stop ad
