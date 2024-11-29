@@ -1,28 +1,42 @@
-# docker-compose.yml
-
 version: '3.8'
 
 services:
-  samba_ad:
+  ad:
     build:
-      context: .  # Le répertoire contenant le Dockerfile
-    container_name: ad
+      context: .
+    container_name: ad  # Nom unique du conteneur
+    ports:
+      - "2223:22"         # Port SSH pour configuration avec Ansible
+      - "445:445"         # Port SMB
+      - "88:88"           # Port Kerberos
+      - "389:389"         # Port LDAP
+      - "464:464"         # Port Kerberos (changement de mot de passe)
+      - "636:636"         # Port LDAP sécurisé (LDAPS)
+      - "3268:3268"       # Port Global Catalog (LDAP non sécurisé)
+      - "3269:3269"       # Port Global Catalog sécurisé (LDAP)
     environment:
-      TZ: "Europe/Paris"
+      TZ: "Europe/Paris"  # Configuration du fuseau horaire
     networks:
       shared_net:
-        ipv4_address: 192.168.0.3
-    ports:
-      - "2223:22"  # Port SSH exposé sur l'hôte
-      - "88:88"
-      - "389:389"
+        ipv4_address: 192.168.0.3  # Adresse IP statique assignée
     volumes:
-      - ./smb:/etc/samba
+      - ./smb:/etc/samba            # Configuration Samba
+      - samba_data:/var/lib/samba   # Données persistantes Samba
+      - samba_krb:/etc/krb5.conf    # Configuration Kerberos
+      - type: bind
+        source: ./smb.conf
+        target: /etc/samba/smb.conf  # Fichier de configuration Samba
 
 volumes:
-  ad_data:
-    driver: local 
+  samba_data:
+    driver: local                  # Volume pour stocker les données persistantes de Samba
+  samba_krb:
+    driver: local                  # Volume pour stocker les données persistantes de Kerberos
 
 networks:
   shared_net:
-    external: true  # Utiliser le même réseau que Bind9
+    name: shared_net               # Réseau partagé avec Bind9
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24   # Sous-réseau commun
