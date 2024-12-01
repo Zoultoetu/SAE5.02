@@ -9,7 +9,7 @@
       - dnsutils
       - openssh-server
     state: present
-    update_cache: yes
+    #update_cache: yes
 
 - name: Configurer le fichier krb5.conf
   template:
