@@ -36,8 +36,6 @@
         src: /home/toine-fa/SAE5.02/test_ansible/roles/samba/krb5.conf
         dest: /root/test_ansible/roles/samba/krb5.conf
 
-    - name: Lancer Samba AD avec Docker Compose
-      command: docker-compose -f /root/test_ansible/roles/samba/docker-compose.yml up -d
 
 
 - name: Configurer Samba dans le conteneur
