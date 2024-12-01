@@ -18,22 +18,22 @@
 
     - name: Copier le fichier docker-compose.yml pour Samba
       copy:
-        src: ./SAE5.02/test_ansible/roles/samba/docker-compose.yml
+        src: /home/toine-fa/SAE5.02/test_ansible/roles/samba/docker-compose.yml
         dest: /root/test_ansible/roles/samba/docker-compose.yml
 
     - name: Copier le fichier Dockerfile pour Samba
       copy:
-        src: ./SAE5.02/test_ansible/roles/samba/Dockerfile
+        src: /home/toine-fa/SAE5.02/test_ansible/roles/samba/Dockerfile
         dest: /root/test_ansible/roles/samba/Dockerfile
 
     - name: Copier le fichier smb.conf pour Samba
       copy:
-        src: ./SAE5.02/test_ansible/roles/samba/smb.conf
+        src: /home/toine-fa/SAE5.02/test_ansible/roles/samba/smb.conf
         dest: /root/test_ansible/roles/samba/smb.conf
 
     - name: Copier le fichier krb5.conf pour Samba
       copy:
-        src: ./SAE5.02/test_ansible/roles/samba/krb5.conf
+        src: /home/toine-fa/SAE5.02/test_ansible/roles/samba/krb5.conf
         dest: /root/test_ansible/roles/samba/krb5.conf
 
     - name: Lancer Samba AD avec Docker Compose
