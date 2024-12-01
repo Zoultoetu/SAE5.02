@@ -5,8 +5,8 @@
     - name: Installer Docker et Docker Compose si nécessaire
       apt:
         name:
-          - docker.io
-          - docker-compose
+          #- docker.io
+          #- docker-compose
         state: present
         update_cache: yes
 
