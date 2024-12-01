@@ -4,29 +4,23 @@ services:
   ad:
     build:
       context: .
-    container_name: ad  # Nom unique du conteneur
+    container_name: ad
     ports:
-      - "2223:22"         # Port SSH pour configuration avec Ansible
-      - "445:445"         # Port SMB
-      - "88:88"           # Port Kerberos
-      - "389:389"         # Port LDAP
-      - "464:464"         # Port Kerberos (changement de mot de passe)
-      - "636:636"         # Port LDAP sécurisé (LDAPS)
-      - "3268:3268"       # Port Global Catalog (LDAP non sécurisé)
-      - "3269:3269"       # Port Global Catalog sécurisé (LDAP)
+      - "53:53/udp"
+      - "53:53/tcp"
+      - "389:389"
+      - "88:88"
+      - "464:464"
+      - "445:445"
+      - "2223:22"
     environment:
-      TZ: "Europe/Paris"  # Configuration du fuseau horaire
+      TZ: "Europe/Paris"
     networks:
       shared_net:
-        ipv4_address: 192.168.0.3  # Adresse IP statique assignée
-
+        ipv4_address: 192.168.0.3
     volumes:
-      - ./smb:/etc/samba            # Configuration Samba
-      - samba_data:/var/lib/samba   # Données persistantes Samba
-      - samba_krb:/etc/krb5.conf    # Configuration Kerberos
-      - type: bind
-        source: ./smb.conf
-        target: /etc/samba/smb.conf  # Fichier de configuration Samba
+      - ./smb.conf:/etc/samba/smb.conf
+      - ./krb5.conf:/etc/krb5.conf
 
 volumes:
   samba_data:

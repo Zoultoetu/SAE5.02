@@ -1,12 +1,12 @@
 - name: Déployer Samba AD avec Docker et Ansible
-  hosts: ad
+  hosts: docker_host
   become: true
   tasks:
     - name: Installer Docker et Docker Compose si nécessaire
       apt:
         name:
-          # - docker.io
-          # - docker-compose
+          - docker.io
+          - docker-compose
         state: present
         update_cache: yes
 
@@ -18,21 +18,27 @@
 
     - name: Copier le fichier docker-compose.yml pour Samba
       copy:
-        src: docker-compose.yml
-        dest: "{{ lookup('env', 'HOME') }}/test_ansible/roles/samba/docker-compose.yml"
+        src: roles/samba/docker-compose.yml
+        dest: /root/test_ansible/roles/samba/docker-compose.yml
 
     - name: Copier le fichier Dockerfile pour Samba
       copy:
-        src: Dockerfile
-        dest: "{{ lookup('env', 'HOME') }}/test_ansible/roles/samba/Dockerfile"
+        src: roles/samba/Dockerfile
+        dest: /root/test_ansible/roles/samba/Dockerfile
 
-    - name: Attendre que le conteneur Samba soit prêt (pour SSH)
-      wait_for:
-        host: 192.168.0.3
-        port: 22
-        state: started
-        delay: 10
-        timeout: 60
+    - name: Copier le fichier smb.conf pour Samba
+      copy:
+        src: roles/samba/smb.conf
+        dest: /root/test_ansible/roles/samba/smb.conf
+
+    - name: Copier le fichier krb5.conf pour Samba
+      copy:
+        src: roles/samba/krb5.conf
+        dest: /root/test_ansible/roles/samba/krb5.conf
+
+    - name: Lancer Samba AD avec Docker Compose
+      command: docker-compose -f /root/test_ansible/roles/samba/docker-compose.yml up -d
+
 
 - name: Configurer Samba dans le conteneur
   hosts: ad
