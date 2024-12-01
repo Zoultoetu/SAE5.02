@@ -1,15 +1,19 @@
 ---
-- name: Installer Samba et outils nécessaires
+- name: Installer les paquets un par un
   apt:
-    name:
-      - samba
-      - smbclient
-      - krb5-user
-      - bind9utils
-      - dnsutils
-      - openssh-server
+    name: "{{ item }}"
     state: present
-    #update_cache: yes
+    update_cache: yes
+  with_items:
+    - samba
+    - smbclient
+    - krb5-user
+    - bind9utils
+    - dnsutils
+    - openssh-server
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
 
 - name: Configurer le fichier krb5.conf
   template:
