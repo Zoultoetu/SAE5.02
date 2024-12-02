@@ -6,10 +6,10 @@
     update_cache: yes
   with_items:
     - samba
-    - smbclient
-    - krb5-user
-    - bind9utils
-    - dnsutils
+    # - smbclient
+    # - krb5-user
+    # - bind9utils
+    # - dnsutils
     - openssh-server
   environment:
     DEBIAN_FRONTEND: noninteractive
