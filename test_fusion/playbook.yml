@@ -27,7 +27,8 @@
 
     - name: Redémarrer le service Bind9
       service:
-        name: bind9
+        use : service
+        name: named
         state: restarted
 
     # Étape 3 : Configuration de Samba
@@ -40,3 +41,5 @@
       service:
         name: smbd
         state: restarted
+        use : service
+
