@@ -17,9 +17,9 @@ docker-compose up -d --build
 # Étape 3 : Pause pour s'assurer que le conteneur est prêt
 echo "=== Attente du démarrage du conteneur ==="
 sleep 10
-cd 
 # Étape 4 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
+pwd
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
 
 echo "Europe/Paris" > /etc/timezone
