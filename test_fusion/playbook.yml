@@ -1,0 +1,84 @@
+- name: Déployer et configurer AD et DNS
+  hosts: docker_host
+  become: true
+
+  tasks:
+    - name: Installer Docker et Docker Compose
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+        update_cache: yes
+
+    - name: Copier le fichier docker-compose.yml
+      copy:
+        src: docker-compose.yml
+        dest: /root/docker-compose.yml
+
+    - name: Copier les fichiers nécessaires pour Bind9 et Samba
+      synchronize:
+        src: ./bind/
+        dest: /root/bind/
+        recursive: yes
+    - name: Copier les fichiers nécessaires pour Bind9 et Samba V2
+      synchronize:
+        src: ./samba/
+        dest: /root/samba/
+        recursive: yes
+
+    - name: Construire et démarrer les conteneurs
+      command: docker-compose -f /root/docker-compose.yml up -d
+      args:
+        chdir: /root/
+
+    - name: Attendre que le conteneur soit prêt
+      wait_for:
+        host: 192.168.0.2
+        port: 22
+        state: started
+        delay: 10
+        timeout: 30
+
+- name: Configurer Bind9 dans le conteneur
+  hosts: dns
+  become: true
+
+  tasks:
+    - name: Copier les fichiers de configuration de Bind9
+      copy:
+        src: bind/named.conf
+        dest: /etc/bind/named.conf
+    - name: Copier les fichiers de configuration de Bind9 V2
+      copy:
+        src: bind/zones/example.com.db
+        dest: /var/lib/bind/example.com.db
+
+    - name: Vérifier la configuration Bind9
+      command: named-checkconf /etc/bind/named.conf
+
+    - name: Vérifier les fichiers de zones DNS
+      command: named-checkzone example.com /var/lib/bind/example.com.db
+
+    - name: Redémarrer Bind9
+      service:
+        name: bind9
+        state: restarted
+
+- name: Configurer Samba comme contrôleur de domaine
+  hosts: ad
+  become: true
+
+  tasks:
+    - name: Provisionner Samba comme AD-DC
+      command: samba-tool domain provision \
+               --realm=EXAMPLE.COM \
+               --domain=EXAMPLE \
+               --server-role=dc \
+               --dns-backend=SAMBA_INTERNAL \
+               --use-rfc2307
+      args:
+        creates: /etc/samba/smb.conf
+
+    - name: Vérifier l'état du domaine
+      command: samba-tool domain level show

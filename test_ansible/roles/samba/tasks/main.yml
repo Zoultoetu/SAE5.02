@@ -6,8 +6,8 @@
     update_cache: yes
   with_items:
     - samba
-    # - smbclient
-    # - krb5-user
+    - smbclient
+    - krb5-user
     # - bind9utils
     # - dnsutils
     - openssh-server
