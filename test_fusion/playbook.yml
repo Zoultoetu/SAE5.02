@@ -1,39 +1,43 @@
-- name: Déploiement des services Bind9 et Samba
-  hosts: fusion
+- name: Configuration des services DNS et Samba
+  hosts: all
+  become: yes
   tasks:
 
-    # Installation des services dans le conteneur
+    # Étape 1 : Mise à jour du système et installation des paquets nécessaires
+    - name: Mise à jour des paquets
+      apt:
+        update_cache: yes
+
     - name: Installer Bind9 et Samba
       apt:
         name:
           - bind9
           - samba
         state: present
-        update_cache: yes
 
-    # Configuration de Bind9
+    # Étape 2 : Configuration de Bind9
     - name: Copier la configuration de Bind9
       copy:
         src: ./bind/named.conf
         dest: /etc/bind/named.conf
 
-    - name: Copier les fichiers de zones Bind9
+    - name: Copier les fichiers de zones DNS
       copy:
         src: ./bind/zones/example.com.db
         dest: /var/lib/bind/example.com.db
 
-    - name: Redémarrer Bind9
+    - name: Redémarrer le service Bind9
       service:
         name: bind9
         state: restarted
 
-    # Configuration de Samba
+    # Étape 3 : Configuration de Samba
     - name: Copier la configuration de Samba
       copy:
         src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
-    - name: Démarrer Samba
+    - name: Redémarrer le service Samba
       service:
         name: smbd
-        state: started
+        state: restarted
