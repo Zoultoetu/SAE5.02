@@ -2,6 +2,14 @@
   hosts: all
   become: yes
   tasks:
+    - name: Configuration du fuseau horaire
+      hosts: all
+      become: yes
+      tasks:
+        - name: Définir le fuseau horaire sur Europe/Paris
+          timezone:
+            name: "Europe/Paris"
+
 
     # Étape 1 : Mise à jour du système et installation des paquets nécessaires
     - name: Mise à jour des paquets

@@ -2,6 +2,12 @@
 
 BASE_DIR="./SAE5.02/test_fusion"
 
+echo "=== Configuration du fuseau horaire ==="
+
+# Définir le fuseau horaire par défaut (par exemple UTC ou Europe/Paris)
+echo "Europe/Paris" > /etc/timezone
+dpkg-reconfigure --frontend noninteractive tzdat
+
 echo "=== Déploiement automatique de Bind9 et Samba ==="
 
 # Étape 1 : Réinitialisation des conteneurs
