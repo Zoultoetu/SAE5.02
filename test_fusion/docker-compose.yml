@@ -7,7 +7,8 @@ services:
       dockerfile: dockerfile
     container_name: dns_ad
     environment:
-      TZ: "Europe/Paris"
+      - TZ: "Europe/Paris"
+      - DEBIAN_FRONTEND=noninteractive
     ports:
       - "2222:22"        # SSH
       - "53:53/udp"      # DNS (Bind9)
