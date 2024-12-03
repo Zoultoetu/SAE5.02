@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: dockerfile
     container_name: dns_ad
+    environment:
+      TZ: "Europe/Paris"
     ports:
       - "2222:22"        # SSH
       - "53:53/udp"      # DNS (Bind9)
@@ -13,8 +15,6 @@ services:
       - "445:445"        # Samba
       - "139:139"
       - "389:389"        # LDAP pour Samba
-    environment:
-      TZ: "Europe/Paris"
     networks:
       shared_net:
         ipv4_address: 192.168.0.2
