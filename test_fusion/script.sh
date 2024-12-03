@@ -19,7 +19,7 @@ echo "=== Attente du démarrage du conteneur ==="
 sleep 10
 # Étape 4 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
-pwd
+cd ../..
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
 
 echo "Europe/Paris" > /etc/timezone
