@@ -1,21 +1,15 @@
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 
-# Mettre à jour le système et installer les paquets nécessaires
-RUN apt-get update && apt-get install -y \
-    bind9 bind9utils bind9-doc \
-    samba samba-common-bin \
-    krb5-user krb5-config winbind \
-    openssh-server && \
-    apt-get clean
-
-# Configuration SSH
-RUN mkdir -p /var/run/sshd && \
+# Met à jour le système et installe OpenSSH Server
+RUN apt-get update && apt-get install -y openssh-server && \
+    mkdir -p /var/run/sshd && \
     echo 'root:root' | chpasswd && \
+    sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     sed -i 's@UsePAM yes@UsePAM no@g' /etc/ssh/sshd_config
 
-# Ports exposés
-EXPOSE 22 53/udp 53/tcp 88 389 445 464 636 3268 3269
+# Expose les ports
+EXPOSE 53/udp 53/tcp 22
 
-# Commande d'entrée
-CMD service ssh start && /usr/sbin/named -f && samba -i -M single
+# Commande de démarrage
+CMD service ssh start && /usr/sbin/named -f

@@ -1,43 +1,30 @@
 version: '3.8'
 
 services:
-  ad-dns:
+  fusion_service:
     build:
       context: .
-      dockerfile: Dockerfile  # Dockerfile pour construire l'image avec SSH, Bind9 et Samba
-    container_name: ad-dns  # Conteneur unique pour AD et DNS
+      dockerfile: dockerfile
+    container_name: dns/ad
     ports:
-      - "53:53/udp"          # Port DNS UDP
-      - "53:53/tcp"          # Port DNS TCP
-      - "445:445"            # Port SMB (Samba)
-      - "88:88"              # Port Kerberos
-      - "389:389"            # Port LDAP
-      - "464:464"            # Port Kerberos (changement de mot de passe)
-      - "636:636"            # Port LDAPS (LDAP sécurisé)
-      - "3268:3268"          # Port Global Catalog (LDAP non sécurisé)
-      - "3269:3269"          # Port Global Catalog sécurisé (LDAP)
-      - "2222:22"            # Port SSH pour Ansible
-    environment:
-      TZ: "Europe/Paris"     # Configuration du fuseau horaire
+      - "2222:22"         # SSH
+      - "53:53/udp"     # DNS (Bind9)
+      - "53:53/tcp"
+      - "445:445"       # Samba
+      - "139:139"
+      - "389:389"       # LDAP pour Samba
     networks:
       shared_net:
-        ipv4_address: 192.168.0.2  # Adresse IP fixe pour ce conteneur
+        ipv4_address: 192.168.0.2
     volumes:
-      - ./bind/zones:/var/lib/bind  # Zones DNS
-      - bind_data:/etc/bind         # Configuration persistante de Bind9
-      - ./samba/smb:/etc/samba      # Configuration Samba
-      - samba_data:/var/lib/samba   # Données persistantes Samba
-      - ./krb5:/etc/krb5.conf       # Configuration Kerberos
-
-volumes:
-  bind_data:
-    driver: local
-  samba_data:
-    driver: local
+      - ./bind:/etc/bind
+      - ./bind/zones:/var/lib/bind
+      - ./samba:/etc/samba
+    privileged: true
 
 networks:
   shared_net:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.0.0/24  # Sous-réseau pour les conteneurs
+        - subnet: 192.168.0.0/24
