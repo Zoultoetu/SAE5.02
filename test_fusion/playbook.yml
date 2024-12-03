@@ -25,11 +25,6 @@
         src: ./bind/zones/example.com.db
         dest: /var/lib/bind/example.com.db
 
-    - name: Redémarrer le service Bind9
-      service:
-        use : service
-        name: named
-        state: restarted
 
     # Étape 3 : Configuration de Samba
     - name: Copier la configuration de Samba
@@ -37,9 +32,4 @@
         src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
-    - name: Redémarrer le service Samba
-      service:
-        name: smbd
-        state: restarted
-        use : service
 
