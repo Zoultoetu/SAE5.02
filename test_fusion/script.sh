@@ -2,12 +2,6 @@
 
 BASE_DIR="./SAE5.02/test_fusion"
 
-echo "=== Configuration du fuseau horaire ==="
-
-# Définir le fuseau horaire par défaut (par exemple UTC ou Europe/Paris)
-echo "Europe/Paris" > /etc/timezone
-dpkg-reconfigure --frontend noninteractive tzdat
-
 echo "=== Déploiement automatique de Bind9 et Samba ==="
 
 # Étape 1 : Réinitialisation des conteneurs
@@ -27,5 +21,8 @@ cd
 # Étape 4 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
+
+echo "Europe/Paris" > /etc/timezone
+dpkg-reconfigure --frontend noninteractive tzdata
 
 echo "=== Déploiement terminé ==="
