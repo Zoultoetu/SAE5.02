@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: dockerfile
     environment:
-      - TZ: "Europe/Paris"
+      - TZ: Europe/Paris
     container_name: dns_ad
     ports:
       - "2222:22"        # SSH
