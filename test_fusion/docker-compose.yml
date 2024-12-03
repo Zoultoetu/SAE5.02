@@ -5,10 +5,9 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+      environment:
+        TZ: "Europe/Paris"
     container_name: dns_ad
-    environment:
-      - TZ: "Europe/Paris"
-      - DEBIAN_FRONTEND=noninteractive
     ports:
       - "2222:22"        # SSH
       - "53:53/udp"      # DNS (Bind9)
