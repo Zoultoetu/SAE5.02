@@ -13,6 +13,7 @@ pwd
 echo "=== Construction et démarrage du conteneur ==="
 cd "$BASE_DIR" || exit
 docker-compose up -d --build
+cd
 pwd
 # Étape 3 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
