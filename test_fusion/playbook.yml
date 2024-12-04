@@ -35,9 +35,9 @@
     - name: "activation Bind9"
       service:
         name: "named"
-        state: "started"
-        # enabled: true
-        # use: "service"
+        state: "restarted"
+        enabled: true
+        use: "service"
 
     - name: "activation samba"
       service:
