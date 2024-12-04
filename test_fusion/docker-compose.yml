@@ -22,7 +22,7 @@ services:
     volumes:
       - ./bind:/etc/bind
       - ./bind/zones:/var/lib/bind
-      - ./samba:/etc/samba
+      - ./bind/cache:/var/cache/bind
     privileged: true
 
 networks:
