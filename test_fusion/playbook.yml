@@ -36,8 +36,8 @@
       service:
         name: "named"
         state: "started"
+        enabled: true
         use: "service"
-        become: yes
 
     - name: "activation samba"
       service:
@@ -45,4 +45,4 @@
         state: "smbd"
         enabled: true
         use: "service"
-        become: yes
+  
