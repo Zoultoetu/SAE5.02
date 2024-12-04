@@ -32,8 +32,10 @@
         src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
-    - name: "activation Bind9"
-      cmd: service named start
+    - name: "Démarrage du service Bind9 avec service"
+      shell: "service named start"
+      become: true
+
 
     - name: "activation samba"
       service:
