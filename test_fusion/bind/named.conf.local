@@ -1,9 +1,29 @@
-zone "example.com" {
-    type master;
-    file "/etc/bind/zones/db.example.com";
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+//___________________________________________________
+// ZONE DE RESOLUTION DE DOMAINE exemple.com         |
+//___________________________________________________|
+zone "exemple.com" {
+  type master;
+  file "/etc/bind/db.exemple.com";
+
+  allow-transfer {213.186.33.199;};  // autorise le transfert vers ns.kimsufi.com
+  notify yes;                                       // notification aux serveurs esclaves quand une zone est mise a jour
 };
 
-zone "128.10.in-addr.arpa" {
-    type master;
-    file "/etc/bind/zones/db.10.128";
+//____________________________
+// ZONE DE RESOLUTION INVERSE |
+//____________________________|
+zone "444.333.222.111.in-addr.arpa" {
+  type master;
+  file "/etc/bind/444.333.222.111.in-addr.arpa";
+  // autorise le transfert vers ns.kimsufi.com
+  allow-transfer {213.186.33.199;};
+  notify no;
 };

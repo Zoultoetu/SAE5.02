@@ -1,11 +1,11 @@
-$TTL    604800
-@       IN      SOA     ns1.example.com. admin.example.com. (
-                              1         ; Serial
-                         604800         ; Refresh
-                          86400         ; Retry
-                        2419200         ; Expire
-                         604800 )       ; Negative Cache TTL
-;
-        IN      NS      ns1.example.com.
-
-11      IN      PTR     ns1.example.com.
+$TTL 1H
+@          IN              SOA             ksxxxxx.kimsufi.com. email@example.com. (
+           2011042201 ; Serial
+           1H              ; Refresh
+           15M             ; Retry
+           2W              ; Expire
+           3M              ; Minimum TTL
+)
+           IN NS   ksxxxxx.kimsufi.com.
+           IN NS   ns.kimsufi.com.
+           IN PTR  exemple.com.
