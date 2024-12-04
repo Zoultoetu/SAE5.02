@@ -36,7 +36,7 @@
         name: "named"
         state: "started"
         enabled: true
-        use: "service"
+        #use: "service"
 
     - name: "activation samba"
       service:
