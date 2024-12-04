@@ -22,8 +22,8 @@
 
     - name: Copier les fichiers de zones DNS
       copy:
-        src: ./bind/zones/example.com.db
-        dest: /var/lib/bind/example.com.db
+        src: ./bind/zones/db.example.com
+        dest: /var/lib/bind/db.example.com
 
 
     # Étape 3 : Configuration de Samba
