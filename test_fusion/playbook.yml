@@ -32,12 +32,12 @@
         src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
-    # - name: "activation Bind9"
-    #   service:
-    #     name: "named"
-    #     state: "started"
-    #     enabled: true
-    #     use: "service"
+    - name: "activation Bind9"
+      service:
+        name: "named"
+        state: "started"
+        # enabled: true
+        # use: "service"
 
     - name: "activation samba"
       service:
