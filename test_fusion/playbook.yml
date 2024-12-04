@@ -33,7 +33,7 @@
 
     - name: "activation Bind9"
       service:
-        name: "bind9"
+        name: "named"
         state: "started"
         enabled: true
         use: "service"
