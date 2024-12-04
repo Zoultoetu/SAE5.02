@@ -1,6 +1,5 @@
 - name: Configuration des services DNS et Samba
   hosts: all
-  become: yes
   tasks:
     # Étape 1 : Mise à jour du système et installation des paquets nécessaires
     - name: Mise à jour des paquets
@@ -32,4 +31,16 @@
         src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
+    - name: "activation Bind9"
+      service:
+        name: "named"
+        state: "started"
+        enabled: true
+        use: "service"
 
+    - name: "activation samba"
+      service:
+        name: "named"
+        state: "smbd"
+        enabled: true
+        use: "service"

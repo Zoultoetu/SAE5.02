@@ -22,8 +22,8 @@ echo "=== Configuration des services avec Ansible ==="
 cd ../..
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
 
-docker stop dns_ad
-docker start dns_ad
+# docker stop dns_ad
+# docker start dns_ad
 
 echo "Europe/Paris" > /etc/timezone
 dpkg-reconfigure --frontend noninteractive tzdata
