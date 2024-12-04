@@ -41,8 +41,8 @@
 
     - name: "activation samba"
       service:
-        name: "named"
-        state: "smbd"
+        name: "smbd"
+        state: "started"
         enabled: true
         use: "service"
   
