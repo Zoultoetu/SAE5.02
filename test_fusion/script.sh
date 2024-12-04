@@ -23,8 +23,8 @@ cd ../..
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
 
 echo "=== Démarrage des services Bind9 et Samba ==="
-    docker exec -it dns service named start
-    docker exec -it dns service smbd start
+    docker exec -it dns_ad service named start
+    docker exec -it dns_ad service smbd start
 # docker stop dns_ad
 # docker start dns_ad
 
