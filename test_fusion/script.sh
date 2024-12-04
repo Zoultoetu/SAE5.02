@@ -20,7 +20,7 @@ sleep 10
 # Étape 4 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
 cd ../..
-ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
+ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml" -vvv
 
 echo "=== Démarrage des services Bind9 et Samba ==="
     docker exec -it dns_ad service named start
