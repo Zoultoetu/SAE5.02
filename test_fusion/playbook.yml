@@ -1,5 +1,6 @@
 - name: Configuration des services DNS et Samba
   hosts: all
+  
   tasks:
     # Étape 1 : Mise à jour du système et installation des paquets nécessaires
     - name: Mise à jour des paquets
@@ -36,7 +37,8 @@
         name: "named"
         state: "started"
         enabled: true
-        #use: "service"
+        use: "service"
+        become: yes
 
     - name: "activation samba"
       service:
@@ -44,3 +46,4 @@
         state: "smbd"
         enabled: true
         use: "service"
+        become: yes
