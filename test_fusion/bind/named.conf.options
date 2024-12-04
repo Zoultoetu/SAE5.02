@@ -1,0 +1,11 @@
+options {
+    directory "/var/cache/bind";
+    recursion yes;
+    allow-query { any; };      # Permet les requêtes externes
+    listen-on { any; };        # Écoute sur toutes les interfaces réseau
+    forwarders {
+        8.8.8.8;               # Serveur DNS de Google
+        8.8.4.4;
+    };
+    dnssec-validation no;      # Désactiver DNSSEC si non nécessaire
+};
