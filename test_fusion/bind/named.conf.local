@@ -1,4 +1,9 @@
 zone "example.com" {
     type master;
-    file "/etc/bind/zones/example.com.db";  # Chemin du fichier de zone
+    file "/etc/bind/zones/db.example.com";
+};
+
+zone "128.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.10.128";
 };

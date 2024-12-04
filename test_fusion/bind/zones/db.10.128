@@ -8,4 +8,4 @@ $TTL    604800
 ;
         IN      NS      ns1.example.com.
 
-ns1     IN      A       10.128.10.11    # Adresse IP de votre serveur DNS
+11      IN      PTR     ns1.example.com.
