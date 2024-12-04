@@ -33,7 +33,6 @@
         dest: /etc/samba/smb.conf
 
     - name: "activation Bind9"
-      ansible.builtin.command:
       cmd: service named start
 
     - name: "activation samba"
