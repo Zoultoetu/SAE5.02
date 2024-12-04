@@ -24,7 +24,7 @@ services:
       - ./bind/named.conf.local:/etc/bind/named.conf.local
       - ./bind/named.conf.options:/etc/bind/named.conf.options
       - ./bind/zones:/etc/bind/zones
-      - ./bind/samba:/etc/samba
+      - ./samba:/etc/samba
     privileged: true
 
 networks:
