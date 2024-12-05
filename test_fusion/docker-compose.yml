@@ -23,10 +23,6 @@ services:
       - ./bind/named.conf:/etc/bind/named.conf
       - ./bind/named.conf.options:/etc/bind/named.conf.options
       - ./bind/zones:/etc/bind/zones
-      # - ./bind/db.local:/etc/bind/db.local
-      # - ./bind/db.127:/etc/bind/db.127
-      # - ./bind/db.0:/etc/bind/db.0
-      # - ./bind/db.255:/etc/bind/db.255
       - ./samba:/etc/samba
     privileged: true
 
