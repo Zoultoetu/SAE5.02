@@ -52,11 +52,11 @@
         group: root
         mode: '0755'
 
-    - name: Démarrer le service Samba
-      service:
-        name: smbd
-        state: started
-        enabled: true
+    # - name: Démarrer le service Samba
+    #   service:
+    #     name: smbd
+    #     state: started
+    #     enabled: true
 
     - name: Créer un utilisateur Samba
       command: smbpasswd -a root
