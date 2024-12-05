@@ -26,11 +26,11 @@
         src: ./bind/named.conf.options
         dest: /etc/bind/named.conf.options
 
-    - name: Copier les fichiers de zones DNS
-      copy:
-        src: ./bind/zones/
-        dest: /etc/bind/zones/
-        remote_src: yes
+    # - name: Copier les fichiers de zones DNS
+    #   copy:
+    #     src: ./bind/zones/
+    #     dest: /etc/bind/zones/
+    #     remote_src: yes
 
     - name: Redémarrer Bind9 pour appliquer les changements
       service:
