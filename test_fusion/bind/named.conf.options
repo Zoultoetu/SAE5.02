@@ -1,11 +1,14 @@
 options {
     directory "/var/cache/bind";
 
-    // Configurer les forwarders (DNS publics)
+    // Forwarders pour les requêtes externes
     forwarders {
         8.8.8.8;
         8.8.4.4;
     };
+
+    // Autoriser les requêtes de tous les clients
+    allow-query { any; };
 
     // Conformité avec RFC1035
     auth-nxdomain no;
@@ -14,6 +17,6 @@ options {
     listen-on { any; };
     listen-on-v6 { any; };
 
-    // Autoriser la récursivité pour localhost uniquement
-    //allow-recursion { 127.0.0.1; };
+    // Activer la récursivité pour les clients
+    recursion yes;
 };
