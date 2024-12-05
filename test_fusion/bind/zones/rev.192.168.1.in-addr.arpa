@@ -1,0 +1,12 @@
+$TTL 86400
+@    IN    SOA    zimbra.mondomaine.com. admin.mondomaine.com. (
+            2024010101  ; Numéro de série
+            28800       ; Refresh
+            3600        ; Retry
+            604800      ; Expiry
+            86400       ; Minimum TTL
+)
+
+; Enregistrements PTR (résolution inversée)
+@       IN    NS    zimbra.mondomaine.com.
+10      IN    PTR   zimbra.mondomaine.com.

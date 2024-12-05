@@ -1,0 +1,18 @@
+$TTL 86400
+@    IN    SOA    zimbra.mondomaine.com. admin.mondomaine.com. (
+            2024010101  ; Numéro de série (format AAAAMMJJNN)
+            28800       ; Refresh
+            3600        ; Retry
+            604800      ; Expiry
+            86400       ; Minimum TTL
+)
+
+; Enregistrements de base pour "mondomaine.com"
+@       IN    NS    zimbra.mondomaine.com.
+@       IN    MX    10 zimbra.mondomaine.com.
+@       IN    A     192.168.1.10
+zimbra   IN    A     192.168.1.10
+mail     IN    A     192.168.1.10
+
+; Alias (CNAME)
+www      IN    CNAME  zimbra
