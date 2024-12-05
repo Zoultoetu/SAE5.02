@@ -17,9 +17,10 @@ options {
         forwarders {
             8.8.8.8;
         };
-
+        tkey-gssapi-keytab "/var/lib/samba/bind-dns/dns.keytab";
         auth-nxdomain no;    # conform to RFC1035
         listen-on-v6 { any; };
         listen-on { any; };
         allow-recursion { 127.0.0.1;};
+        minimal-responses yes;
 };
