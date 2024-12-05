@@ -21,7 +21,7 @@ services:
         ipv4_address: 192.168.0.2
     volumes:
       - ./bind/named.conf:/etc/bind/named.conf
-      # - ./bind/named.conf.options:/etc/bind/named.conf.options
+      - ./bind/named.conf.options:/etc/bind/named.conf.options
       - ./bind/zones:/etc/bind/zones
       # - ./bind/db.local:/etc/bind/db.local
       # - ./bind/db.127:/etc/bind/db.127
