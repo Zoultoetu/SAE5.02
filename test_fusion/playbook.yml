@@ -20,10 +20,10 @@
         src: ./bind/named.conf
         dest: /etc/bind/named.conf
 
-    # - name: Copier les fichiers de zones DNS
-    #   copy:
-    #     src: ./bind/zones/db.example.com
-    #     dest: /var/lib/bind/db.example.com
+    - name: Copier les fichiers de zones DNS
+      copy:
+        src: ./bind/zones/db.example.com
+        dest: /var/lib/bind/db.example.com
 
 
     # Étape 3 : Configuration de Samba
