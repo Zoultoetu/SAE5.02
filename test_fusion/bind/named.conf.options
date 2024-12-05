@@ -9,6 +9,8 @@ options {
     auth-nxdomain no;
     listen-on-v6 { any; };
     recursion yes;
+    listen-on { any; };  # Accepter les connexions sur toutes les interfaces
+    allow-query { any; };  # Autoriser toutes les requêtes
 };
 logging {
     channel default_debug {
