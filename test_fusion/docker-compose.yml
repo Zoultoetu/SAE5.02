@@ -22,7 +22,7 @@ services:
     volumes:
       - ./bind/named.conf:/etc/bind/named.conf
       - ./bind/named.conf.local:/etc/bind/named.conf.local
-      - ./bind/named.conf.options:/etc/bind/named.conf.options
+      # - ./bind/named.conf.options:/etc/bind/named.conf.options
       - ./bind/zones:/etc/bind/zones
       - ./samba:/etc/samba
     privileged: true

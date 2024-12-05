@@ -1,13 +1,11 @@
-$ttl 1H
-exemple.com.          IN      SOA     ksxxxxx.kimsufi.com. email@example.com. (
-                                        2011041902 ; Serial
-                                        1H ; Refresh
-                                        15M ; Retry
-                                        2W ; Expire
-                                        3M ; Minimum TTL
-                                        )
-exemple.com.  IN      NS              ksxxxxx.kimsufi.com.
-exemple.com.  IN      NS              ns.kimsufi.com.
-exemple.com.  IN      MX              10 mail.exemple.com.
-exemple.com.  IN      A               111.222.111.222
-mail          IN      A               111.222.111.222
+$TTL    604800
+@       IN      SOA     ns.mysite.lan. root.mysite.lan. (
+                        2           ; Serial
+                        604800      ; Refresh
+                        86400       ; Retry
+                        2419200     ; Expire
+                        604800 )    ; Negative Cache TTL
+;
+@       IN      NS      ns.mysite.lan.
+ns      IN      A       192.168.1.10
+www     IN      A       192.168.1.100
