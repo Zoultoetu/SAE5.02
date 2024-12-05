@@ -24,3 +24,7 @@ options {
         allow-recursion { 127.0.0.1;};
         minimal-responses yes;
 };
+controls {
+    inet 127.0.0.1 port 953 allow { 127.0.0.1; } keys { "rndc-key"; };
+};
+include "/etc/bind/rndc.key";

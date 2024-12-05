@@ -17,18 +17,18 @@ docker-compose up -d --build
 # Étape 3 : Pause pour s'assurer que le conteneur est prêt
 echo "=== Attente du démarrage du conteneur ==="
 sleep 10
+
 # Étape 4 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
 cd ../..
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
 
+# Étape 5 : Démarrage des services
 echo "=== Démarrage des services Bind9 et Samba ==="
-    docker exec -it dns_ad service named start
-    docker exec -it dns_ad service smbd start
+docker exec -it dns_ad service bind9 start
+docker exec -it dns_ad service smbd start
 
-# docker stop dns_ad
-# docker start dns_ad
-
+# Étape 6 : Configuration des fuseaux horaires
 echo "Europe/Paris" > /etc/timezone
 dpkg-reconfigure --frontend noninteractive tzdata
 

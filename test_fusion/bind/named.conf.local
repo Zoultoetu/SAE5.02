@@ -1,5 +1,11 @@
 zone "mysite.lan" {
-	type master;
-	file "/etc/bind/db.mysite.lan";
+    type master;
+    file "/etc/bind/zones/db.mysite.lan";
+    allow-update { key "rndc-key"; }; # Permet les mises à jour DNS par Samba
 };
 
+zone "1.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/rev.192.168.1.in-addr.arpa";
+    allow-update { key "rndc-key"; };
+};

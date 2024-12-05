@@ -2,7 +2,7 @@
   hosts: all
   
   tasks:
-    # Étape 1 : Mise à jour du système et installation des paquets nécessaires
+    # Mise à jour des paquets
     - name: Mise à jour des paquets
       apt:
         update_cache: yes
@@ -12,35 +12,57 @@
         name:
           - bind9
           - samba
+          - smbclient
         state: present
 
-    # Étape 2 : Configuration de Bind9
+    # Configuration de Bind9
     - name: Copier la configuration de Bind9
       copy:
         src: ./bind/named.conf
         dest: /etc/bind/named.conf
 
-    # - name: Copier les fichiers de zones DNS
-    #   copy:
-    #     src: ./bind/zones/db.example.com
-    #     dest: /var/lib/bind/db.example.com
+    - name: Copier les options de configuration de Bind9
+      copy:
+        src: ./bind/named.conf.options
+        dest: /etc/bind/named.conf.options
 
+    - name: Copier les fichiers de zones DNS
+      copy:
+        src: ./bind/zones/
+        dest: /etc/bind/zones/
+        remote_src: yes
 
-    # Étape 3 : Configuration de Samba
+    - name: Redémarrer Bind9 pour appliquer les changements
+      service:
+        name: bind9
+        state: restarted
+
+    # Configuration de Samba
     - name: Copier la configuration de Samba
       copy:
         src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
-    # - name: "Démarrage du service Bind9 avec service"
-    #   shell: "service named start"
-    #   become: true
+    - name: Créer le répertoire Sysvol pour Samba
+      file:
+        path: /var/lib/samba/sysvol
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
 
+    - name: Démarrer le service Samba
+      service:
+        name: smbd
+        state: started
+        enabled: true
 
-    # - name: "activation samba"
-    #   service:
-    #     name: "smbd"
-    #     state: "started"
-    #     enabled: true
-    #     use: "service"
-  
+    - name: Créer un utilisateur Samba
+      command: smbpasswd -a root
+      args:
+        creates: /etc/samba/private/smbpasswd
+
+    - name: Redémarrer le service Samba
+      service:
+        name: smbd
+        state: restarted

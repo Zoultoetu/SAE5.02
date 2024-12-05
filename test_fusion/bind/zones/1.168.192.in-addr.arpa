@@ -1,0 +1,16 @@
+$TTL    86400
+@       IN      SOA     dns.mysite.lan. admin.mysite.lan. (
+                2024010101 ; Serial (année/mois/jour/numéro de révision)
+                7200       ; Refresh (2 heures)
+                3600       ; Retry (1 heure)
+                1209600    ; Expire (14 jours)
+                86400      ; Negative Cache TTL (1 jour)
+)
+
+        IN      NS      dns.mysite.lan.   ; Serveur de noms principal
+
+; Entrées pour la résolution inverse
+2       IN      PTR     dns.mysite.lan.  ; 192.168.1.2 -> dns.mysite.lan
+10      IN      PTR     server.mysite.lan.  ; 192.168.1.10 -> server.mysite.lan
+20      IN      PTR     pc01.mysite.lan. ; 192.168.1.20 -> pc01.mysite.lan
+30      IN      PTR     pc02.mysite.lan. ; 192.168.1.30 -> pc02.mysite.lan
