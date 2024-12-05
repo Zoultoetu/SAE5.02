@@ -32,11 +32,11 @@
     #     dest: /etc/bind/zones/
     #     remote_src: yes
 
-    - name: Redémarrer Bind9 pour appliquer les changements
-      service:
-        use : service
-        name: named
-        state: restarted
+    # - name: Redémarrer Bind9 pour appliquer les changements
+    #   service:
+    #     use : service
+    #     name: named
+    #     state: restarted
 
     # Configuration de Samba
     - name: Copier la configuration de Samba
@@ -63,8 +63,8 @@
       args:
         creates: /etc/samba/private/smbpasswd
 
-    - name: Redémarrer le service Samba
-      service:
-        use : service
-        name: smbd
-        state: restarted
+    # - name: Redémarrer le service Samba
+    #   service:
+    #     use : service
+    #     name: smbd
+    #     state: restarted
