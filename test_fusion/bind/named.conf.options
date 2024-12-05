@@ -11,9 +11,9 @@ options {
     auth-nxdomain no;
 
     // Écouter sur toutes les interfaces (IPv4 et IPv6)
-    //listen-on { any; };
-    //listen-on-v6 { any; };
+    listen-on { any; };
+    listen-on-v6 { any; };
 
     // Autoriser la récursivité pour localhost uniquement
-    allow-recursion { 127.0.0.1; };
+    //allow-recursion { 127.0.0.1; };
 };
