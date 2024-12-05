@@ -1,22 +1,19 @@
 options {
-        directory "/var/cache/bind";
+    directory "/var/cache/bind";
 
-        // If there is a firewall between you and nameservers you want
-        // to talk to, you may need to fix the firewall to allow multiple
-        // ports to talk.  See http://www.kb.cert.org/vuls/id/800113
+    // Configurer les forwarders (DNS publics)
+    forwarders {
+        8.8.8.8;
+        8.8.4.4;
+    };
 
-        // If your ISP provided one or more IP addresses for stable
-        // nameservers, you probably want to use them as forwarders.
-        // Uncomment the following block, and insert the addresses replacing
-        // the all-0's placeholder.
+    // Conformité avec RFC1035
+    auth-nxdomain no;
 
-        // forwarders {
-        //      8.8.8.8;
-                8.8.4.4;
-        // };
+    // Écouter sur toutes les interfaces (IPv4 et IPv6)
+    listen-on { any; };
+    listen-on-v6 { any; };
 
-        auth-nxdomain no;    # conform to RFC1035
-        listen-on-v6 { any; };
-        listen-on { any; };
-        allow-recursion { 127.0.0.1;};
+    // Autoriser la récursivité pour localhost uniquement
+    allow-recursion { 127.0.0.1; };
 };
