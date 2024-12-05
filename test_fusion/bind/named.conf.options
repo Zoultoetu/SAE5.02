@@ -2,17 +2,17 @@ options {
     directory "/var/cache/bind";
 
     // Configurer les forwarders (DNS publics)
-    //forwarders {
-    //    8.8.8.8;
-    //    8.8.4.4;
-    //};
+    forwarders {
+        8.8.8.8;
+        8.8.4.4;
+    };
 
     // Conformité avec RFC1035
     auth-nxdomain no;
 
     // Écouter sur toutes les interfaces (IPv4 et IPv6)
-    listen-on { any; };
-    listen-on-v6 { any; };
+    //listen-on { any; };
+    //listen-on-v6 { any; };
 
     // Autoriser la récursivité pour localhost uniquement
     allow-recursion { 127.0.0.1; };
