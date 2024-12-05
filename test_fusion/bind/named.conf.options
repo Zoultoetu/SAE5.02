@@ -1,6 +1,8 @@
 options {
     directory "/var/cache/bind";
 
+    query-source address * port 53;
+
     // Forwarders pour les requêtes externes
     forwarders {
         8.8.8.8;
@@ -16,7 +18,4 @@ options {
     // Écouter sur toutes les interfaces (IPv4 et IPv6)
     listen-on { any; };
     listen-on-v6 { any; };
-
-    // Activer la récursivité pour les clients
-    recursion yes;
 };
