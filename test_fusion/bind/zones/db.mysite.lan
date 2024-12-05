@@ -1,10 +1,10 @@
 $TTL    86400
 @       IN      SOA         localhost   root.mysite.lan. (
-                2           ;   Serial
-                7200        ;   Refresh 
-                1800        ;   Retry
-                10000       ;   Expire
-                3600        ;   Negative Cache TTL
+                2           ;           Serial
+                7200        ;           Refresh 
+                1800        ;           Retry
+                10000       ;           Expire
+                3600        ;           Negative Cache TTL
 )
         IN      NS      dns.mysite.lan.
 dns_ad  IN      A      192.168.0.2

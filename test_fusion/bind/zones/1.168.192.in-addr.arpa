@@ -9,7 +9,6 @@ $TTL    86400
 
         IN      NS      dns.mysite.lan.   ; Serveur de noms principal
 
-; Entrées pour la résolution inverse
 2       IN      PTR     dns.mysite.lan.  ; 192.168.1.2 -> dns.mysite.lan
 10      IN      PTR     server.mysite.lan.  ; 192.168.1.10 -> server.mysite.lan
 20      IN      PTR     pc01.mysite.lan. ; 192.168.1.20 -> pc01.mysite.lan
