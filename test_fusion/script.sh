@@ -21,6 +21,7 @@ sleep 10
 # Étape 4 : Exécution du playbook Ansible
 echo "=== Configuration des services avec Ansible ==="
 cd ../..
+pwd
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
 
 # Étape 5 : Démarrage des services
