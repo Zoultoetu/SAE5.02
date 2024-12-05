@@ -22,7 +22,7 @@ services:
     volumes:
       - ./bind/named.conf:/etc/bind/named.conf
       - ./bind/named.conf.options:/etc/bind/named.conf.options
-      - ./bind/zones:/etc/bind/zones
+      - ./bind/zones:/etc/bind
       - ./samba/smb.conf:/etc/samba/smb.conf
       - /var/lib/samba:/var/lib/samba   # Volume pour persister les données Samba
       - /var/cache/bind:/var/cache/bind
