@@ -2,10 +2,10 @@ options {
     directory "/var/cache/bind";
 
     // Configurer les forwarders (DNS publics)
-    forwarders {
-        8.8.8.8;
-        8.8.4.4;
-    };
+    //forwarders {
+    //    8.8.8.8;
+    //    8.8.4.4;
+    //};
 
     // Conformité avec RFC1035
     auth-nxdomain no;
