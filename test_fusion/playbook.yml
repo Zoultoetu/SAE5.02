@@ -185,6 +185,7 @@
 
     - name: Démarrer et activer les services nécessaires
       service:
+        use : service
         name: "{{ item }}"
         state: started
         enabled: true
