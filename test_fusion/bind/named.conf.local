@@ -14,5 +14,5 @@ zone "mysite.lan" {
 
 zone "0.168.192.in-addr.arpa" {
     type master;
-    file "/etc/bind/zones/db.0.168.192";
+    file "/etc/bind/zones/db.1.168.192";
 };
