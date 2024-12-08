@@ -128,7 +128,7 @@
 
     - name: Copier la configuration de Samba
       template:
-        src: ./samba/smb.conf.j2
+        src: ./samba/smb.conf
         dest: /etc/samba/smb.conf
 
     - name: Copier la configuration de Kerberos
