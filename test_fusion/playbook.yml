@@ -173,7 +173,7 @@
         state: restarted
       with_items:
         - samba-ad-dc
-        - bind9
+        - named
 
     - name: Vérifier le provisionnement
       command: samba-tool domain info 127.0.0.1
