@@ -52,10 +52,13 @@
         state: restarted
 
     # === Configuration de Samba ===
-    - name: Copier le fichier de configuration de Samba
-      copy:
-        src: ./samba/smb.conf
+    - name: Générer le fichier smb.conf à partir du modèle Jinja2
+      template:
+        src: ./samba/smb.conf.j2
         dest: /etc/samba/smb.conf
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Créer le répertoire Sysvol pour Samba
       file:
@@ -65,10 +68,10 @@
         group: root
         mode: '0755'
 
-    - name: Démarrer le service Samba
+    - name: Démarrer ou redémarrer le service Samba
       service:
         name: smbd
-        state: started
+        state: restarted
 
     - name: Créer un utilisateur Samba
       command: smbpasswd -a root

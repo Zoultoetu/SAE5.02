@@ -1,15 +1,21 @@
 [global]
    workgroup = {{ samba_workgroup }}
-   realm = {{ realm }}
-   netbios name = DC01
-   server role = active directory domain controller
-   dns forwarder = 8.8.8.8
-   idmap_ldb:use rfc2307 = yes
+   server string = Samba Server Version %v
+   netbios name = {{ inventory_hostname }}
+   security = user
+   map to guest = bad user
+   dns proxy = no
+   log file = /var/log/samba/log.%m
+   max log size = 50
 
-[netlogon]
-   path = /var/lib/samba/sysvol/{{ domain }}/scripts
-   read only = No
+[homes]
+   comment = Home Directories
+   browseable = no
+   writable = yes
 
-[sysvol]
-   path = /var/lib/samba/sysvol
-   read only = No
+[public]
+   path = /srv/samba/public
+   public = yes
+   writable = yes
+   comment = Public Share
+   printable = no
