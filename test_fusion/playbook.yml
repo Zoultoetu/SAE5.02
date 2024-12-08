@@ -1,8 +1,9 @@
-
 - name: Configuration complète des services DNS, Samba et synchronisation NTP
   hosts: all
   become: true
-
+  vars:
+    samba_username: "root"
+    samba_password: "root"  # Assure-toi de mettre un mot de passe sécurisé
   tasks:
     # === Mise à jour des paquets ===
     - name: Mettre à jour la liste des paquets
@@ -73,16 +74,25 @@
         name: smbd
         state: restarted
 
-    - name: Créer un utilisateur Samba
-      command: smbpasswd -a root
-      args:
-        stdin: yes
-      vars:
-        ansible_become: true
-      stdin: |
-        root
-        root
+    # === Création d'un utilisateur Samba avec un mot de passe ===
+    - name: Créer un utilisateur local système
+      user:
+        name: "{{ samba_username }}"
+        state: present
+        shell: /bin/bash
+        password: "{{ samba_password | password_hash('sha512') }}"
+        update_password: on_create
 
+    - name: Ajouter l'utilisateur à Samba
+      samba_user:
+        name: "{{ samba_username }}"
+        password: "{{ samba_password }}"
+        state: present
+
+    - name: Activer l'utilisateur Samba
+      command: smbpasswd -e "{{ samba_username }}"
+      notify:
+        - Redémarrer Samba
 
     # === Synchronisation NTP ===
     - name: Installer ntpdate (si manquant)
@@ -98,3 +108,8 @@
       debug:
         msg: "{{ ntp_sync_result.stdout }}"
 
+  handlers:
+    - name: Redémarrer Samba
+      service:
+        name: smbd
+        state: restarted
