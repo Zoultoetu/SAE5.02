@@ -7,9 +7,9 @@ options {
     allow-query { any; };
 };
 
-zone "example.com" {
+zone "mysite.lan" {
     type master;
-    file "/etc/bind/zones/db.example.com";
+    file "/etc/bind/zones/db.mysite.lan";
 };
 
 zone "0.168.192.in-addr.arpa" {
