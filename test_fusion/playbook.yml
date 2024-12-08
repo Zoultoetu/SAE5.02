@@ -74,9 +74,10 @@
         state: restarted
 
     - name: Créer un utilisateur Samba
-      command: smbpasswd -a root
-      args:
-        creates: /etc/samba/private/smbpasswd
+      community.general.samba_user:
+        name: root
+        password: "{{ samba_root_password }}"
+        state: present
 
     # === Synchronisation NTP ===
     - name: Installer ntpdate (si manquant)
