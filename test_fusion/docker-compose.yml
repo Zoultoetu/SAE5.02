@@ -19,8 +19,8 @@ services:
     networks:
       shared_net:
         ipv4_address: 192.168.0.2
-    volumes:
-      - ./bind/named.conf:/etc/bind/named.conf
+    # volumes:
+      #  - ./bind/named.conf:/etc/bind/named.conf
       # - ./bind/named.conf.options:/etc/bind/named.conf.options
       # - ./bind/zones:/etc/bind
       # - ./samba/smb.conf:/etc/samba/smb.conf
