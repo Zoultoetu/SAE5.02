@@ -9,7 +9,4 @@ $TTL    86400
 
         IN      NS      dns.mysite.lan.   ; Serveur de noms principal
 
-2       IN      PTR     dns.mysite.lan.  ; 192.168.1.2 -> dns.mysite.lan
-10      IN      PTR     server.mysite.lan.  ; 192.168.1.10 -> server.mysite.lan
-20      IN      PTR     pc01.mysite.lan. ; 192.168.1.20 -> pc01.mysite.lan
-30      IN      PTR     pc02.mysite.lan. ; 192.168.1.30 -> pc02.mysite.lan
+dns_ad  IN      A      192.168.0.2

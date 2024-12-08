@@ -21,10 +21,10 @@
         src: ./bind/named.conf
         dest: /etc/bind/named.conf
 
-    - name: Copier les options de configuration de Bind9
-      copy:
-        src: ./bind/named.conf.options
-        dest: /etc/bind/named.conf.options
+    # - name: Copier les options de configuration de Bind9
+    #   copy:
+    #     src: ./bind/named.conf.options
+    #     dest: /etc/bind/named.conf.options
 
     # - name: Copier les fichiers de zones DNS
     #   copy:
