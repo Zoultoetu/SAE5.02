@@ -59,10 +59,9 @@
 
     - name: Démarrer le service Samba
       service:
-        name: "smdb"
-        state: "started"
-        enabled: true
-        use: "service"
+        name: smdb
+        state: started
+        use: service
 
     - name: Créer un utilisateur Samba
       command: smbpasswd -a root
