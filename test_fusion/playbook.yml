@@ -17,6 +17,15 @@
         state: present
 
     # Configuration de Bind9
+    - name: Créer le répertoire Sysvol pour Bind
+      file:
+        path: /var/lib/bind/sysvol
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+
     - name: Copier la configuration de Bind9
       copy:
         src: ./bind/named.conf
