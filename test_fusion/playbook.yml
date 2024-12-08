@@ -78,8 +78,8 @@
 
     - name: Ajouter l'utilisateur à Samba
       samba_user:
-        name: "{{ samba_username }}"
-        password: "{{ samba_password }}"
+        name: root
+        password: root
         state: present
 
     # === Synchronisation NTP ===
