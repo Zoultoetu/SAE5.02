@@ -157,11 +157,15 @@
 
 
     - name: Provisionner le domaine Samba (non interactif)
-      command:
-        cmd: samba-tool domain provision --use-rfc2307 --realm=EXAMPLE.COM --domain=EXAMPLE --server-role=dc --dns-backend=SAMBA_INTERNAL --adminpass=root
+      command: >
+        samba-tool domain provision
+        --use-rfc2307
+        --realm=EXAMPLE.COM
+        --domain=EXAMPLE
+        --server-role=dc
+        --dns-backend=SAMBA_INTERNAL
+        --adminpass=root
       become: true
-
-
 
 
     - name: Démarrer et activer les services nécessaires
