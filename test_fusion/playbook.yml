@@ -31,8 +31,11 @@
         state: present
 
     # Synchronisation de l'heure
-    - name: Synchroniser l'heure avec NTP
-      command: ntpdate -u pool.ntp.org
+    - name: Installer ntpdate
+      apt:
+        name: ntpdate
+        state: present
+
 
     # Configuration de Kerberos
     - name: Configurer Kerberos
