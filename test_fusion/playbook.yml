@@ -156,17 +156,16 @@
         dest: /etc/krb5.conf
 
 
-    - name: Exécuter la commande samba-tool domain provision
-      ansible.builtin.expect:
-        command: samba-tool domain provision --use-rfc2307 --interactive
-        responses:
-          'Realm': 'EXAMPLE.COM'
-          'Domain': 'EXAMPLE'
-          'Server Role': 'dc'
-          'DNS backend': 'SAMBA_INTERNAL'
-          'Administrator password': 'root'
-          'Retype password': 'root'
+    - name: Provisionner le domaine Samba (non interactif)
+      command:
+        cmd: samba-tool domain provision --use-rfc2307 \
+              --realm=EXAMPLE.COM \
+              --domain=EXAMPLE \
+              --server-role=dc \
+              --dns-backend=SAMBA_INTERNAL \
+              --adminpass=VotreMotDePasseAdmin
       become: true
+
 
 
 
