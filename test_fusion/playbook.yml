@@ -30,7 +30,7 @@
       copy:
         src: ./bind/zones/
         dest: /etc/bind/zones/
-        remote_src: yes
+        # remote_src: yes
 
     # - name: Redémarrer Bind9 pour appliquer les changements
     #   service:
