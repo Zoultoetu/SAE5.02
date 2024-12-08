@@ -15,7 +15,7 @@
           - smbclient
           - nano
           - ntpdate
-          - krb5-clients
+          - krb5-kdc
         state: present
 
     # Configuration de Bind9
