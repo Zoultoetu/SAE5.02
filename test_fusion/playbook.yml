@@ -21,8 +21,6 @@
           - krb5-kdc
           - krb5-admin-server
         state: present
-      collections:
-        - community.general
 
     # === Configuration de Bind9 ===
     - name: Créer le répertoire Sysvol pour Bind9
@@ -76,10 +74,15 @@
         state: restarted
 
     - name: Créer un utilisateur Samba
-      community.general.samba_user:
-        name: root
-        password: "{{ samba_root_password }}"
-        state: present
+      command: smbpasswd -a root
+      args:
+        stdin: yes
+      vars:
+        ansible_become: true
+      stdin: |
+        root
+        root
+
 
     # === Synchronisation NTP ===
     - name: Installer ntpdate (si manquant)
