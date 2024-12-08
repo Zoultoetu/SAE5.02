@@ -105,6 +105,23 @@
 #         state: restarted
 
   tasks:
+  # === Mise à jour des paquets ===
+    - name: Mettre à jour la liste des paquets
+      apt:
+        update_cache: yes
+
+    # === Installation des paquets nécessaires ===
+    - name: Installer les paquets requis
+      apt:
+        name:
+          - bind9
+          - samba
+          - smbclient
+          - nano
+          - ntpdate
+          - krb5-kdc
+          - krb5-admin-server
+        state: present
     - name: Copier la configuration principale de Bind9
       copy:
         src: ./bind/named.conf
