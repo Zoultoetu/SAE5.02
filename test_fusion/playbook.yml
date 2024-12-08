@@ -21,6 +21,8 @@
           - krb5-kdc
           - krb5-admin-server
         state: present
+      collections:
+        - community.general
 
     # === Configuration de Bind9 ===
     - name: Créer le répertoire Sysvol pour Bind9
