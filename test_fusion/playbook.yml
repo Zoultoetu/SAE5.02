@@ -31,12 +31,16 @@
         src: ./bind/zones/
         dest: /etc/bind/zones/
         # remote_src: yes
+    - name: Copier les options de configuration de Samba
+      copy:
+        src: ./samba/smb.conf
+        dest: /etc/samba/smb.conf
 
-    # - name: Redémarrer Bind9 pour appliquer les changements
-    #   service:
-    #     use : service
-    #     name: named
-    #     state: restarted
+    - name: Redémarrer Bind9 pour appliquer les changements
+      service:
+        use : service
+        name: named
+        state: restarted
 
     # Configuration de Samba
     - name: Copier la configuration de Samba
