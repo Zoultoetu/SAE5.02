@@ -4,6 +4,8 @@
   vars:
     samba_username: "root"
     samba_password: "root"  # Assure-toi de mettre un mot de passe sécurisé
+  collections:
+    - community.general
   tasks:
     # === Mise à jour des paquets ===
     - name: Mettre à jour la liste des paquets
@@ -76,8 +78,8 @@
 
     # === Création d'un utilisateur Samba avec un mot de passe ===
 
-    - name: Ajouter l'utilisateur à Samba
-      samba_user:
+    - name: Créer un utilisateur Samba
+      community.general.samba_user:
         name: root
         password: root
         state: present
