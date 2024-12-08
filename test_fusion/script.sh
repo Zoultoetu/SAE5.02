@@ -22,7 +22,7 @@ sleep 10
 echo "=== Configuration des services avec Ansible ==="
 cd ../..
 pwd
-ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml"
+ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml" -vvv
 
 # Étape 5 : Démarrage des services
 echo "=== Démarrage des services Bind9 et Samba ==="
