@@ -16,6 +16,7 @@
           - nano
           - ntpdate
           - krb5-kdc
+          - krb5-admin-server
         state: present
 
     # Configuration de Bind9
