@@ -28,14 +28,12 @@
           - krb5-admin-server
           - ntp
           - nano
+          - ntpdate
         state: present
 
     # Synchronisation de l'heure
-    - name: Installer ntpdate
-      apt:
-        name: ntpdate
-        state: present
-
+    - name: Synchroniser l'heure avec NTP
+      command: ntpdate -u pool.ntp.org
 
     # Configuration de Kerberos
     - name: Configurer Kerberos
