@@ -1,87 +1,130 @@
-- name: Configuration des services DNS et Samba
+- name: Configuration de Samba AD et Kerberos
   hosts: all
-  
+  become: true
+
+  vars:
+    realm: EXAMPLE.COM
+    domain: example.com
+    kdc_primary: kdc01.example.com
+    kdc_secondary: kdc02.example.com
+    admin_user: steve
+    admin_instance: admin
+    samba_password: "SambaADStrongPassword"
+
   tasks:
     # Mise à jour des paquets
     - name: Mise à jour des paquets
       apt:
         update_cache: yes
 
-    - name: Installer Bind9 et Samba
+    # Installation des paquets requis
+    - name: Installer les paquets nécessaires
       apt:
         name:
           - bind9
           - samba
           - smbclient
-          - nano
-          - ntpdate
           - krb5-kdc
           - krb5-admin-server
+          - ntp
+          - nano
         state: present
 
-    # Configuration de Bind9
-    - name: Créer le répertoire Sysvol pour Bind
-      file:
-        path: /var/lib/bind/sysvol
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
+    # Synchronisation de l'heure
+    - name: Synchroniser l'heure avec NTP
+      command: ntpdate -u pool.ntp.org
 
+    # Configuration de Kerberos
+    - name: Configurer Kerberos
+      copy:
+        content: |
+          [libdefaults]
+              default_realm = {{ realm }}
+              dns_lookup_realm = false
+              dns_lookup_kdc = true
 
-    - name: Copier la configuration de Bind9
+          [realms]
+              {{ realm }} = {
+                  kdc = {{ kdc_primary }}
+                  admin_server = {{ kdc_primary }}
+              }
+
+          [domain_realm]
+              .{{ domain }} = {{ realm }}
+              {{ domain }} = {{ realm }}
+        dest: /etc/krb5.conf
+
+    # Initialiser le KDC principal
+    - name: Initialiser le domaine Kerberos
+      command: krb5_newrealm
+      args:
+        creates: /etc/krb5kdc/principal
+
+    # Création de l'utilisateur administrateur dans Kerberos
+    - name: Créer un principal Kerberos pour l'administrateur
+      shell: |
+        echo -e "{{ samba_password }}\n{{ samba_password }}" | kadmin.local addprinc {{ admin_user }}/{{ admin_instance }}@{{ realm }}
+      args:
+        creates: /etc/krb5kdc/kadm5.acl
+
+    - name: Configurer les ACL pour l'administrateur Kerberos
+      copy:
+        content: "{{ admin_user }}/{{ admin_instance }}@{{ realm }} *"
+        dest: /etc/krb5kdc/kadm5.acl
+
+    - name: Redémarrer les services Kerberos
+      service:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - krb5-kdc
+        - krb5-admin-server
+
+    # Configuration de Samba comme contrôleur de domaine
+    - name: Configurer Samba en tant que contrôleur de domaine
+      shell: |
+        echo -e "{{ samba_password }}\n{{ samba_password }}" | samba-tool domain provision --realm={{ realm }} --domain={{ domain | upper }} --server-role=dc
+      args:
+        creates: /var/lib/samba/private/sam.ldb
+
+    # Configuration DNS pour Samba
+    - name: Configurer Bind9 pour Samba
       copy:
         src: ./bind/named.conf
         dest: /etc/bind/named.conf
-
-    - name: Copier les options de configuration de Bind9
-      copy:
-        src: ./bind/named.conf.options
-        dest: /etc/bind/named.conf.options
 
     - name: Copier les fichiers de zones DNS
       copy:
         src: ./bind/zones/
         dest: /etc/bind/zones/
-        # remote_src: yes
-    - name: Copier les options de configuration de Samba
-      copy:
-        src: ./samba/smb.conf
-        dest: /etc/samba/smb.conf
 
-    - name: Redémarrer Bind9 pour appliquer les changements
+    - name: Redémarrer Bind9
       service:
-        use : service
-        name: named
+        name: bind9
         state: restarted
 
-    # Configuration de Samba
-    - name: Copier la configuration de Samba
-      copy:
-        src: ./samba/smb.conf
-        dest: /etc/samba/smb.conf
-
-    - name: Créer le répertoire Sysvol pour Samba
-      file:
-        path: /var/lib/samba/sysvol
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
-
-    - name: Démarrer le service Samba
+    # Démarrage des services Samba
+    - name: Démarrer les services Samba
       service:
-        name: smdb
+        name: "{{ item }}"
         state: started
-        use: service
+      loop:
+        - smbd
+        - nmbd
+        - winbind
 
-    - name: Créer un utilisateur Samba
-      command: smbpasswd -a root
-      args:
-        creates: /etc/samba/private/smbpasswd
+    # Tester l'accès Kerberos
+    - name: Tester l'authentification Kerberos
+      shell: kinit {{ admin_user }}/{{ admin_instance }}@{{ realm }}
+      register: kerberos_test
+      ignore_errors: true
 
-    # - name: Redémarrer le service Samba
-    #   service:
-    #     use : service
-    #     name: smbd
-    #     state: restarted
+    - name: Vérifier les tickets Kerberos
+      shell: klist
+      register: kerberos_tickets
+      ignore_errors: true
+
+    - debug:
+        msg: 
+          - "Test d'authentification Kerberos : {{ kerberos_test }}"
+          - "Tickets Kerberos : {{ kerberos_tickets.stdout_lines }}"
