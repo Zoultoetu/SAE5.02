@@ -1,0 +1,8 @@
+# Variables pour Samba
+samba_workgroup: EXAMPLE
+samba_realm: EXAMPLE.COM
+samba_netbios_name: DC01
+
+# Variables pour Bind9
+bind_zone_direct: example.com
+bind_zone_reverse: 0.168.192.in-addr.arpa

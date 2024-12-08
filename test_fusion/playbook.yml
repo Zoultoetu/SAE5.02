@@ -6,100 +6,141 @@
     samba_password: "root"  # Assure-toi de mettre un mot de passe sécurisé
   collections:
     - community.general
+#   tasks:
+#     # === Mise à jour des paquets ===
+#     - name: Mettre à jour la liste des paquets
+#       apt:
+#         update_cache: yes
+
+#     # === Installation des paquets nécessaires ===
+#     - name: Installer les paquets requis
+#       apt:
+#         name:
+#           - bind9
+#           - samba
+#           - smbclient
+#           - nano
+#           - ntpdate
+#           - krb5-kdc
+#           - krb5-admin-server
+#         state: present
+
+#     # === Configuration de Bind9 ===
+#     - name: Créer le répertoire Sysvol pour Bind9
+#       file:
+#         path: /var/lib/bind/sysvol
+#         state: directory
+#         owner: root
+#         group: root
+#         mode: '0755'
+
+#     - name: Copier le fichier de configuration principal de Bind9
+#       copy:
+#         src: ./bind/named.conf
+#         dest: /etc/bind/named.conf
+
+#     - name: Copier les options de configuration de Bind9
+#       copy:
+#         src: ./bind/named.conf.options
+#         dest: /etc/bind/named.conf.options
+
+#     - name: Copier les fichiers des zones DNS
+#       copy:
+#         src: ./bind/zones/
+#         dest: /etc/bind/zones/
+
+#     - name: Redémarrer le service Bind9
+#       service:
+#         name: named
+#         state: restarted
+
+#     # === Configuration de Samba ===
+#     - name: Générer le fichier smb.conf à partir du modèle Jinja2
+#       template:
+#         src: ./samba/smb.conf.j2
+#         dest: /etc/samba/smb.conf
+#         owner: root
+#         group: root
+#         mode: '0644'
+
+#     - name: Créer le répertoire Sysvol pour Samba
+#       file:
+#         path: /var/lib/samba/sysvol
+#         state: directory
+#         owner: root
+#         group: root
+#         mode: '0755'
+
+#     - name: Démarrer ou redémarrer le service Samba
+#       service:
+#         name: smbd
+#         state: restarted
+
+#     # === Création d'un utilisateur Samba avec un mot de passe ===
+
+#     - name: Créer un utilisateur Samba
+#       community.general.samba_user:
+#         name: root
+#         password: root
+#         # state: present
+
+#     # === Synchronisation NTP ===
+#     - name: Installer ntpdate (si manquant)
+#       apt:
+#         name: ntpdate
+#         state: present
+
+#     - name: Synchroniser l'heure avec un serveur NTP
+#       command: ntpdate -u pool.ntp.org
+#       register: ntp_sync_result
+
+#     - name: Afficher le résultat de la synchronisation NTP
+#       debug:
+#         msg: "{{ ntp_sync_result.stdout }}"
+
+#   handlers:
+#     - name: Redémarrer Samba
+#       service:
+#         name: smbd
+#         state: restarted
+
   tasks:
-    # === Mise à jour des paquets ===
-    - name: Mettre à jour la liste des paquets
-      apt:
-        update_cache: yes
-
-    # === Installation des paquets nécessaires ===
-    - name: Installer les paquets requis
-      apt:
-        name:
-          - bind9
-          - samba
-          - smbclient
-          - nano
-          - ntpdate
-          - krb5-kdc
-          - krb5-admin-server
-        state: present
-
-    # === Configuration de Bind9 ===
-    - name: Créer le répertoire Sysvol pour Bind9
-      file:
-        path: /var/lib/bind/sysvol
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
-
-    - name: Copier le fichier de configuration principal de Bind9
+    - name: Copier la configuration principale de Bind9
       copy:
         src: ./bind/named.conf
         dest: /etc/bind/named.conf
 
-    - name: Copier les options de configuration de Bind9
+    - name: Copier les options globales de Bind9
       copy:
         src: ./bind/named.conf.options
         dest: /etc/bind/named.conf.options
 
-    - name: Copier les fichiers des zones DNS
+    - name: Copier les configurations locales de Bind9
+      copy:
+        src: ./bind/named.conf.local
+        dest: /etc/bind/named.conf.local
+
+    - name: Copier les fichiers de zones DNS
       copy:
         src: ./bind/zones/
         dest: /etc/bind/zones/
+        remote_src: no
 
-    - name: Redémarrer le service Bind9
-      service:
-        name: named
-        state: restarted
-
-    # === Configuration de Samba ===
-    - name: Générer le fichier smb.conf à partir du modèle Jinja2
+    - name: Copier la configuration de Samba
       template:
         src: ./samba/smb.conf.j2
         dest: /etc/samba/smb.conf
-        owner: root
-        group: root
-        mode: '0644'
 
-    - name: Créer le répertoire Sysvol pour Samba
-      file:
-        path: /var/lib/samba/sysvol
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
+    - name: Copier la configuration de Kerberos
+      copy:
+        src: ./kerberos/krb5.conf
+        dest: /etc/krb5.conf
 
-    - name: Démarrer ou redémarrer le service Samba
+    - name: Démarrer et activer les services nécessaires
       service:
-        name: smbd
-        state: restarted
-
-    # === Création d'un utilisateur Samba avec un mot de passe ===
-
-    - name: Créer un utilisateur Samba
-      community.general.samba_user:
-        name: root
-        password: root
-        # state: present
-
-    # === Synchronisation NTP ===
-    - name: Installer ntpdate (si manquant)
-      apt:
-        name: ntpdate
-        state: present
-
-    - name: Synchroniser l'heure avec un serveur NTP
-      command: ntpdate -u pool.ntp.org
-      register: ntp_sync_result
-
-    - name: Afficher le résultat de la synchronisation NTP
-      debug:
-        msg: "{{ ntp_sync_result.stdout }}"
-
-  handlers:
-    - name: Redémarrer Samba
-      service:
-        name: smbd
-        state: restarted
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      with_items:
+        - bind9
+        - samba
