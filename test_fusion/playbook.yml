@@ -156,16 +156,16 @@
         dest: /etc/krb5.conf
 
 
-    - name: Provisionner le domaine Samba (non interactif)
-      command: >
-        samba-tool domain provision
-        --use-rfc2307
-        --realm=EXAMPLE.COM
-        --domain=EXAMPLE
-        --server-role=dc
-        --dns-backend=SAMBA_INTERNAL
-        --adminpass=Roa42300
-      become: true
+    # - name: Provisionner le domaine Samba (non interactif)
+    #   command: >
+    #     samba-tool domain provision
+    #     --use-rfc2307
+    #     --realm=EXAMPLE.COM
+    #     --domain=EXAMPLE
+    #     --server-role=dc
+    #     --dns-backend=SAMBA_INTERNAL
+    #     --adminpass=Roa42300
+    #   become: true
 
     - name: Redémarrer les services Samba et Bind9
       service:
