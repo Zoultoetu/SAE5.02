@@ -190,5 +190,5 @@
         state: started
         enabled: true
       with_items:
-        - bind9
+        - named
         - samba
