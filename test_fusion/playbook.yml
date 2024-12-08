@@ -82,7 +82,7 @@
       community.general.samba_user:
         name: root
         password: root
-        state: present
+        # state: present
 
     # === Synchronisation NTP ===
     - name: Installer ntpdate (si manquant)
