@@ -121,7 +121,9 @@
           - ntpdate
           - krb5-kdc
           - krb5-admin-server
+          - expect
         state: present
+
     - name: Copier la configuration principale de Bind9
       copy:
         src: ./bind/named.conf
@@ -152,6 +154,19 @@
       copy:
         src: ./kerberos/krb5.conf
         dest: /etc/krb5.conf
+
+    - name: Exécuter la commande samba-tool domain provision
+      ansible.builtin.expect:
+        command: samba-tool domain provision --use-rfc2307 --interactive
+        responses:
+          'Realm': 'EXAMPLE.COM'
+          'Domain': 'EXAMPLE'
+          'Server Role': 'dc'
+          'DNS backend': 'SAMBA_INTERNAL'
+          'Administrator password': 'VotreMotDePasseAdmin'
+          'Retype password': 'VotreMotDePasseAdmin'
+      become: true
+
 
     - name: Démarrer et activer les services nécessaires
       service:
