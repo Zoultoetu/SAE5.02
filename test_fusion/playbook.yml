@@ -164,9 +164,24 @@
         --domain=EXAMPLE
         --server-role=dc
         --dns-backend=SAMBA_INTERNAL
-        --adminpass=root
+        --adminpass=Roa42300
       become: true
 
+    - name: Redémarrer les services Samba et Bind9
+      service:
+        name: "{{ item }}"
+        state: restarted
+      with_items:
+        - samba-ad-dc
+        - bind9
+
+    - name: Vérifier le provisionnement
+      command: samba-tool domain info 127.0.0.1
+      register: domain_info
+
+    - name: Afficher les informations du domaine provisionné
+      debug:
+        msg: "{{ domain_info.stdout }}"
 
     - name: Démarrer et activer les services nécessaires
       service:
