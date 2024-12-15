@@ -108,7 +108,7 @@
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
         content: |
-          port 1194
+          port 16385
           proto udp
           dev tun
           ca ca.crt
@@ -158,7 +158,7 @@
           client
           dev tun
           proto udp
-          remote {{ ansible_host }} 1194
+          remote {{ ansible_host }} 16385
           resolv-retry infinite
           nobind
           persist-key
