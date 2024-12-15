@@ -6,6 +6,7 @@
   vars:
     openvpn_dir: /etc/openvpn
     easyrsa_dir: /etc/openvpn/easy-rsa
+    export_dir: /etc/openvpn/export
     server_name: "server"
     vpn_subnet: "10.8.0.0"
     vpn_netmask: "255.255.255.0"
@@ -20,7 +21,7 @@
         state: present
         update_cache: yes
 
-    # Étape 2 : Préparer le répertoire OpenVPN
+    # Étape 2 : Préparer les répertoires nécessaires
     - name: Créer les répertoires nécessaires pour OpenVPN
       file:
         path: "{{ item }}"
@@ -29,9 +30,10 @@
       loop:
         - "{{ openvpn_dir }}"
         - "{{ easyrsa_dir }}"
+        - "{{ export_dir }}"  # Répertoire pour stocker le fichier client.ovpn
 
-    # Étape 3 : Copier les scripts Easy-RSA dans le bon répertoire
-    - name: Initialiser Easy-RSA
+    # Étape 3 : Copier Easy-RSA
+    - name: Copier les fichiers Easy-RSA dans le répertoire
       copy:
         src: /usr/share/easy-rsa/
         dest: "{{ easyrsa_dir }}"
@@ -51,8 +53,8 @@
         - 'set_var EASYRSA_REQ_EMAIL      "admin@myvpn.local"'
         - 'set_var EASYRSA_REQ_OU         "IT Department"'
 
-    # Étape 5 : Générer le PKI et les certificats nécessaires
-    - name: Initialiser le PKI (Public Key Infrastructure)
+    # Étape 5 : Générer les certificats nécessaires
+    - name: Initialiser le PKI
       command: ./easyrsa init-pki
       args:
         chdir: "{{ easyrsa_dir }}"
@@ -71,7 +73,7 @@
       environment:
         EASYRSA_BATCH: "1"
 
-    - name: Signer le certificat du serveur avec l'autorité de certification (CA)
+    - name: Signer le certificat du serveur
       command: ./easyrsa sign-req server {{ server_name }}
       args:
         chdir: "{{ easyrsa_dir }}"
@@ -88,8 +90,8 @@
       args:
         chdir: "{{ easyrsa_dir }}/pki"
 
-    # Étape 6 : Copier les certificats et clés vers le répertoire OpenVPN
-    - name: Copier les certificats et clés dans /etc/openvpn
+    # Étape 6 : Copier les certificats et clés vers OpenVPN
+    - name: Copier les certificats et clés vers /etc/openvpn
       copy:
         src: "{{ easyrsa_dir }}/pki/{{ item.src }}"
         dest: "{{ openvpn_dir }}/{{ item.dest }}"
@@ -101,7 +103,7 @@
         - { src: "dh.pem", dest: "dh.pem" }
         - { src: "ta.key", dest: "ta.key" }
 
-    # Étape 7 : Créer le fichier de configuration OpenVPN
+    # Étape 7 : Configurer OpenVPN
     - name: Configurer OpenVPN (server.conf)
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
@@ -132,3 +134,53 @@
         name: openvpn
         state: started
         enabled: yes
+
+    # Étape 9 : Générer les certificats pour le client
+    - name: Générer une clé et un certificat pour le client
+      command: ./easyrsa gen-req client nopass
+      args:
+        chdir: "{{ easyrsa_dir }}"
+      environment:
+        EASYRSA_BATCH: "1"
+
+    - name: Signer le certificat du client
+      command: ./easyrsa sign-req client client
+      args:
+        chdir: "{{ easyrsa_dir }}"
+      environment:
+        EASYRSA_BATCH: "1"
+
+    # Étape 10 : Générer le fichier client.ovpn
+    - name: Créer le fichier client.ovpn
+      copy:
+        dest: "{{ export_dir }}/client.ovpn"
+        content: |
+          client
+          dev tun
+          proto udp
+          remote {{ ansible_host }} 1194
+          resolv-retry infinite
+          nobind
+          persist-key
+          persist-tun
+          remote-cert-tls server
+          cipher AES-256-CBC
+          auth SHA256
+          key-direction 1
+          verb 3
+
+          <ca>
+          {{ lookup('file', '{{ openvpn_dir }}/ca.crt') }}
+          </ca>
+
+          <cert>
+          {{ lookup('file', '{{ openvpn_dir }}/issued/client.crt') }}
+          </cert>
+
+          <key>
+          {{ lookup('file', '{{ openvpn_dir }}/private/client.key') }}
+          </key>
+
+          <tls-auth>
+          {{ lookup('file', '{{ openvpn_dir }}/ta.key') }}
+          </tls-auth>
