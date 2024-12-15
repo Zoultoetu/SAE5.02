@@ -169,11 +169,11 @@
           key-direction 1
           verb 3
 
-          
+          <ca>
+          {{ lookup('file', '{{ easyrsa_dir }}/pki/ca.crt') }}
+          </ca>
 
-          <cert>
-          {{ lookup('file', '{{ easyrsa_dir }}/pki/issued/client.crt') }}
-          </cert>
+          
 
           <key>
           {{ lookup('file', '{{ easyrsa_dir }}/pki/private/client.key') }}
