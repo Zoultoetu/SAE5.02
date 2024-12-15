@@ -182,7 +182,7 @@
           </ca>
 
           <cert>
-          {{ lookup('file', '{{ easyrsa_dir }}/pki/issued/client.crt') }}
+          {{ lookup('file', '/etc/openvpn/easy-rsa/pki/issued/client.crt') }}
           </cert>
 
           <key>
