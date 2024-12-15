@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  fusion_service:
+    build:
+      context: .
+      dockerfile: dockerfile
+    environment:
+      - TZ=Europe/Paris
+      - DEBIAN_FRONTEND=noninteractive
+    container_name: dns_ad
+    ports:
+      - "2222:22"        # SSH
+      - "53:53/udp"      # DNS (Bind9)
+      - "53:53/tcp"
+      - "445:445"        # Samba
+      - "139:139"
+      - "389:389"        # LDAP pour Samba
+    networks:
+      shared_net:
+        ipv4_address: 192.168.1.150
+    privileged: true
+
+networks:
+  shared_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/25

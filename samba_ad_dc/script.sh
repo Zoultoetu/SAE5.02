@@ -1,12 +1,12 @@
 #!/bin/bash
 
-BASE_DIR="./SAE5.02/test_fusion"
+BASE_DIR="./SAE5.02/samba_ad_dc"
 
 echo "=== Déploiement automatique de Bind9 et Samba ==="
 
 # Étape 1 : Réinitialisation des conteneurs
 echo "=== Réinitialisation des conteneurs et volumes ==="
-docker rm -f ad_local 2>/dev/null || true
+docker rm -f dns_ad 2>/dev/null || true
 docker volume prune -f 2>/dev/null || true
 
 # Étape 2 : Construction et démarrage du conteneur
@@ -27,8 +27,8 @@ ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml" -e "samb
 
 # Étape 5 : Démarrage des services
 echo "=== Démarrage des services Bind9 et Samba ==="
-docker exec -it ad_local service named start
-docker exec -it ad_local service smbd start
+docker exec -it dns_ad service named start
+docker exec -it dns_ad service smbd start
 
 # Étape 6 : Configuration des fuseaux horaires
 echo "Europe/Paris" > /etc/timezone
