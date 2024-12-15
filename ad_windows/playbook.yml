@@ -155,10 +155,7 @@
         path: "{{ item }}"
         mode: '0777'
       loop:
-        - "{{ easyrsa_dir }}/pki/issued/client.crt"
-        - "{{ easyrsa_dir }}/pki/private/client.key"
-        - "{{ easyrsa_dir }}/pki/ca.crt"
-        - "{{ easyrsa_dir }}/pki/ta.key"
+        - /etc/openvpn
 
 
     # Étape 10 : Générer le fichier client.ovpn
