@@ -149,6 +149,17 @@
         chdir: "{{ easyrsa_dir }}"
       environment:
         EASYRSA_BATCH: "1"
+    
+    - name: Appliquer des permissions 777 sur tous les fichiers générés
+      file:
+        path: "{{ item }}"
+        mode: '0777'
+      loop:
+        - "{{ easyrsa_dir }}/pki/issued/client.crt"
+        - "{{ easyrsa_dir }}/pki/private/client.key"
+        - "{{ easyrsa_dir }}/pki/ca.crt"
+        - "{{ easyrsa_dir }}/pki/ta.key"
+
 
     # Étape 10 : Générer le fichier client.ovpn
     - name: Créer le fichier client.ovpn directement
@@ -173,7 +184,9 @@
           {{ lookup('file', '{{ easyrsa_dir }}/pki/ca.crt') }}
           </ca>
 
-          
+          <cert>
+          {{ lookup('file', '{{ easyrsa_dir }}/pki/issued/client.crt') }}
+          </cert>
 
           <key>
           {{ lookup('file', '{{ easyrsa_dir }}/pki/private/client.key') }}
