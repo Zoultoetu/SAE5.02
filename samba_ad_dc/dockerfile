@@ -3,10 +3,9 @@ FROM ubuntu:20.04
 # Met à jour les paquets et installe les dépendances nécessaires
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-server \
-    bind9 \
-    samba \
     python3 \
     python3-pip \
+    nano \
     tzdata && \
     echo "Europe/Paris" > /etc/timezone && \
     ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime && \

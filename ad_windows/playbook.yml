@@ -1,0 +1,134 @@
+---
+- name: Configuration complète d'OpenVPN
+  hosts: vpn
+  become: true
+
+  vars:
+    openvpn_dir: /etc/openvpn
+    easyrsa_dir: /etc/openvpn/easy-rsa
+    server_name: "server"
+    vpn_subnet: "10.8.0.0"
+    vpn_netmask: "255.255.255.0"
+
+  tasks:
+    # Étape 1 : Installer OpenVPN et Easy-RSA
+    - name: Installer OpenVPN et Easy-RSA
+      apt:
+        name:
+          - openvpn
+          - easy-rsa
+        state: present
+        update_cache: yes
+
+    # Étape 2 : Préparer le répertoire OpenVPN
+    - name: Créer les répertoires nécessaires pour OpenVPN
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ openvpn_dir }}"
+        - "{{ easyrsa_dir }}"
+
+    # Étape 3 : Copier les scripts Easy-RSA dans le bon répertoire
+    - name: Initialiser Easy-RSA
+      copy:
+        src: /usr/share/easy-rsa/
+        dest: "{{ easyrsa_dir }}"
+        remote_src: yes
+
+    # Étape 4 : Configurer les variables Easy-RSA
+    - name: Configurer les variables Easy-RSA
+      lineinfile:
+        path: "{{ easyrsa_dir }}/vars"
+        create: yes
+        line: "{{ item }}"
+      loop:
+        - 'set_var EASYRSA_REQ_COUNTRY    "FR"'
+        - 'set_var EASYRSA_REQ_PROVINCE   "Ile-de-France"'
+        - 'set_var EASYRSA_REQ_CITY       "Paris"'
+        - 'set_var EASYRSA_REQ_ORG        "MyVPN"'
+        - 'set_var EASYRSA_REQ_EMAIL      "admin@myvpn.local"'
+        - 'set_var EASYRSA_REQ_OU         "IT Department"'
+
+    # Étape 5 : Générer le PKI et les certificats nécessaires
+    - name: Initialiser le PKI (Public Key Infrastructure)
+      command: ./easyrsa init-pki
+      args:
+        chdir: "{{ easyrsa_dir }}"
+
+    - name: Construire le certificat de l'autorité de certification (CA)
+      command: ./easyrsa build-ca nopass
+      args:
+        chdir: "{{ easyrsa_dir }}"
+      environment:
+        EASYRSA_BATCH: "1"
+
+    - name: Générer le certificat et la clé privée du serveur
+      command: ./easyrsa gen-req {{ server_name }} nopass
+      args:
+        chdir: "{{ easyrsa_dir }}"
+      environment:
+        EASYRSA_BATCH: "1"
+
+    - name: Signer le certificat du serveur avec l'autorité de certification (CA)
+      command: ./easyrsa sign-req server {{ server_name }}
+      args:
+        chdir: "{{ easyrsa_dir }}"
+      environment:
+        EASYRSA_BATCH: "1"
+
+    - name: Générer le certificat Diffie-Hellman
+      command: ./easyrsa gen-dh
+      args:
+        chdir: "{{ easyrsa_dir }}"
+
+    - name: Générer une clé TLS Auth
+      command: openvpn --genkey --secret ta.key
+      args:
+        chdir: "{{ easyrsa_dir }}/pki"
+
+    # Étape 6 : Copier les certificats et clés vers le répertoire OpenVPN
+    - name: Copier les certificats et clés dans /etc/openvpn
+      copy:
+        src: "{{ easyrsa_dir }}/pki/{{ item.src }}"
+        dest: "{{ openvpn_dir }}/{{ item.dest }}"
+        remote_src: yes
+      loop:
+        - { src: "ca.crt", dest: "ca.crt" }
+        - { src: "issued/{{ server_name }}.crt", dest: "server.crt" }
+        - { src: "private/{{ server_name }}.key", dest: "server.key" }
+        - { src: "dh.pem", dest: "dh.pem" }
+        - { src: "ta.key", dest: "ta.key" }
+
+    # Étape 7 : Créer le fichier de configuration OpenVPN
+    - name: Configurer OpenVPN (server.conf)
+      copy:
+        dest: "{{ openvpn_dir }}/server.conf"
+        content: |
+          port 1194
+          proto udp
+          dev tun
+          ca ca.crt
+          cert server.crt
+          key server.key
+          dh dh.pem
+          auth SHA256
+          tls-auth ta.key 0
+          server {{ vpn_subnet }} {{ vpn_netmask }}
+          ifconfig-pool-persist ipp.txt
+          keepalive 10 120
+          cipher AES-256-CBC
+          persist-key
+          persist-tun
+          status openvpn-status.log
+          log-append /var/log/openvpn.log
+          verb 3
+          explicit-exit-notify 1
+
+    # Étape 8 : Activer et démarrer OpenVPN
+    - name: Activer et démarrer le service OpenVPN
+      service:
+        name: openvpn
+        state: started
+        enabled: yes
