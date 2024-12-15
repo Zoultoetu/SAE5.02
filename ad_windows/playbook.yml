@@ -151,14 +151,14 @@
         EASYRSA_BATCH: "1"
 
     # Étape 10 : Générer le fichier client.ovpn
-    - name: Créer le fichier client.ovpn
+    - name: Créer le fichier client.ovpn directement
       copy:
-        dest: "{{ export_dir }}/client.ovpn"
+        dest: "{{ openvpn_dir }}/client.ovpn"
         content: |
           client
           dev tun
           proto udp
-          remote {{ ansible_host }} 16385
+          remote {{ ansible_host }} 1194
           resolv-retry infinite
           nobind
           persist-key
@@ -170,17 +170,18 @@
           verb 3
 
           <ca>
-          {{ lookup('file', '{{ openvpn_dir }}/ca.crt') }}
+          {{ lookup('file', '{{ easyrsa_dir }}/pki/ca.crt') }}
           </ca>
 
           <cert>
-          {{ lookup('file', '{{ openvpn_dir }}/issued/client.crt') }}
+          {{ lookup('file', '{{ easyrsa_dir }}/pki/issued/client.crt') }}
           </cert>
 
           <key>
-          {{ lookup('file', '{{ openvpn_dir }}/private/client.key') }}
+          {{ lookup('file', '{{ easyrsa_dir }}/pki/private/client.key') }}
           </key>
 
           <tls-auth>
-          {{ lookup('file', '{{ openvpn_dir }}/ta.key') }}
+          {{ lookup('file', '{{ easyrsa_dir }}/pki/ta.key') }}
           </tls-auth>
+
