@@ -25,3 +25,6 @@ cd ../..
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml" -e "samba_username=root samba_password=root"
 
 echo "=== Déploiement terminé ==="
+
+echo "=== Copie du Fichier OVPN ==="
+scp root@192.168.0.3:/etc/openvpn/client.ovpn ./client.ovpn
