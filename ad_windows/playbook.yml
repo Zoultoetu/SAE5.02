@@ -159,36 +159,50 @@
 
 
     # Étape 10 : Générer le fichier client.ovpn
-    - name: Générer le fichier client.ovpn
-      copy:
-        dest: "/etc/openvpn/client.ovpn"
-        content: |
-          client
-          dev tun
-          proto udp
-          remote {{ ansible_host }} 1194
-          resolv-retry infinite
-          nobind
-          persist-key
-          persist-tun
-          remote-cert-tls server
-          auth SHA256
-          cipher AES-256-CBC
-          verb 3
-          key-direction 1
+    - name: Créer le certificat et le fichier client.ovpn via Easy-RSA
+      command: ./easyrsa build-client-full client nopass
+      args:
+        chdir: /etc/openvpn/easy-rsa
 
-          <ca>
-          {{ lookup('file', '/etc/openvpn/easy-rsa/pki/ca.crt') }}
-          </ca>
-          <cert>
-          {{ lookup('file', '/etc/openvpn/easy-rsa/pki/issued/client.crt') }}
-          </cert>
-          <key>
-          {{ lookup('file', '/etc/openvpn/easy-rsa/pki/private/client.key') }}
-          </key>
-          <tls-auth>
-          {{ lookup('file', '/etc/openvpn/easy-rsa/pki/ta.key') }}
-          </tls-auth>
-      delegate_to: localhost
+    - name: Générer automatiquement le fichier client.ovpn
+      shell: |
+        echo "client
+        dev tun
+        proto udp
+        remote {{ ansible_host }} 1194
+        resolv-retry infinite
+        nobind
+        persist-key
+        persist-tun
+        remote-cert-tls server
+        auth SHA256
+        cipher AES-256-CBC
+        verb 3
+        key-direction 1
+        <ca>" > /etc/openvpn/client.ovpn && \
+        cat /etc/openvpn/easy-rsa/pki/ca.crt >> /etc/openvpn/client.ovpn && \
+        echo "</ca>
+        <cert>" >> /etc/openvpn/client.ovpn && \
+        cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> /etc/openvpn/client.ovpn && \
+        echo "</cert>
+        <key>" >> /etc/openvpn/client.ovpn && \
+        cat /etc/openvpn/easy-rsa/pki/private/client.key >> /etc/openvpn/client.ovpn && \
+        echo "</key>
+        <tls-auth>" >> /etc/openvpn/client.ovpn && \
+        cat /etc/openvpn/easy-rsa/pki/ta.key >> /etc/openvpn/client.ovpn && \
+        echo "</tls-auth>" >> /etc/openvpn/client.ovpn
+      args:
+        creates: /etc/openvpn/client.ovpn
+
+    - name: S'assurer que le fichier client.ovpn est généré
+      stat:
+        path: /etc/openvpn/client.ovpn
+      register: client_ovpn_file
+
+    - name: Afficher un message si le fichier client.ovpn est généré
+      debug:
+        msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
+      when: client_ovpn_file.stat.exists
+
 
 
