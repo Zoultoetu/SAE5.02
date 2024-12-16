@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     nano \
     iputils-ping && \
+    dnsutils \
     mkdir -p /var/run/sshd && \
     echo 'root:root' | chpasswd && \
     sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config && \
