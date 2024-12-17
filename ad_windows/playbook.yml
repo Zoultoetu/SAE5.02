@@ -9,6 +9,12 @@
     dns_serveur: "10.8.0.3"  # Adresse IP du contrôleur de domaine DNS
 
   tasks:
+    # === Mise à jour des paquets ===
+    - name: Mettre à jour la liste des paquets
+      apt:
+        update_cache: yes
+
+
 
     - name: Installer les paquets nécessaires pour l'intégration au domaine
       apt:
@@ -21,7 +27,7 @@
           - adcli
           - packagekit
         state: present
-        update_cache: yes
+        # update_cache: yes
 
     - name: Configurer le DNS pour pointer vers le contrôleur de domaine
       copy:
