@@ -11,7 +11,7 @@ services:
       - "2222:22"              # Port SSH
     volumes:
       - ./openvpn:/etc/openvpn
-      - ./samba:/etc/samba
+      # - ./samba:/etc/samba
       - ./kerberos:/etc/krb5.conf
       - ./ad/resolv.conf:/etc/resolv.conf
     networks:
