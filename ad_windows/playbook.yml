@@ -46,6 +46,7 @@
 
     - name: Redémarrer Samba pour appliquer les changements
       service:
+        use : service
         name: smbd
         state: restarted
 
