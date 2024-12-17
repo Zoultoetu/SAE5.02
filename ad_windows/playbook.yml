@@ -6,8 +6,8 @@
     domaine_ad: "MAME.net"         # Nom du domaine Active Directory
     realm_ad: "MAME.NET"           # Nom du REALM (toujours en majuscules)
     serveur_ad_ip: "10.8.0.3"      # Adresse IP du contrôleur de domaine AD
-    utilisateur_domaine: "Administrateur"  # Utilisateur avec droits sur le domaine
-    mot_de_passe_domaine: "MonMotDePasse123"  # Mot de passe pour l'utilisateur
+    utilisateur_domaine: "Administrator"  # Utilisateur avec droits sur le domaine
+    mot_de_passe_domaine: "Roa42300"  # Mot de passe pour l'utilisateur
 
   tasks:
 
