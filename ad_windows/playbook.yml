@@ -244,74 +244,74 @@
         state: started
         enabled: yes
 
-    # Étape 9 : Générer les certificats pour le client
-    - name: Générer une clé et un certificat pour le client
-      command: ./easyrsa gen-req client nopass
-      args:
-        chdir: "{{ easyrsa_dir }}"
-      environment:
-        EASYRSA_BATCH: "1"
-
-    - name: Signer le certificat du client
-      command: ./easyrsa sign-req client client
-      args:
-        chdir: "{{ easyrsa_dir }}"
-      environment:
-        EASYRSA_BATCH: "1"
-    
-    - name: Appliquer des permissions 777 sur tous les fichiers générés
-      file:
-        path: "{{ item }}"
-        mode: '777'
-      loop:
-        - /etc/openvpn
-
-
-    # Étape 10 : Générer le fichier client.ovpn
-    # - name: Créer le certificat et le fichier client.ovpn via Easy-RSA
-    #   command: ./easyrsa build-client-full client nopass
+    # # Étape 9 : Générer les certificats pour le client
+    # - name: Générer une clé et un certificat pour le client
+    #   command: ./easyrsa gen-req client nopass
     #   args:
-    #     chdir: /etc/openvpn/easy-rsa
+    #     chdir: "{{ easyrsa_dir }}"
+    #   environment:
+    #     EASYRSA_BATCH: "1"
 
-    - name: Générer automatiquement le fichier client.ovpn
-      shell: |
-        echo "client
-        dev tun
-        proto udp
-        remote 91.175.31.138 16387  # Utilise l'IP publique de ta boxe et le port redirigé
-        resolv-retry infinite
-        nobind
-        persist-key
-        persist-tun
-        remote-cert-tls server
-        auth SHA256
-        cipher AES-256-CBC
-        verb 3
-        key-direction 1
-        <ca>" > /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/ca.crt >> /etc/openvpn/client.ovpn && \
-        echo "</ca>
-        <cert>" >> /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> /etc/openvpn/client.ovpn && \
-        echo "</cert>
-        <key>" >> /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/private/client.key >> /etc/openvpn/client.ovpn && \
-        echo "</key>
-        <tls-auth>" >> /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/ta.key >> /etc/openvpn/client.ovpn && \
-        echo "</tls-auth>" >> /etc/openvpn/client.ovpn
-      args:
-        creates: /etc/openvpn/client.ovpn
+    # - name: Signer le certificat du client
+    #   command: ./easyrsa sign-req client client
+    #   args:
+    #     chdir: "{{ easyrsa_dir }}"
+    #   environment:
+    #     EASYRSA_BATCH: "1"
+    
+    # - name: Appliquer des permissions 777 sur tous les fichiers générés
+    #   file:
+    #     path: "{{ item }}"
+    #     mode: '777'
+    #   loop:
+    #     - /etc/openvpn
 
-    - name: S'assurer que le fichier client.ovpn est généré
-      stat:
-        path: /etc/openvpn/client.ovpn
-      register: client_ovpn_file
 
-    - name: Afficher un message si le fichier client.ovpn est généré
-      debug:
-        msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
-      when: client_ovpn_file.stat.exists
+    # # Étape 10 : Générer le fichier client.ovpn
+    # # - name: Créer le certificat et le fichier client.ovpn via Easy-RSA
+    # #   command: ./easyrsa build-client-full client nopass
+    # #   args:
+    # #     chdir: /etc/openvpn/easy-rsa
+
+    # - name: Générer automatiquement le fichier client.ovpn
+    #   shell: |
+    #     echo "client
+    #     dev tun
+    #     proto udp
+    #     remote 91.175.31.138 16387  # Utilise l'IP publique de ta boxe et le port redirigé
+    #     resolv-retry infinite
+    #     nobind
+    #     persist-key
+    #     persist-tun
+    #     remote-cert-tls server
+    #     auth SHA256
+    #     cipher AES-256-CBC
+    #     verb 3
+    #     key-direction 1
+    #     <ca>" > /etc/openvpn/client.ovpn && \
+    #     cat /etc/openvpn/easy-rsa/pki/ca.crt >> /etc/openvpn/client.ovpn && \
+    #     echo "</ca>
+    #     <cert>" >> /etc/openvpn/client.ovpn && \
+    #     cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> /etc/openvpn/client.ovpn && \
+    #     echo "</cert>
+    #     <key>" >> /etc/openvpn/client.ovpn && \
+    #     cat /etc/openvpn/easy-rsa/pki/private/client.key >> /etc/openvpn/client.ovpn && \
+    #     echo "</key>
+    #     <tls-auth>" >> /etc/openvpn/client.ovpn && \
+    #     cat /etc/openvpn/easy-rsa/pki/ta.key >> /etc/openvpn/client.ovpn && \
+    #     echo "</tls-auth>" >> /etc/openvpn/client.ovpn
+    #   args:
+    #     creates: /etc/openvpn/client.ovpn
+
+    # - name: S'assurer que le fichier client.ovpn est généré
+    #   stat:
+    #     path: /etc/openvpn/client.ovpn
+    #   register: client_ovpn_file
+
+    # - name: Afficher un message si le fichier client.ovpn est généré
+    #   debug:
+    #     msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
+    #   when: client_ovpn_file.stat.exists
 
 
 
