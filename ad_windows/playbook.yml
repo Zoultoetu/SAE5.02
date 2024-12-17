@@ -44,6 +44,12 @@
         name: dbus
         state: started
 
+    - name: Copier les fichiers samba dans le répertoire
+      copy:
+        src: ./samba/smb.conf
+        dest: "/etc/samba/smb.conf"
+        remote_src: yes
+
 
     - name: Découvrir le domaine Active Directory
       command: "realm discover {{ domaine_ad }}"
@@ -51,10 +57,10 @@
       changed_when: false
 
 
-    - name: SUPPRIMER le domaine Active Directory
-      command: "realm leave mon_domaine.local"
-      register: realm_discover
-      changed_when: false
+    # - name: SUPPRIMER le domaine Active Directory
+    #   command: "realm leave mon_domaine.local"
+    #   register: realm_discover
+    #   changed_when: false
 
 
     - name: Joindre la machine au domaine
