@@ -37,7 +37,6 @@
         state: present
         update_cache: yes
 
-
     - name: Configurer le DNS pour pointer vers le contrôleur de domaine
       copy:
         dest: /etc/resolv.conf
