@@ -18,8 +18,6 @@
       apt:
         name: ntp
         state: present
-      notify:
-        - Redémarrer NTP
 
 
     - name: Préconfigurer krb5-user pour éviter l'invite interactive
