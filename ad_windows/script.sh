@@ -26,5 +26,8 @@ ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml" -e "samb
 
 echo "=== Déploiement terminé ==="
 
-# echo "=== Copie du Fichier OVPN ==="
+echo "=== Copie du Fichier OVPN ==="
 echo root | scp root@192.168.0.3:/etc/openvpn/client.ovpn ./client.ovpn
+
+echo "=== Copie du Fichier OVPN dans le presse papier ==="
+xclip -sel clip < client.ovpn
