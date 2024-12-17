@@ -44,11 +44,11 @@
       failed_when: "'Error' in testparm_output.stderr"
       changed_when: false
 
-    - name: Redémarrer Samba pour appliquer les changements
-      service:
-        use : service
-        name: smbd
-        state: restarted
+    # - name: Redémarrer Samba pour appliquer les changements
+    #   service:
+    #     use : service
+    #     name: smbd
+    #     state: restarted
 
     - name: Reconfigurer le paquet samba-common-bin
       command: dpkg --configure -a
