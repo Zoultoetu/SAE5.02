@@ -152,6 +152,13 @@
     #     state: present
     #     insertafter: EOF
 
+    - name: Redémarrer SSSD
+      service:
+        use : service
+        name: dbus
+        state: started
+
+
     - name: Découvrir le domaine Active Directory
       command: "realm discover {{ domaine_ad }}"
       register: realm_discover
