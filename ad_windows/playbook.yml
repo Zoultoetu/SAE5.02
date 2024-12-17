@@ -164,6 +164,13 @@
       register: realm_discover
       changed_when: false
 
+
+    - name: SUPPRIMER le domaine Active Directory
+      command: "realm leave mon_domaine.local"
+      register: realm_discover
+      changed_when: false
+
+
     - name: Joindre la machine au domaine
       command: >
         echo Roa42300 | realm join {{ domaine_ad }} -U {{ utilisateur_domaine }}
