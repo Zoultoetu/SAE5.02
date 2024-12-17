@@ -25,7 +25,12 @@
     mot_de_passe_domaine: "Roa42300"  # Mot de passe pour l'utilisateur
 
   tasks:
-
+    - name: Copier les fichiers samba dans le répertoire
+      copy:
+        src: ./SAE5.02/ad_windows/samba/smb.conf
+        dest: "/etc/samba/smb.conf"
+        remote_src: yes
+        
     - name: Installer les paquets nécessaires
       apt:
         name:
@@ -44,11 +49,7 @@
         name: dbus
         state: started
 
-    - name: Copier les fichiers samba dans le répertoire
-      copy:
-        src: ./samba/smb.conf
-        dest: "/etc/samba/smb.conf"
-        remote_src: yes
+    
 
 
     - name: Découvrir le domaine Active Directory
