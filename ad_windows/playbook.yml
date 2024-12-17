@@ -1,4 +1,89 @@
 ---
+- name: Joindre une machine Ubuntu au domaine Windows Active Directory
+  hosts: ubuntu_clients
+  become: true  # Exécute les tâches en tant que root
+  vars:
+    domaine_ad: "MAME.net"
+    utilisateur_domaine: "Administrator"  # Nom de l'utilisateur du domaine avec droits
+    mot_de_passe_domaine: "Roa42300"  # Mot de passe sécurisé
+    dns_serveur: "10.8.0.3"  # Adresse IP du contrôleur de domaine DNS
+
+  tasks:
+
+    - name: Installer les paquets nécessaires pour l'intégration au domaine
+      apt:
+        name:
+          - realmd
+          - sssd
+          - samba-common-bin
+          - samba-libs
+          - krb5-user
+          - adcli
+          - packagekit
+        state: present
+        update_cache: yes
+
+    - name: Configurer le DNS pour pointer vers le contrôleur de domaine
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver {{ dns_serveur }}
+          search {{ domaine_ad }}
+
+    - name: Découvrir le domaine Active Directory
+      command: "realm discover {{ domaine_ad }}"
+      register: realm_discover
+      changed_when: false
+
+    - name: Joindre la machine au domaine
+      command: >
+        realm join {{ domaine_ad }} -U {{ utilisateur_domaine }} --password {{ mot_de_passe_domaine }}
+      args:
+        creates: /etc/sssd/sssd.conf
+
+    - name: Configurer SSSD pour le domaine AD
+      copy:
+        dest: /etc/sssd/sssd.conf
+        content: |
+          [sssd]
+          domains = {{ domaine_ad }}
+          config_file_version = 2
+          services = nss, pam
+
+          [domain/{{ domaine_ad }}]
+          ad_domain = {{ domaine_ad }}
+          krb5_realm = {{ domaine_ad | upper }}
+          realmd_tags = manages-system joined-with-samba
+          cache_credentials = true
+          id_provider = ad
+          auth_provider = ad
+          chpass_provider = ad
+          access_provider = ad
+      notify:
+        - Redémarrer SSSD
+
+    - name: Configurer PAM pour créer les répertoires personnels des utilisateurs du domaine
+      lineinfile:
+        path: /etc/pam.d/common-session
+        line: "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077"
+        state: present
+
+    - name: Vérifier si la machine est bien jointe au domaine
+      command: "realm list"
+      register: realm_list
+      changed_when: false
+
+    - name: Afficher le statut de l'intégration au domaine
+      debug:
+        msg: "La machine a été jointe avec succès au domaine {{ domaine_ad }}"
+      when: "'configured' in realm_list.stdout"
+
+  handlers:
+    - name: Redémarrer SSSD
+      service:
+        name: sssd
+        state: restarted
+
 - name: Configuration complète d'OpenVPN
   hosts: vpn
   become: true
