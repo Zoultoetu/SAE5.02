@@ -1,56 +1,56 @@
 ---
-- name: Joindre une machine Ubuntu au domaine Windows Active Directory
+- name: Joindre une machine Ubuntu au domaine Active Directory
   hosts: all
   become: true  # Exécute les tâches en tant que root
   vars:
-    domaine_ad: "MAME.net"
-    utilisateur_domaine: "Administrator"  # Nom de l'utilisateur du domaine avec droits
-    mot_de_passe_domaine: "Roa42300"  # Mot de passe sécurisé
-    dns_serveur: "10.8.0.3"  # Adresse IP du contrôleur de domaine DNS
+    domaine_ad: "MAME.net"         # Nom du domaine Active Directory
+    realm_ad: "MAME.NET"           # Nom du REALM (toujours en majuscules)
+    serveur_ad_ip: "10.8.0.3"      # Adresse IP du contrôleur de domaine AD
+    utilisateur_domaine: "Administrateur"  # Utilisateur avec droits sur le domaine
+    mot_de_passe_domaine: "MonMotDePasse123"  # Mot de passe pour l'utilisateur
 
   tasks:
-    # === Mise à jour des paquets ===
-    - name: Mettre à jour la liste des paquets
-      apt:
-        update_cache: yes
 
-    - name: Installer NTP et synchroniser l'heure
-      apt:
-        name: ntp
-        state: present
-
-
-    - name: Préconfigurer krb5-user pour éviter l'invite interactive
-      debconf:
-        name: krb5-config
-        question: "{{ item.question }}"
-        value: "{{ item.value }}"
-        vtype: "{{ item.vtype }}"
-      with_items:
-        - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
-        - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
-        - { question: 'krb5-config/kerberos_servers', value: '10.8.0.3', vtype: 'string' }
-        - { question: 'krb5-config/admin_server', value: '10.8.0.3', vtype: 'string' }
-
-    - name: Installer les paquets nécessaires pour l'intégration au domaine
+    - name: Installer les paquets nécessaires
       apt:
         name:
           - realmd
           - sssd
           - samba-common-bin
           - samba-libs
-          - krb5-user
           - adcli
           - packagekit
         state: present
-        # update_cache: yes
+        update_cache: yes
 
-    - name: Configurer le DNS pour pointer vers le contrôleur de domaine
+    - name: Créer un fichier de configuration Kerberos (/etc/krb5.conf)
       copy:
-        dest: /etc/resolv.conf
+        dest: /etc/krb5.conf
         content: |
-          nameserver {{ dns_serveur }}
-          search {{ domaine_ad }}
+          [libdefaults]
+              default_realm = {{ realm_ad }}
+              dns_lookup_realm = false
+              dns_lookup_kdc = true
+              ticket_lifetime = 24h
+              renew_lifetime = 7d
+              forwardable = true
+
+          [realms]
+              {{ realm_ad }} = {
+                  kdc = {{ serveur_ad_ip }}
+                  admin_server = {{ serveur_ad_ip }}
+              }
+
+          [domain_realm]
+              .{{ domaine_ad | lower }} = {{ realm_ad }}
+              {{ domaine_ad | lower }} = {{ realm_ad }}
+
+    - name: Configurer le DNS pour pointer vers le serveur Active Directory
+      lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver {{ serveur_ad_ip }}"
+        state: present
+        insertafter: EOF
 
     - name: Découvrir le domaine Active Directory
       command: "realm discover {{ domaine_ad }}"
@@ -63,7 +63,7 @@
       args:
         creates: /etc/sssd/sssd.conf
 
-    - name: Configurer SSSD pour le domaine AD
+    - name: Configurer SSSD pour l'authentification AD
       copy:
         dest: /etc/sssd/sssd.conf
         content: |
@@ -74,7 +74,7 @@
 
           [domain/{{ domaine_ad }}]
           ad_domain = {{ domaine_ad }}
-          krb5_realm = {{ domaine_ad | upper }}
+          krb5_realm = {{ realm_ad }}
           realmd_tags = manages-system joined-with-samba
           cache_credentials = true
           id_provider = ad
@@ -84,20 +84,20 @@
       notify:
         - Redémarrer SSSD
 
-    - name: Configurer PAM pour créer les répertoires personnels des utilisateurs du domaine
+    - name: Configurer PAM pour créer les répertoires utilisateurs automatiquement
       lineinfile:
         path: /etc/pam.d/common-session
         line: "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077"
         state: present
 
-    - name: Vérifier si la machine est bien jointe au domaine
+    - name: Vérifier l'intégration de la machine au domaine
       command: "realm list"
       register: realm_list
       changed_when: false
 
-    - name: Afficher le statut de l'intégration au domaine
+    - name: Afficher le résultat de l'intégration
       debug:
-        msg: "La machine a été jointe avec succès au domaine {{ domaine_ad }}"
+        msg: "La machine a rejoint avec succès le domaine {{ domaine_ad }}."
       when: "'configured' in realm_list.stdout"
 
   handlers:
@@ -105,6 +105,7 @@
       service:
         name: sssd
         state: restarted
+
 
 - name: Configuration complète d'OpenVPN
   hosts: vpn
