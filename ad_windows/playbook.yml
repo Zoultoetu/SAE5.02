@@ -9,6 +9,10 @@
     dns_serveur: "10.8.0.3"  # Adresse IP du contrôleur de domaine DNS
 
   tasks:
+    # === Mise à jour des paquets ===
+    - name: Mettre à jour la liste des paquets
+      apt:
+        update_cache: yes
 
     - name: Préconfigurer krb5-user pour éviter l'invite interactive
       debconf:
@@ -19,12 +23,12 @@
       with_items:
         - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
         - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
-        - { question: 'krb5-config/kerberos_servers', value: '192.168.1.10', vtype: 'string' }
-        - { question: 'krb5-config/admin_server', value: '192.168.1.10', vtype: 'string' }
+        - { question: 'krb5-config/kerberos_servers', value: '10.8.0.3', vtype: 'string' }
+        - { question: 'krb5-config/admin_server', value: '10.8.0.3', vtype: 'string' }
 
 
 
-        - name: Installer les paquets nécessaires pour l'intégration au domaine
+    - name: Installer les paquets nécessaires pour l'intégration au domaine
       apt:
         name:
           - realmd
@@ -35,7 +39,7 @@
           - adcli
           - packagekit
         state: present
-        update_cache: yes
+        # update_cache: yes
 
     - name: Configurer le DNS pour pointer vers le contrôleur de domaine
       copy:
