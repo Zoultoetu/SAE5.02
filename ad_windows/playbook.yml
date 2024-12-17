@@ -1,6 +1,6 @@
 ---
 - name: Joindre une machine Ubuntu au domaine Windows Active Directory
-  hosts: ubuntu_clients
+  hosts: all
   become: true  # Exécute les tâches en tant que root
   vars:
     domaine_ad: "MAME.net"
