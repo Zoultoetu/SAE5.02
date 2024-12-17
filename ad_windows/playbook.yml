@@ -14,6 +14,18 @@
       apt:
         update_cache: yes
 
+    - name: Préconfigurer krb5-user pour éviter l'invite interactive
+      debconf:
+        name: krb5-config
+        question: "{{ item.question }}"
+        value: "{{ item.value }}"
+        vtype: "{{ item.vtype }}"
+      with_items:
+        - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
+        - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
+        - { question: 'krb5-config/kerberos_servers', value: '192.168.1.10', vtype: 'string' }
+        - { question: 'krb5-config/admin_server', value: '192.168.1.10', vtype: 'string' }
+
 
 
     - name: Installer les paquets nécessaires pour l'intégration au domaine
