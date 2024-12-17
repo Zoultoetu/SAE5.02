@@ -1,15 +1,9 @@
 ---
-- name: Joindre une machine Ubuntu au domaine Active Directory
-  hosts: all
-  become: true  # Exécute les tâches en tant que root
-  vars:
-    domaine_ad: "MAME.net"         # Nom du domaine Active Directory
-    realm_ad: "MAME.NET"           # Nom du REALM (toujours en majuscules)
-    serveur_ad_ip: "10.8.0.3"      # Adresse IP du contrôleur de domaine AD
-    utilisateur_domaine: "Administrator"  # Utilisateur avec droits sur le domaine
-    mot_de_passe_domaine: "Roa42300"  # Mot de passe pour l'utilisateur
-
+- name: Réécrire entièrement le fichier smb.conf pour Samba
+  hosts: ubuntu_clients
+  become: true
   tasks:
+
     - name: Écrire le fichier smb.conf avec la configuration correcte
       copy:
         dest: /etc/samba/smb.conf
@@ -37,6 +31,11 @@
              path = /srv/samba/partage
              read only = no
              browsable = yes
+          
+          # BEGIN IDMAP Configuration
+             idmap config * : range = 10000-20000
+             idmap config MYWORKGROUP : range = 20001-30000
+          # END IDMAP Configuration
       backup: yes
 
     - name: Vérifier la configuration Samba avec testparm
@@ -52,6 +51,64 @@
 
     - name: Reconfigurer le paquet samba-common-bin
       command: dpkg --configure -a
+
+- name: Joindre une machine Ubuntu au domaine Active Directory
+  hosts: all
+  become: true  # Exécute les tâches en tant que root
+  vars:
+    domaine_ad: "MAME.net"         # Nom du domaine Active Directory
+    realm_ad: "MAME.NET"           # Nom du REALM (toujours en majuscules)
+    serveur_ad_ip: "10.8.0.3"      # Adresse IP du contrôleur de domaine AD
+    utilisateur_domaine: "Administrator"  # Utilisateur avec droits sur le domaine
+    mot_de_passe_domaine: "Roa42300"  # Mot de passe pour l'utilisateur
+
+  tasks:
+
+      
+    # - name: Corriger les plages IDMAP dans smb.conf
+    #   replace:
+    #     path: /etc/samba/smb.conf
+    #     regexp: 'idmap config MYWORKGROUP : range = \d+-\d+'
+    #     replace: 'idmap config MYWORKGROUP : range = 20001-30000'
+
+    # - name: Ajouter idmap config pour le domaine par défaut si absent
+    #   blockinfile:
+    #     path: /etc/samba/smb.conf
+    #     block: |
+    #       idmap config * : range = 10000-20000
+    #       idmap config MYWORKGROUP : range = 20001-30000
+    #     marker: "# {mark} IDMAP Configuration"
+
+    # # - name: Tester la configuration Samba avec testparm
+    # #   command: testparm
+    # #   register: testparm_output
+    # #   failed_when: "'Error' in testparm_output.stderr"
+
+    # # - name: Reconfigurer le paquet samba-common-bin
+    # #   command: dpkg --configure -a
+
+    # - name: Corriger la configuration de Samba dans smb.conf
+    #   lineinfile:
+    #     path: /etc/samba/smb.conf
+    #     regexp: '^security = ADS.*'
+    #     line: 'security = ADS'
+    #     state: present
+    #     backrefs: no
+
+    # - name: Ajouter un commentaire séparé pour le mode sécurité
+    #   lineinfile:
+    #     path: /etc/samba/smb.conf
+    #     insertafter: '^security = ADS'
+    #     line: '# Mode de sécurité : AD pour Active Directory'
+    #     state: present
+
+    # # - name: Tester la configuration Samba avec testparm
+    # #   command: testparm
+    # #   register: testparm_output
+    # #   failed_when: "'Error' in testparm_output.stderr"
+
+    # # - name: Reconfigurer le paquet samba-common-bin
+    # #   command: dpkg --configure -a
 
     - name: Installer les paquets nécessaires
       apt:
