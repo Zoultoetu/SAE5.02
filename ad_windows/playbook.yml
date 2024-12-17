@@ -236,13 +236,13 @@
           verb 3
           explicit-exit-notify 1
 
-    # # Étape 8 : Activer et démarrer OpenVPN
-    # - name: Activer et démarrer le service OpenVPN
-    #   service:
-    #     use : service
-    #     name: openvpn
-    #     state: started
-    #     enabled: yes
+    # Étape 8 : Activer et démarrer OpenVPN
+    - name: Activer et démarrer le service OpenVPN
+      service:
+        use : service
+        name: openvpn
+        state: started
+        enabled: yes
 
     # # Étape 9 : Générer les certificats pour le client
     # - name: Générer une clé et un certificat pour le client
