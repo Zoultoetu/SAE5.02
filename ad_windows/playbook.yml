@@ -14,6 +14,14 @@
       apt:
         update_cache: yes
 
+    - name: Installer NTP et synchroniser l'heure
+      apt:
+        name: ntp
+        state: present
+      notify:
+        - Redémarrer NTP
+
+
     - name: Préconfigurer krb5-user pour éviter l'invite interactive
       debconf:
         name: krb5-config
@@ -25,8 +33,6 @@
         - { question: 'krb5-config/default_realm', value: 'MAME.NET', vtype: 'string' }
         - { question: 'krb5-config/kerberos_servers', value: '10.8.0.3', vtype: 'string' }
         - { question: 'krb5-config/admin_server', value: '10.8.0.3', vtype: 'string' }
-
-
 
     - name: Installer les paquets nécessaires pour l'intégration au domaine
       apt:
