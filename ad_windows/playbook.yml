@@ -10,47 +10,45 @@
     mot_de_passe_domaine: "Roa42300"  # Mot de passe pour l'utilisateur
 
   tasks:
-    - name: Corriger les plages IDMAP dans smb.conf
-      replace:
-        path: /etc/samba/smb.conf
-        regexp: 'idmap config MYWORKGROUP : range = \d+-\d+'
-        replace: 'idmap config MYWORKGROUP : range = 20001-30000'
+    - name: Écrire le fichier smb.conf avec la configuration correcte
+      copy:
+        dest: /etc/samba/smb.conf
+        content: |
+          [global]
+             workgroup = MYWORKGROUP
+             security = ADS
+             realm = MON_DOMAINE.LOCAL
+             encrypt passwords = yes
+             log file = /var/log/samba/%m.log
+             log level = 1
 
-    - name: Ajouter idmap config pour le domaine par défaut si absent
-      blockinfile:
-        path: /etc/samba/smb.conf
-        block: |
-          idmap config * : range = 10000-20000
-          idmap config MYWORKGROUP : range = 20001-30000
-        marker: "# {mark} IDMAP Configuration"
+          # Intégration AD
+             idmap config *:backend = tdb
+             idmap config *:range = 1000-2000
+             idmap config MYWORKGROUP:backend = rid
+             idmap config MYWORKGROUP:range = 2001-3000
+             winbind use default domain = yes
+             winbind offline logon = true
+             winbind enum users = yes
+             winbind enum groups = yes
 
-    - name: Tester la configuration Samba avec testparm
+          # Partage de fichiers (optionnel)
+          [partage]
+             path = /srv/samba/partage
+             read only = no
+             browsable = yes
+      backup: yes
+
+    - name: Vérifier la configuration Samba avec testparm
       command: testparm
       register: testparm_output
       failed_when: "'Error' in testparm_output.stderr"
+      changed_when: false
 
-    - name: Reconfigurer le paquet samba-common-bin
-      command: dpkg --configure -a
-
-    - name: Corriger la configuration de Samba dans smb.conf
-      lineinfile:
-        path: /etc/samba/smb.conf
-        regexp: '^security = ADS.*'
-        line: 'security = ADS'
-        state: present
-        backrefs: no
-
-    - name: Ajouter un commentaire séparé pour le mode sécurité
-      lineinfile:
-        path: /etc/samba/smb.conf
-        insertafter: '^security = ADS'
-        line: '# Mode de sécurité : AD pour Active Directory'
-        state: present
-
-    - name: Tester la configuration Samba avec testparm
-      command: testparm
-      register: testparm_output
-      failed_when: "'Error' in testparm_output.stderr"
+    - name: Redémarrer Samba pour appliquer les changements
+      service:
+        name: smbd
+        state: restarted
 
     - name: Reconfigurer le paquet samba-common-bin
       command: dpkg --configure -a
