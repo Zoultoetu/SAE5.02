@@ -123,27 +123,27 @@
         state: present
         update_cache: yes
 
-    - name: Créer un fichier de configuration Kerberos (/etc/krb5.conf)
-      copy:
-        dest: /etc/krb5.conf
-        content: |
-          [libdefaults]
-              default_realm = {{ realm_ad }}
-              dns_lookup_realm = false
-              dns_lookup_kdc = true
-              ticket_lifetime = 24h
-              renew_lifetime = 7d
-              forwardable = true
+    # - name: Créer un fichier de configuration Kerberos (/etc/krb5.conf)
+    #   copy:
+    #     dest: /etc/krb5.conf
+    #     content: |
+    #       [libdefaults]
+    #           default_realm = {{ realm_ad }}
+    #           dns_lookup_realm = false
+    #           dns_lookup_kdc = true
+    #           ticket_lifetime = 24h
+    #           renew_lifetime = 7d
+    #           forwardable = true
 
-          [realms]
-              {{ realm_ad }} = {
-                  kdc = {{ serveur_ad_ip }}
-                  admin_server = {{ serveur_ad_ip }}
-              }
+    #       [realms]
+    #           {{ realm_ad }} = {
+    #               kdc = {{ serveur_ad_ip }}
+    #               admin_server = {{ serveur_ad_ip }}
+    #           }
 
-          [domain_realm]
-              .{{ domaine_ad | lower }} = {{ realm_ad }}
-              {{ domaine_ad | lower }} = {{ realm_ad }}
+    #       [domain_realm]
+    #           .{{ domaine_ad | lower }} = {{ realm_ad }}
+    #           {{ domaine_ad | lower }} = {{ realm_ad }}
 
     - name: Configurer le DNS pour pointer vers le serveur Active Directory
       lineinfile:
