@@ -278,7 +278,7 @@
         echo "client
         dev tun
         proto udp
-        remote {{ ansible_host }} 1194
+        remote 91.175.31.138 16387
         resolv-retry infinite
         nobind
         persist-key
