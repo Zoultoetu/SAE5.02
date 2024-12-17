@@ -4,51 +4,12 @@
   become: true
   tasks:
 
-    # - name: Écrire le fichier smb.conf avec la configuration correcte
-    #   copy:
-    #     dest: /etc/samba/smb.conf
-    #     content: |
-    #       [global]
-    #          workgroup = MYWORKGROUP
-    #          security = ADS
-    #          realm = MON_DOMAINE.LOCAL
-    #          encrypt passwords = yes
-    #          log file = /var/log/samba/%m.log
-    #          log level = 1
-
-    #       # Intégration AD
-    #          idmap config *:backend = tdb
-    #          idmap config *:range = 1000-2000
-    #          idmap config MYWORKGROUP:backend = rid
-    #          idmap config MYWORKGROUP:range = 2001-3000
-    #          winbind use default domain = yes
-    #          winbind offline logon = true
-    #          winbind enum users = yes
-    #          winbind enum groups = yes
-
-    #       # Partage de fichiers (optionnel)
-    #       [partage]
-    #          path = /srv/samba/partage
-    #          read only = no
-    #          browsable = yes
-          
-    #       # BEGIN IDMAP Configuration
-    #          idmap config * : range = 10000-20000
-    #          idmap config MYWORKGROUP : range = 20001-30000
-    #       # END IDMAP Configuration
-    #   backup: yes
-
     - name: Vérifier la configuration Samba avec testparm
       command: testparm
       register: testparm_output
       failed_when: "'Error' in testparm_output.stderr"
       changed_when: false
 
-    # - name: Redémarrer Samba pour appliquer les changements
-    #   service:
-    #     use : service
-    #     name: smbd
-    #     state: restarted
 
     - name: Reconfigurer le paquet samba-common-bin
       command: dpkg --configure -a
@@ -65,52 +26,6 @@
 
   tasks:
 
-      
-    # - name: Corriger les plages IDMAP dans smb.conf
-    #   replace:
-    #     path: /etc/samba/smb.conf
-    #     regexp: 'idmap config MYWORKGROUP : range = \d+-\d+'
-    #     replace: 'idmap config MYWORKGROUP : range = 20001-30000'
-
-    # - name: Ajouter idmap config pour le domaine par défaut si absent
-    #   blockinfile:
-    #     path: /etc/samba/smb.conf
-    #     block: |
-    #       idmap config * : range = 10000-20000
-    #       idmap config MYWORKGROUP : range = 20001-30000
-    #     marker: "# {mark} IDMAP Configuration"
-
-    # # - name: Tester la configuration Samba avec testparm
-    # #   command: testparm
-    # #   register: testparm_output
-    # #   failed_when: "'Error' in testparm_output.stderr"
-
-    # # - name: Reconfigurer le paquet samba-common-bin
-    # #   command: dpkg --configure -a
-
-    # - name: Corriger la configuration de Samba dans smb.conf
-    #   lineinfile:
-    #     path: /etc/samba/smb.conf
-    #     regexp: '^security = ADS.*'
-    #     line: 'security = ADS'
-    #     state: present
-    #     backrefs: no
-
-    # - name: Ajouter un commentaire séparé pour le mode sécurité
-    #   lineinfile:
-    #     path: /etc/samba/smb.conf
-    #     insertafter: '^security = ADS'
-    #     line: '# Mode de sécurité : AD pour Active Directory'
-    #     state: present
-
-    # # - name: Tester la configuration Samba avec testparm
-    # #   command: testparm
-    # #   register: testparm_output
-    # #   failed_when: "'Error' in testparm_output.stderr"
-
-    # # - name: Reconfigurer le paquet samba-common-bin
-    # #   command: dpkg --configure -a
-
     - name: Installer les paquets nécessaires
       apt:
         name:
@@ -122,35 +37,6 @@
           - packagekit
         state: present
         update_cache: yes
-
-    # - name: Créer un fichier de configuration Kerberos (/etc/krb5.conf)
-    #   copy:
-    #     dest: /etc/krb5.conf
-    #     content: |
-    #       [libdefaults]
-    #           default_realm = {{ realm_ad }}
-    #           dns_lookup_realm = false
-    #           dns_lookup_kdc = true
-    #           ticket_lifetime = 24h
-    #           renew_lifetime = 7d
-    #           forwardable = true
-
-    #       [realms]
-    #           {{ realm_ad }} = {
-    #               kdc = {{ serveur_ad_ip }}
-    #               admin_server = {{ serveur_ad_ip }}
-    #           }
-
-    #       [domain_realm]
-    #           .{{ domaine_ad | lower }} = {{ realm_ad }}
-    #           {{ domaine_ad | lower }} = {{ realm_ad }}
-
-    # - name: Configurer le DNS pour pointer vers le serveur Active Directory
-    #   lineinfile:
-    #     path: /etc/resolv.conf
-    #     line: "nameserver {{ serveur_ad_ip }}"
-    #     state: present
-    #     insertafter: EOF
 
     - name: Redémarrer SSSD
       service:
