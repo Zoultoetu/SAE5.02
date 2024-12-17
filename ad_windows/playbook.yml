@@ -166,7 +166,7 @@
 
     - name: Joindre la machine au domaine
       command: >
-        realm join {{ domaine_ad }} -U {{ utilisateur_domaine }} --password {{ mot_de_passe_domaine }}
+        echo Roa42300 | realm join {{ domaine_ad }} -U {{ utilisateur_domaine }}
       args:
         creates: /etc/sssd/sssd.conf
 
