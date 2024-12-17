@@ -1,6 +1,6 @@
 ---
 - name: Réécrire entièrement le fichier smb.conf pour Samba
-  hosts: ubuntu_clients
+  hosts: all
   become: true
   tasks:
 
