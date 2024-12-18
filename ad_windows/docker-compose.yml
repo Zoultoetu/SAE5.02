@@ -16,7 +16,7 @@ services:
       - ./ad/resolv.conf:/etc/resolv.conf
     networks:
       macvlan_net:
-        ipv4_address: 192.168.0.10  # Adresse IP à donner au conteneur
+        ipv4_address: 192.168.1.202  # Adresse IP à donner au conteneur
 
 networks:
   macvlan_net:
