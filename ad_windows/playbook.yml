@@ -25,12 +25,16 @@
     mot_de_passe_domaine: "Roa42300"  # Mot de passe pour l'utilisateur
 
   tasks:
+    - name: Joindre la machine au domaine
+      command: >
+        pwd
+
     - name: Copier les fichiers samba dans le répertoire
       copy:
-        src: ./SAE5.02/ad_windows/samba/smb.conf
+        src: ./samba/smb.conf
         dest: "/etc/samba/smb.conf"
         remote_src: yes
-        
+
     - name: Installer les paquets nécessaires
       apt:
         name:
