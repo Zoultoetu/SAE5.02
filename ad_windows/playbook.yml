@@ -217,6 +217,15 @@
         - { src: "ta.key", dest: "ta.key" }
 
     # Étape 7 : Configurer OpenVPN
+    - name: Nettoyer les anciens certificats et clés
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /etc/openvpn/easy-rsa/pki/reqs/client.req
+        - /etc/openvpn/easy-rsa/pki/issued/client.crt
+        - /etc/openvpn/easy-rsa/pki/private/client.key
+
     - name: Identifier le certificat et la clé du serveur
       find:
         paths: /etc/openvpn/easy-rsa/pki/issued
@@ -242,7 +251,7 @@
         server_cert: "{{ cert_files.files[0].path | basename }}"
         server_key: "{{ key_files.files[0].path | basename }}"
 
-        
+
     - name: Configurer OpenVPN (server.conf)
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
