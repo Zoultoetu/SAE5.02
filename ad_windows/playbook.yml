@@ -223,6 +223,7 @@
 
     - name: Activer et démarrer le service OpenVPN
       service:
+        use : service
         name: openvpn
         state: started
         enabled: yes
