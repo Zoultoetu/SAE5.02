@@ -152,6 +152,9 @@
         - 'set_var EASYRSA_REQ_ORG        "MyVPN"'
         - 'set_var EASYRSA_REQ_EMAIL      "admin@myvpn.local"'
         - 'set_var EASYRSA_REQ_OU         "IT Department"'
+    - name: Générer le fichier ta.key pour OpenVPN
+      command: openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key
+      creates: /etc/openvpn/easy-rsa/pki/ta.key
 
     - name: Initialiser le PKI et générer les certificats nécessaires
       command: "{{ item }}"
