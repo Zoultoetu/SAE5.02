@@ -192,7 +192,7 @@
 
     - name: Sécuriser les permissions des fichiers sensibles (server.key et ta.key)
       file:
-        path: "/etc/openvpn/easyrsa_dir/pki"
+        path: "/etc/openvpn/easy-rsa/pki/"
         mode: '0777'
         owner: root
         group: root
