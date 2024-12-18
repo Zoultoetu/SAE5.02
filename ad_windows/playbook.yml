@@ -243,13 +243,13 @@
     #     msg: "Plusieurs certificats ou clés trouvés. Veuillez vérifier."
     #   when: cert_files.matched > 1 or key_files.matched > 1
 
-    - name: Générer le fichier de configuration OpenVPN (server.conf)
-      template:
-        src: server.conf.j2
-        dest: /etc/openvpn/server.conf
-      vars:
-        server_cert: "{{ cert_files.files[0].path | basename }}"
-        server_key: "{{ key_files.files[0].path | basename }}"
+    # - name: Générer le fichier de configuration OpenVPN (server.conf)
+    #   template:
+    #     src: server.conf.j2
+    #     dest: /etc/openvpn/server.conf
+    #   vars:
+    #     server_cert: "{{ cert_files.files[0].path | basename }}"
+    #     server_key: "{{ key_files.files[0].path | basename }}"
 
 
     - name: Configurer OpenVPN (server.conf)
