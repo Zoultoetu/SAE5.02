@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install ansible
 
 # Expose les ports nécessaires
-EXPOSE 22 16387/udp 1194/udp
+#EXPOSE 22 16387/udp 1194/udp
 
 # Commande de démarrage
 CMD service ssh start && tail -f /dev/null
