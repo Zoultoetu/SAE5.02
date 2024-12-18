@@ -26,11 +26,6 @@
 
   tasks:
 
-    - name: Copier les fichiers samba dans le répertoire
-      copy:
-        src: /home/toine-fa/SAE5.02/ad_windows/samba/smb.conf
-        dest: "/etc/samba/smb.conf"
-
     - name: Installer les paquets nécessaires
       apt:
         name:
@@ -49,7 +44,10 @@
         name: dbus
         state: started
 
-    
+    - name: Copier les fichiers samba dans le répertoire
+      copy:
+        src: /home/toine-fa/SAE5.02/ad_windows/samba/smb.conf
+        dest: "/etc/samba/smb.conf"
 
 
     - name: Découvrir le domaine Active Directory
