@@ -133,7 +133,7 @@
         - "{{ openvpn_dir }}"
         - "{{ easyrsa_dir }}"
         - "{{ export_dir }}"
-
+    
     - name: Copier les fichiers Easy-RSA
       copy:
         src: /usr/share/easy-rsa/
@@ -211,7 +211,7 @@
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
         content: |
-          port 16387
+          remote 91.175.31.138 16387
           proto udp
           dev tun
           ca ca.crt
@@ -273,7 +273,7 @@
         echo "client
         dev tun
         proto udp
-        remote {{ ansible_host }} 1194
+        remote 91.175.31.138 16387
         resolv-retry infinite
         nobind
         persist-key
