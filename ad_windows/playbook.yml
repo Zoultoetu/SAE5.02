@@ -1,4 +1,3 @@
----
 - name: Réécrire entièrement le fichier smb.conf pour Samba
   hosts: all
   become: true
@@ -165,7 +164,7 @@
         - ./easyrsa gen-req {{ server_name }} nopass
         - ./easyrsa sign-req server {{ server_name }}
         - ./easyrsa gen-dh
-        - openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key
+        - openvpn --genkey --secret ta.key
 
     - name: Copier les certificats et clés vers /etc/openvpn
       copy:
@@ -195,6 +194,16 @@
         msg: "Le fichier {{ item.item }} est manquant dans {{ openvpn_dir }}."
       when: not item.stat.exists
       loop: "{{ file_check.results }}"
+
+    - name: Sécuriser les permissions des fichiers sensibles (server.key et ta.key)
+      file:
+        path: "{{ openvpn_dir }}/{{ item }}"
+        mode: '0600'
+        owner: root
+        group: root
+      loop:
+        - server.key
+        - ta.key
 
     - name: Configurer OpenVPN (server.conf)
       copy:
@@ -227,6 +236,7 @@
         name: openvpn
         state: started
         enabled: yes
+
 
     # Étape 9 : Générer les certificats pour le client
     - name: Générer une clé et un certificat pour le client
