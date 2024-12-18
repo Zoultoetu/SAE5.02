@@ -238,10 +238,10 @@
     #     patterns: "*.key"
     #   register: key_files
 
-    - name: Vérifier qu'un seul certificat et clé sont trouvés
-      fail:
-        msg: "Plusieurs certificats ou clés trouvés. Veuillez vérifier."
-      when: cert_files.matched > 1 or key_files.matched > 1
+    # - name: Vérifier qu'un seul certificat et clé sont trouvés
+    #   fail:
+    #     msg: "Plusieurs certificats ou clés trouvés. Veuillez vérifier."
+    #   when: cert_files.matched > 1 or key_files.matched > 1
 
     - name: Générer le fichier de configuration OpenVPN (server.conf)
       template:
