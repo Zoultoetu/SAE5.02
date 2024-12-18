@@ -221,7 +221,7 @@
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
         content: |
-          port 16385
+          port 16387
           proto udp
           dev tun
           ca ca.crt
