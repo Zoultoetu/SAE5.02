@@ -26,8 +26,7 @@
 
   tasks:
     - name: Joindre la machine au domaine
-      command: >
-        pwd
+      command: pwd
 
     - name: Copier les fichiers samba dans le répertoire
       copy:
