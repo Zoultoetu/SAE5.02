@@ -30,7 +30,6 @@
       copy:
         src: /home/toine-fa/SAE5.02/ad_windows/samba/smb.conf
         dest: "/etc/samba/smb.conf"
-        remote_src: yes
 
     - name: Installer les paquets nécessaires
       apt:
