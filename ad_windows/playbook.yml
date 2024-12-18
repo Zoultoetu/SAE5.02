@@ -1,6 +1,7 @@
 ---
+###################################################### Samba ########################################################################################
 - name: Réécrire entièrement le fichier smb.conf pour Samba
-  hosts: vpn
+  hosts: all
   become: true
   tasks:
 
@@ -13,9 +14,10 @@
     - name: Reconfigurer le paquet samba-common-bin
       command: dpkg --configure -a
 
+######################################################Mettre en place l'active directory##########################################################
 
 - name: Joindre une machine Ubuntu au domaine Active Directory
-  hosts: vpn
+  hosts: all
   become: true
   vars:
     domaine_ad: "MAME.net"
@@ -102,7 +104,7 @@
         name: sssd
         state: restarted
 
-
+##########################################################SERVEUR VPN############################################################################
 - name: Configuration complète d'OpenVPN
   hosts: vpn
   become: true
@@ -316,63 +318,35 @@
 
 
 ---
-- name: Installer et configurer Home Assistant
+- name: Configurer la machine Home Assistant
   hosts: home_assistant
+  gather_facts: true
   become: true
 
   tasks:
-    # Mettre à jour le système
+    # Mise à jour des paquets
     - name: Mettre à jour les paquets
       apt:
         update_cache: yes
         upgrade: dist
 
-    # Installer les dépendances nécessaires pour Home Assistant
-    - name: Installer les dépendances
-      apt:
-        name:
-          - software-properties-common
-          - apparmor-utils
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - dbus
-        state: present
+    # Ajouter un fichier de configuration pour Home Assistant
+    - name: Ajouter un fichier de configuration Home Assistant
+      copy:
+        dest: /opt/home_assistant/config/configuration.yaml
+        content: |
+          homeassistant:
+            name: "Smart Home"
+          default_config:
+          automation:
+            - alias: "Turn on lights at sunset"
+              trigger:
+                - platform: sun
+                  event: sunset
+              action:
+                - service: light.turn_on
+                  entity_id: light.living_room
 
-    # Ajouter le dépôt officiel de Home Assistant (si besoin)
-    - name: Ajouter le dépôt Docker
-      shell: |
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-      args:
-        executable: /bin/bash
-
-    # Installer Docker
-    - name: Installer Docker
-      apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
-
-    # Lancer et activer le service Docker
-    - name: Lancer et activer Docker
-      systemd:
-        name: docker
-        enabled: yes
-        state: started
-
-    # Télécharger et configurer l'image officielle de Home Assistant
-    - name: Télécharger Home Assistant
-      docker_container:
-        name: home_assistant
-        image: ghcr.io/home-assistant/home-assistant:stable
-        state: started
-        restart_policy: always
-        ports:
-          - "8123:8123"
-        volumes:
-          - /opt/home_assistant/config:/config
-        env:
-          TZ: Europe/Paris
+    # Redémarrer Home Assistant
+    - name: Redémarrer Home Assistant
+      shell: pkill hass && hass --config /opt/home_assistant/config &
