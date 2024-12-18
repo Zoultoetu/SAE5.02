@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-# Met à jour le système et installe SSH
+# Met à jour le système et installe SSH, Python, pip, et outils réseau
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-server \
     python3 \
@@ -19,8 +19,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Installe Ansible
 RUN pip3 install ansible
 
-# Expose les ports nécessaires
-#EXPOSE 22 16387/udp 1194/udp
+# Expose les ports nécessaires (ajustez si nécessaire)
+EXPOSE 22
 
 # Commande de démarrage
-CMD service ssh start && tail -f /dev/null
+CMD ["/usr/sbin/sshd", "-D"]

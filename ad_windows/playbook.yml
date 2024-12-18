@@ -1,6 +1,6 @@
 ---
 - name: Réécrire entièrement le fichier smb.conf pour Samba
-  hosts: all
+  hosts: vpn
   become: true
   tasks:
 
@@ -15,7 +15,7 @@
 
 
 - name: Joindre une machine Ubuntu au domaine Active Directory
-  hosts: all
+  hosts: vpn
   become: true
   vars:
     domaine_ad: "MAME.net"
@@ -307,3 +307,72 @@
       debug:
         msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
       when: client_ovpn_file.stat.exists
+
+
+
+################################HOME ASSISTANCE####################################################################################################################
+
+
+
+
+---
+- name: Installer et configurer Home Assistant
+  hosts: home_assistant
+  become: true
+
+  tasks:
+    # Mettre à jour le système
+    - name: Mettre à jour les paquets
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    # Installer les dépendances nécessaires pour Home Assistant
+    - name: Installer les dépendances
+      apt:
+        name:
+          - software-properties-common
+          - apparmor-utils
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - dbus
+        state: present
+
+    # Ajouter le dépôt officiel de Home Assistant (si besoin)
+    - name: Ajouter le dépôt Docker
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        executable: /bin/bash
+
+    # Installer Docker
+    - name: Installer Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    # Lancer et activer le service Docker
+    - name: Lancer et activer Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    # Télécharger et configurer l'image officielle de Home Assistant
+    - name: Télécharger Home Assistant
+      docker_container:
+        name: home_assistant
+        image: ghcr.io/home-assistant/home-assistant:stable
+        state: started
+        restart_policy: always
+        ports:
+          - "8123:8123"
+        volumes:
+          - /opt/home_assistant/config:/config
+        env:
+          TZ: Europe/Paris
