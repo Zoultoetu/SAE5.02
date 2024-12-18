@@ -211,7 +211,7 @@
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
         content: |
-          remote 91.175.31.138 16387
+          port 16387
           proto udp
           dev tun
           ca ca.crt
