@@ -217,6 +217,32 @@
         - { src: "ta.key", dest: "ta.key" }
 
     # Étape 7 : Configurer OpenVPN
+    - name: Identifier le certificat et la clé du serveur
+      find:
+        paths: /etc/openvpn/easy-rsa/pki/issued
+        patterns: "*.crt"
+      register: cert_files
+
+    - name: Identifier la clé privée du serveur
+      find:
+        paths: /etc/openvpn/easy-rsa/pki/private
+        patterns: "*.key"
+      register: key_files
+
+    - name: Vérifier qu'un seul certificat et clé sont trouvés
+      fail:
+        msg: "Plusieurs certificats ou clés trouvés. Veuillez vérifier."
+      when: cert_files.matched > 1 or key_files.matched > 1
+
+    - name: Générer le fichier de configuration OpenVPN (server.conf)
+      template:
+        src: server.conf.j2
+        dest: /etc/openvpn/server.conf
+      vars:
+        server_cert: "{{ cert_files.files[0].path | basename }}"
+        server_key: "{{ key_files.files[0].path | basename }}"
+
+        
     - name: Configurer OpenVPN (server.conf)
       copy:
         dest: "{{ openvpn_dir }}/server.conf"
@@ -271,30 +297,7 @@
           verb 3
 
 
-    - name: Identifier le certificat et la clé du serveur
-      find:
-        paths: /etc/openvpn/easy-rsa/pki/issued
-        patterns: "*.crt"
-      register: cert_files
-
-    - name: Identifier la clé privée du serveur
-      find:
-        paths: /etc/openvpn/easy-rsa/pki/private
-        patterns: "*.key"
-      register: key_files
-
-    - name: Vérifier qu'un seul certificat et clé sont trouvés
-      fail:
-        msg: "Plusieurs certificats ou clés trouvés. Veuillez vérifier."
-      when: cert_files.matched > 1 or key_files.matched > 1
-
-    - name: Générer le fichier de configuration OpenVPN (server.conf)
-      template:
-        src: server.conf.j2
-        dest: /etc/openvpn/server.conf
-      vars:
-        server_cert: "{{ cert_files.files[0].path | basename }}"
-        server_key: "{{ key_files.files[0].path | basename }}"
+    
 
     # Étape 8 : Activer et démarrer OpenVPN
     - name: Activer et démarrer le service OpenVPN
