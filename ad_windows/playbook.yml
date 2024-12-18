@@ -165,7 +165,7 @@
         - ./easyrsa gen-req {{ server_name }} nopass
         - ./easyrsa sign-req server {{ server_name }}
         - ./easyrsa gen-dh
-        - openvpn --genkey --secret ta.key
+        - openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key
 
     - name: Copier les certificats et clés vers /etc/openvpn
       copy:
