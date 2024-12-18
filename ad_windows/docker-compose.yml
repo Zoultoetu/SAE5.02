@@ -8,16 +8,21 @@ services:
     container_name: vpn
     ports:
       - "16387:16387/udp"        # Port VPN
-      - "2222:22"                # Port SSH
+      - "2222:22"              # Port SSH
     volumes:
       - ./openvpn:/etc/openvpn
       # - ./samba:/etc/samba
       - ./kerberos:/etc/krb5.conf
       - ./ad/resolv.conf:/etc/resolv.conf
     networks:
-      macvlan_net:
-        ipv4_address: 192.168.1.202  # Adresse IP à donner au conteneur
+      shared_net:
+        ipv4_address: 192.168.0.3
+    privileged: true
+
 
 networks:
-  macvlan_net:
-    external: true
+  shared_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
