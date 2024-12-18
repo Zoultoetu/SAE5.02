@@ -28,7 +28,7 @@
 
     - name: Copier les fichiers samba dans le répertoire
       copy:
-        src: /home/toine-fa/ad_windows/samba/smb.conf
+        src: /home/toine-fa/SAE5.02/ad_windows/samba/smb.conf
         dest: "/etc/samba/smb.conf"
         remote_src: yes
 
