@@ -226,17 +226,17 @@
         - /etc/openvpn/easy-rsa/pki/issued/client.crt
         - /etc/openvpn/easy-rsa/pki/private/client.key
 
-    - name: Identifier le certificat et la clé du serveur
-      find:
-        paths: /etc/openvpn/easy-rsa/pki/issued
-        patterns: "*.crt"
-      register: cert_files
+    # - name: Identifier le certificat et la clé du serveur
+    #   find:
+    #     paths: /etc/openvpn/easy-rsa/pki/issued
+    #     patterns: "*.crt"
+    #   register: cert_files
 
-    - name: Identifier la clé privée du serveur
-      find:
-        paths: /etc/openvpn/easy-rsa/pki/private
-        patterns: "*.key"
-      register: key_files
+    # - name: Identifier la clé privée du serveur
+    #   find:
+    #     paths: /etc/openvpn/easy-rsa/pki/private
+    #     patterns: "*.key"
+    #   register: key_files
 
     - name: Vérifier qu'un seul certificat et clé sont trouvés
       fail:
