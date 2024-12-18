@@ -31,3 +31,6 @@ echo "=== Déploiement terminé ==="
 
 # echo "=== Copie du Fichier OVPN dans le presse papier ==="
 # xclip -sel clip < client.ovpn
+
+docker stop vpn
+docker start vpn
