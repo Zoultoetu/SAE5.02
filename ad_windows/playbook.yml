@@ -384,8 +384,8 @@
       become: true
 
 
-    - name: Reconfigurer le paquet ssh
-      command: ssh-keygen -f '/root/.ssh/known_hosts' -R '192.168.0.4'
+    # - name: Reconfigurer le paquet ssh
+    #   command: ssh-keygen -f '/root/.ssh/known_hosts' -R '192.168.0.4'
 
     - name: Redémarrer docker
       service:
