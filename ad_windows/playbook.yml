@@ -321,6 +321,7 @@
   tasks:
     - name: Mettre à jour les paquets et installer Docker si nécessaire
       apt:
+        update_cache: yes
         name:
           - docker.io
           - docker-compose
@@ -333,18 +334,36 @@
           - libxslt1-dev
           - zlib1g-dev
         state: present
-      become: true
 
-    - name: Installer Home Assistant avec pip
-      shell: |
-        pip3 install --upgrade homeassistant
-      become: true
+    - name: Créer un réseau Docker pour Home Assistant
+      docker_network:
+        name: homeassistant_network
+        state: present
 
-    - name: Créer le groupe homeassistant
+    - name: Vérifier si le conteneur Home Assistant est déjà lancé
+      docker_container_info:
+        name: home_assistant
+      register: ha_container_info
+      ignore_errors: true
+
+    - name: Lancer le conteneur Docker Home Assistant
+      docker_container:
+        name: home_assistant
+        image: homeassistant/home-assistant:stable
+        state: started
+        restart_policy: always
+        ports:
+          - "8123:8123"
+        volumes:
+          - /srv/homeassistant/config:/config
+        networks:
+          - homeassistant_network
+      when: ha_container_info.container is not defined
+
+    - name: Créer le groupe homeassistant si nécessaire
       group:
         name: homeassistant
         state: present
-      become: true
 
     - name: Créer l'utilisateur homeassistant
       user:
@@ -360,9 +379,6 @@
         owner: homeassistant
         group: homeassistant
         mode: '0755'
-      become: true
-
-
 
     - name: Ajouter le fichier configuration.yaml
       copy:
@@ -382,42 +398,5 @@
         owner: homeassistant
         group: homeassistant
         mode: '0644'
-      become: true
 
-
-    # - name: Reconfigurer le paquet ssh
-    #   command: ssh-keygen -f
-
-    # - name: Redémarrer docker
-    #   service:
-    #     use : service
-    #     name: docker-compose
-    #     state: restarted
-
-    - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
-      docker_container:
-        name: home_assistant
-        image: homeassistant/home-assistant:stable
-        state: started
-        restart_policy: always
-        ports:
-          - "8123:8123"
-        volumes:
-          - /srv/homeassistant/config:/config
-        networks:
-          - homeassistant_network
-      become: true
-
-    - name: Créer un réseau Docker si nécessaire
-      docker_network:
-        name: homeassistant_network
-        state: present
-      become: true
-
-    - name: Démarrer Home Assistant directement sans systemd
-      shell: |
-        nohup hass -c /srv/homeassistant/config > /var/log/homeassistant.log 2>&1 &
-      args:
-        executable: /bin/bash
-      become: true
 
