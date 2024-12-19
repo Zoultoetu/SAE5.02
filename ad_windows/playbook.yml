@@ -336,9 +336,10 @@
         state: present
 
     - name: Créer un réseau Docker pour Home Assistant
-      docker_network:
-        name: homeassistant_network
-        state: present
+      driver: bridge
+      ipam:
+        config:
+          - subnet: 192.168.4.0/24
 
     - name: Vérifier si le conteneur Home Assistant est déjà lancé
       docker_container_info:
@@ -352,12 +353,13 @@
         image: homeassistant/home-assistant:stable
         state: started
         restart_policy: always
+        networks:
+          shared_net:
+            ipv4_address: 192.168.4.2
         ports:
           - "8123:8123"
         volumes:
           - /srv/homeassistant/config:/config
-        networks:
-          - homeassistant_network
       when: ha_container_info.container is not defined
 
     - name: Créer le groupe homeassistant si nécessaire
