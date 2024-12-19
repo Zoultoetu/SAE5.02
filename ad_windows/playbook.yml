@@ -313,53 +313,53 @@
 
 ################################HOME ASSISTANT####################################################################################################################
 
-- name: Configurer la machine Home Assistant avec Docker
-  hosts: home_assitance
-  gather_facts: true
-  become: true
+# - name: Configurer la machine Home Assistant avec Docker
+#   hosts: home_assitance
+#   gather_facts: true
+#   become: true
 
-  tasks:
-    - name: Mettre à jour les paquets et installer Docker si nécessaire
-      apt:
-        name:
-          - docker.io
-          - python3-dev
-          - python3-pip
-          - build-essential
-          - libffi-dev
-          - libssl-dev
-          - libxml2-dev
-          - libxslt1-dev
-          - zlib1g-dev
-        state: present
-      become: true
+#   tasks:
+#     - name: Mettre à jour les paquets et installer Docker si nécessaire
+#       apt:
+#         name:
+#           - docker.io
+#           - python3-dev
+#           - python3-pip
+#           - build-essential
+#           - libffi-dev
+#           - libssl-dev
+#           - libxml2-dev
+#           - libxslt1-dev
+#           - zlib1g-dev
+#         state: present
+#       become: true
 
-    - name: Installer Home Assistant avec pip
-      shell: |
-        pip3 install --upgrade homeassistant
-      become: true
+#     - name: Installer Home Assistant avec pip
+#       shell: |
+#         pip3 install --upgrade homeassistant
+#       become: true
 
-    - name: Créer le groupe homeassistant
-      group:
-        name: homeassistant
-        state: present
-      become: true
+#     - name: Créer le groupe homeassistant
+#       group:
+#         name: homeassistant
+#         state: present
+#       become: true
 
-    - name: Créer l'utilisateur homeassistant
-      user:
-        name: homeassistant
-        group: homeassistant
-        create_home: yes
-      become: true
+#     - name: Créer l'utilisateur homeassistant
+#       user:
+#         name: homeassistant
+#         group: homeassistant
+#         create_home: yes
+#       become: true
 
-    - name: Créer un répertoire de configuration pour Home Assistant
-      file:
-        path: /srv/homeassistant/config
-        state: directory
-        owner: homeassistant
-        group: homeassistant
-        mode: '0755'
-      become: true
+#     - name: Créer un répertoire de configuration pour Home Assistant
+#       file:
+#         path: /srv/homeassistant/config
+#         state: directory
+#         owner: homeassistant
+#         group: homeassistant
+#         mode: '0755'
+#       become: true
 
 
 
