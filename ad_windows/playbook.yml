@@ -394,8 +394,11 @@
           WantedBy=multi-user.target
         mode: '0644'
 
-    - name: Recharger systemd pour inclure le nouveau service
-      command: service daemon-reload restart
+    - name: Démarrer Home Assistant directement sans systemd
+      shell: |
+        nohup hass -c /srv/homeassistant/config > /var/log/homeassistant.log 2>&1 &
+      args:
+        executable: /bin/bash
 
     - name: Activer et démarrer le service Home Assistant
       service:
