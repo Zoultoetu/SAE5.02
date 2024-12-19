@@ -363,6 +363,21 @@
         executable: /bin/bash
       become_user: homeassistant
 
+    - name: Créer le répertoire temporaire Ansible avec les bonnes permissions
+      file:
+        path: /srv/homeassistant/.ansible/tmp
+        state: directory
+        mode: '0775'
+      become: true
+
+    - name: Installer Home Assistant dans l'environnement virtuel
+      shell: |
+        source /srv/homeassistant/bin/activate && pip install wheel homeassistant
+      args:
+        executable: /bin/bash
+      become_user: homeassistant
+
+
     # Étape 3 : Ajouter un fichier de configuration personnalisé pour Home Assistant
     - name: Créer le répertoire de configuration pour Home Assistant
       file:
