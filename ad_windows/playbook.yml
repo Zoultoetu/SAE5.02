@@ -335,16 +335,21 @@
           - zlib1g-dev
         state: present
 
+    - name: Vérifier que le démon Docker est en cours d'exécution
+      command: systemctl is-active docker
+      register: docker_status
+      failed_when: docker_status.rc != 0
+
+    - name: S'assurer que Docker démarre s'il est arrêté
+      service:
+        name: docker
+        state: started
+
     - name: Créer un réseau Docker pour Home Assistant
       docker_network:
         name: homeassistant_network
         state: present
-
-    - name: Vérifier si le conteneur Home Assistant est déjà lancé
-      docker_container_info:
-        name: home_assistant
-      register: ha_container_info
-      ignore_errors: true
+        driver: bridge
 
     - name: Lancer le conteneur Docker Home Assistant
       docker_container:
@@ -358,7 +363,6 @@
           - /srv/homeassistant/config:/config
         networks:
           - homeassistant_network
-      when: ha_container_info.container is not defined
 
     - name: Créer le groupe homeassistant si nécessaire
       group:
@@ -370,7 +374,6 @@
         name: homeassistant
         group: homeassistant
         create_home: yes
-      become: true
 
     - name: Créer un répertoire de configuration pour Home Assistant
       file:
@@ -398,5 +401,3 @@
         owner: homeassistant
         group: homeassistant
         mode: '0644'
-
-
