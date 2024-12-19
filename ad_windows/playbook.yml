@@ -1,18 +1,18 @@
 ---
-# ###################################################### Samba ########################################################################################
-# - name: Réécrire entièrement le fichier smb.conf pour Samba
-#   hosts: all
-#   become: true
-#   tasks:
+###################################################### Samba ########################################################################################
+- name: Réécrire entièrement le fichier smb.conf pour Samba
+  hosts: all
+  become: true
+  tasks:
 
-#     - name: Vérifier la configuration Samba avec testparm
-#       command: testparm
-#       register: testparm_output
-#       failed_when: "'Error' in testparm_output.stderr"
-#       changed_when: false
+    - name: Vérifier la configuration Samba avec testparm
+      command: testparm
+      register: testparm_output
+      failed_when: "'Error' in testparm_output.stderr"
+      changed_when: false
 
-#     - name: Reconfigurer le paquet samba-common-bin
-#       command: dpkg --configure -a
+    - name: Reconfigurer le paquet samba-common-bin
+      command: dpkg --configure -a
 
 # ######################################################Mettre en place l'active directory##########################################################
 
