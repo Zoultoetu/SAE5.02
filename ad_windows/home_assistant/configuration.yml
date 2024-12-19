@@ -1,0 +1,86 @@
+homeassistante:
+  name: "Home Assistant"
+  latitude: 32.87336
+  longitude: 117.22743
+  country: "FR"
+  timezone: "Europe/Paris"
+  elevation: 430
+  unit_system: metric
+  currency: "EUR"
+  language: "fr"
+
+# Personnalisation des entités
+homeassistant:
+  customize:
+    light.lumiere_salon:
+      friendly_name: "Salon Lumière"
+      icon: mdi:lightbulb
+    switch.lumiere_chambre:
+      friendly_name: "Chambre Lumière"
+      icon: mdi:bed
+
+# Automatisations
+automation:
+  - alias: "Allumer les lumières la nuit"
+    trigger:
+      platform: sun
+      event: sunset
+    action:
+      service: light.turn_on
+      entity_id: light.lumiere_salon
+
+# Scripts
+script:
+  allumer_lumieres:
+    alias: "Allumer toutes les lumières"
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id: group.all_lights
+
+# MQTT Configuration
+mqtt:
+  broker: "mqtt://192.168.0.10"
+  username: "mqtt_user"
+  password: "super_secret_password"
+
+# Configuration des capteurs
+binary_sensor:
+  - platform: mqtt
+    name: "Capteur porte d'entrée"
+    state_topic: "home/door"
+    payload_on: "OPEN"
+    payload_off: "CLOSED"
+    device_class: door
+
+# Configuration des groupes
+group:
+  all_lights:
+    name: "Toutes les lumières"
+    entities:
+      - light.lumiere_salon
+      - light.lumiere_chambre
+
+# Logger configuration
+logger:
+  default: debug
+  logs:
+    homeassistant.core: info
+    homeassistant.components.mqtt: debug
+
+# Zones géographiques
+zone:
+  - name: Maison
+    latitude: 32.87336
+    longitude: 117.22743
+    radius: 100
+    icon: mdi:home
+
+# Sécuriser des secrets (ici dans le fichier secrets.yaml)
+secrets:
+  mqtt_username: "mqtt_user"
+  mqtt_password: "super_secret_password"
+
+# Exemple d'authentification
+homeassistant.auth_provider:
+  type: homeassistant

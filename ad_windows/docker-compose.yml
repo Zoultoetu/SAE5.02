@@ -18,23 +18,23 @@ services:
       shared_net:
         ipv4_address: 192.168.0.3
     privileged: true
-  home_assistant:
+
+
+  
+  home_assistant_service:
     build:
-      context: .
+      context: ./home_assistant
       dockerfile: Dockerfile
     container_name: home_assistant
-    hostname: homeassistant
-    domainname: MAME.net
     ports:
-      - "8123:8123"
+      - "22:22"     # SSH
+      - "8123:8123" # Home Assistant Web Interface
     volumes:
-      - ./home_assistant/config:/config
-      - ./ad/resolv.conf:/etc/resolv.conf
+      - ./config:/opt/home_assistant/config
     networks:
       shared_net:
         ipv4_address: 192.168.0.4
-    environment:
-      - TZ=Europe/Paris
+    privileged: true
 
 
 networks:
