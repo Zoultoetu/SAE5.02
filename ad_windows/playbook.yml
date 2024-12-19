@@ -384,14 +384,14 @@
       become: true
 
 
-#     - name: Reconfigurer le paquet ssh
-#       command: ssh-keygen -f
+    - name: Reconfigurer le paquet ssh
+      command: ssh-keygen -f
 
-#     - name: Redémarrer docker
-#       service:
-#         use : service
-#         name: docker
-#         state: restarted
+    - name: Redémarrer docker
+      service:
+        use : service
+        name: docker
+        state: restarted
 
 #     - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
 #       docker_container:
