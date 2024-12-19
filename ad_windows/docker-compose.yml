@@ -22,9 +22,7 @@ services:
 
   
   home_assistant:
-    build:
-      context: ./home_assistant
-      dockerfile: Dockerfile
+    image: homeassistant/home-assistant:stable  # Utilisation de l'image officielle
     container_name: home_assistant
     networks:
       shared_net:
@@ -32,7 +30,7 @@ services:
     ports:
       - "8123:8123"  # Interface Web Home Assistant
     volumes:
-      - ./homeassistant:/config  # Répertoire de configuration
+      - ./home_assistant_system:/config  # Répertoire de configuration
     restart: always
 
 
