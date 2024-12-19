@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
     container_name: home_assistant
     ports:
-      - "2223:22"     # SSH
+      - "2227:22"     # SSH
       - "8123:8123" # Home Assistant Web Interface
     volumes:
       - ./samba:/etc/samba
@@ -37,7 +37,8 @@ services:
       - ./home_assistant_system/srv/homeassistant/config:/usr/src/app/config
     networks:
       shared_net:
-        ipv4_address: 192.168.0.4
+        ipv4_address: 192.168.0.5
+
     privileged: true
 
 

@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping && \
     apt-get clean && \
     pip install hass-nabucasa &&\
-    pip install --upgrade cryptography pyopenssl &&\
-    pip install --upgrade boto3 botocore &&\
+    # pip install --upgrade cryptography pyopenssl &&\
+    # pip install --upgrade boto3 botocore &&\
     rm -rf /var/lib/apt/lists/*
 
 # Configurer SSH
@@ -23,7 +23,7 @@ RUN mkdir /var/run/sshd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # Exposer les ports
-EXPOSE 22 8123
+EXPOSE 22
 
 # Commande de démarrage
 CMD service ssh start && tail -f /dev/null
