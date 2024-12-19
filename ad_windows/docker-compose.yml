@@ -30,6 +30,9 @@ services:
       - "22:22"     # SSH
       - "8123:8123" # Home Assistant Web Interface
     volumes:
+      - ./samba:/etc/samba
+      - ./kerberos:/etc/krb5.conf
+      - ./ad/resolv.conf:/etc/resolv.conf
       - ./home_assistant/configuration.yaml:/usr/src/app/config/configuration.yaml  # Montée du fichier de config
       - ./home_assistant_system/srv/homeassistant/config:/usr/src/app/config
     networks:
