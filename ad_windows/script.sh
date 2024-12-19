@@ -22,6 +22,7 @@ sleep 10
 # Étape 4 : Configuration avec Ansible
 echo "=== Configuration des services avec Ansible ==="
 cd ../..
+pwd
 ansible-playbook -i "$BASE_DIR/inventaire.ini" "$BASE_DIR/playbook.yml" -e "samba_username=root samba_password=root"
 
 echo "=== Déploiement terminé ==="
