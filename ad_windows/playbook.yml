@@ -383,7 +383,6 @@
         mode: '0644'
       become: true
 
-    handlers:
     - name: Redémarrer docker
       service:
         use : service
