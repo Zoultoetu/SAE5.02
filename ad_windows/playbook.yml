@@ -339,6 +339,13 @@
         pip3 install --upgrade homeassistant
       become: true
 
+    - name: Créer l'utilisateur et le groupe homeassistant
+      user:
+        name: homeassistant
+        group: homeassistant
+        create_home: yes
+      become: true
+
     - name: Créer un répertoire de configuration pour Home Assistant
       file:
         path: /srv/homeassistant/config
@@ -347,6 +354,7 @@
         group: homeassistant
         mode: '0755'
       become: true
+
 
     - name: Ajouter le fichier configuration.yaml
       copy:
