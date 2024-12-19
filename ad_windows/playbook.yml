@@ -383,10 +383,12 @@
         mode: '0644'
       become: true
 
-    - name: Vérifier si Docker est installé et en cours d'exécution
-      shell: docker info
-      register: docker_info
-      ignore_errors: true
+    handlers:
+    - name: Redémarrer docker
+      service:
+        use : service
+        name: docker
+        state: start
 
     - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
       docker_container:
