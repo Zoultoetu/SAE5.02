@@ -21,25 +21,19 @@ services:
 
 
   
-  home_assistant_service:
+  home_assistant:
     build:
       context: ./home_assistant
       dockerfile: Dockerfile
     container_name: home_assistant
-    ports:
-      - "2227:22"     # SSH
-      - "8123:8123" # Home Assistant Web Interface
-    volumes:
-      - ./samba:/etc/samba
-      - ./kerberos:/etc/krb5.conf
-      - ./ad/resolv.conf:/etc/resolv.conf
-      - ./home_assistant/configuration.yaml:/usr/src/app/config/configuration.yaml  # Montée du fichier de config
-      - ./home_assistant_system/srv/homeassistant/config:/usr/src/app/config
     networks:
       shared_net:
         ipv4_address: 192.168.0.5
-
-    privileged: true
+    ports:
+      - "8123:8123"  # Interface Web Home Assistant
+    volumes:
+      - ./homeassistant:/config  # Répertoire de configuration
+    restart: always
 
 
 networks:

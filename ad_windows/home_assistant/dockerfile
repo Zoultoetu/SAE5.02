@@ -1,29 +1,12 @@
-FROM ubuntu:20.04
+FROM homeassistant/home-assistant:stable
 
-# Mettre à jour le système et installer les dépendances de base
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    openssh-server \
-    python3 \
-    python3-pip \
-    curl \
-    sudo \
-    nano \
-    dnsutils \
-    iputils-ping && \
-    apt-get clean && \
-    pip install hass-nabucasa &&\
-    # pip install --upgrade cryptography pyopenssl &&\
-    # pip install --upgrade boto3 botocore &&\
-    rm -rf /var/lib/apt/lists/*
+# Installer le serveur SSH
+RUN apt-get update && \
+    apt-get install -y openssh-server && \
+    mkdir /var/run/sshd
 
 # Configurer SSH
-RUN mkdir /var/run/sshd && \
-    echo 'root:root' | chpasswd && \
-    sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-
-# Exposer les ports
+RUN echo "root:root" | chpasswd  # Définir un mot de passe pour root (à sécuriser)
 EXPOSE 22
 
-# Commande de démarrage
-CMD service ssh start && tail -f /dev/null
+CMD ["/usr/sbin/sshd", "-D"]
