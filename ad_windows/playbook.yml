@@ -314,7 +314,7 @@
 ################################HOME ASSISTANT####################################################################################################################
 
 - name: Configurer la machine Home Assistant
-  hosts: home_assistant
+  hosts: home_assitance
   gather_facts: true
   become: true
 
