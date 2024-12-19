@@ -319,49 +319,38 @@
   become: true
 
   tasks:
-    # - name: Copier le fichier configuration.yaml dans le conteneur
-    #   docker_container:
-    #     name: "home_assistant_container"
-    #     volumes:
-    #       - ./SAE5.02/ad_windows/home_assistant/configuration.yaml:/usr/src/app/config/configuration.yaml
-    
-    # Étape 1 : Mise à jour des paquets
-    - name: Mettre à jour et installer les paquets nécessaires
+    - name: Mettre à jour les paquets et installer les dépendances nécessaires pour Home Assistant
       apt:
         name:
-          - python3
-          - python3-pip
-          - python3-venv
+          - python3-dev
+          - build-essential
+          - libffi-dev
+          - libssl-dev
+          - libxml2-dev
+          - libxslt1-dev
+          - zlib1g-dev
         state: present
-        update_cache: yes
+      become: true
 
-    # Étape 2 : Créer un environnement virtuel pour Home Assistant
-    - name: Créer un utilisateur dédié pour Home Assistant
-      user:
-        name: homeassistant
-        home: /srv/homeassistant
-        shell: /bin/bash
-        state: present
-
-    - name: Créer un répertoire pour Home Assistant
-      file:
-        path: /srv/homeassistant
-        state: directory
-        owner: homeassistant
-        group: homeassistant
-        mode: '0755'
-
-    - name: Créer un environnement virtuel Python pour Home Assistant
-      command: python3 -m venv /srv/homeassistant
-      args:
-        creates: /srv/homeassistant/bin/activate
-
-    - name: Installer Home Assistant dans l'environnement virtuel
+    - name: Créer l'environnement virtuel pour Home Assistant
       shell: |
-        source /srv/homeassistant/bin/activate && pip install wheel homeassistant
+        python3 -m venv /srv/homeassistant
+      become: true
+
+    - name: Installer wheel dans l'environnement virtuel
+      shell: |
+        source /srv/homeassistant/bin/activate && pip install wheel
       args:
         executable: /bin/bash
       become_user: homeassistant
+
+    - name: Installer Home Assistant dans l'environnement virtuel
+      shell: |
+        source /srv/homeassistant/bin/activate && pip install homeassistant
+      args:
+        executable: /bin/bash
+      become_user: homeassistant
+
 
     - name: Créer le répertoire temporaire Ansible avec les bonnes permissions
       file:
