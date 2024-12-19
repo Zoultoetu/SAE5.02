@@ -334,16 +334,16 @@
         state: present
       become: true
 
-#     - name: Installer Home Assistant avec pip
-#       shell: |
-#         pip3 install --upgrade homeassistant
-#       become: true
+    - name: Installer Home Assistant avec pip
+      shell: |
+        pip3 install --upgrade homeassistant
+      become: true
 
-#     - name: Créer le groupe homeassistant
-#       group:
-#         name: homeassistant
-#         state: present
-#       become: true
+    - name: Créer le groupe homeassistant
+      group:
+        name: homeassistant
+        state: present
+      become: true
 
 #     - name: Créer l'utilisateur homeassistant
 #       user:
