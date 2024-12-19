@@ -331,6 +331,7 @@
           - libssl-dev
           - libxml2-dev
           - libxslt1-dev
+          - libpcap-dev
           - zlib1g-dev
         state: present
         update_cache: yes
