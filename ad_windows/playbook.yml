@@ -319,6 +319,7 @@
   become: true
 
   tasks:
+    # Étape 1 : Installer les paquets nécessaires
     - name: Mettre à jour les paquets et installer les dépendances nécessaires pour Home Assistant
       apt:
         name:
@@ -331,44 +332,21 @@
           - libxslt1-dev
           - zlib1g-dev
         state: present
-      become: true
 
+    # Étape 2 : Préparer l'environnement virtuel pour Home Assistant
     - name: Créer l'environnement virtuel pour Home Assistant
-      shell: |
-        python3 -m venv /srv/homeassistant
-      become: true
+      shell: python3 -m venv /srv/homeassistant
+      args:
+        executable: /bin/bash
 
-    - name: Installer wheel dans l'environnement virtuel
+    - name: Installer les dépendances Python dans l'environnement virtuel
       shell: |
-        source /srv/homeassistant/bin/activate && pip install wheel
+        source /srv/homeassistant/bin/activate && pip install --upgrade pip wheel homeassistant
       args:
         executable: /bin/bash
       become_user: homeassistant
 
-    - name: Installer Home Assistant dans l'environnement virtuel
-      shell: |
-        source /srv/homeassistant/bin/activate && pip install homeassistant
-      args:
-        executable: /bin/bash
-      become_user: homeassistant
-
-
-    - name: Créer le répertoire temporaire Ansible avec les bonnes permissions
-      file:
-        path: /srv/homeassistant/.ansible/tmp
-        state: directory
-        mode: '0775'
-      become: true
-
-    - name: Installer Home Assistant dans l'environnement virtuel
-      shell: |
-        source /srv/homeassistant/bin/activate && pip install wheel homeassistant
-      args:
-        executable: /bin/bash
-      become_user: homeassistant
-
-
-    # Étape 3 : Ajouter un fichier de configuration personnalisé pour Home Assistant
+    # Étape 3 : Configurer les répertoires et fichiers de Home Assistant
     - name: Créer le répertoire de configuration pour Home Assistant
       file:
         path: /srv/homeassistant/config
@@ -396,7 +374,7 @@
         group: homeassistant
         mode: '0644'
 
-    # Étape 4 : Démarrer Home Assistant en tant que service
+    # Étape 4 : Configurer le service systemd pour Home Assistant
     - name: Créer un fichier systemd pour Home Assistant
       copy:
         dest: /etc/systemd/system/home-assistant.service
