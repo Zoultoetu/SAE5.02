@@ -311,29 +311,64 @@
 #       when: client_ovpn_file.stat.exists
 
 
+################################HOME ASSISTANT####################################################################################################################
 
-################################HOME ASSISTANCE####################################################################################################################
-
-
-
-
----
 - name: Configurer la machine Home Assistant
   hosts: home_assistant
   gather_facts: true
   become: true
 
   tasks:
-    # Mise à jour des paquets
-    - name: Mettre à jour les paquets
+    # Étape 1 : Mise à jour des paquets
+    - name: Mettre à jour et installer les paquets nécessaires
       apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+        state: present
         update_cache: yes
-        upgrade: dist
 
-    # Ajouter un fichier de configuration pour Home Assistant
-    - name: Ajouter un fichier de configuration Home Assistant
+    # Étape 2 : Créer un environnement virtuel pour Home Assistant
+    - name: Créer un utilisateur dédié pour Home Assistant
+      user:
+        name: homeassistant
+        home: /srv/homeassistant
+        shell: /bin/bash
+        state: present
+
+    - name: Créer un répertoire pour Home Assistant
+      file:
+        path: /srv/homeassistant
+        state: directory
+        owner: homeassistant
+        group: homeassistant
+        mode: '0755'
+
+    - name: Créer un environnement virtuel Python pour Home Assistant
+      command: python3 -m venv /srv/homeassistant
+      args:
+        creates: /srv/homeassistant/bin/activate
+
+    - name: Installer Home Assistant dans l'environnement virtuel
+      shell: |
+        source /srv/homeassistant/bin/activate && pip install wheel homeassistant
+      args:
+        executable: /bin/bash
+      become_user: homeassistant
+
+    # Étape 3 : Ajouter un fichier de configuration personnalisé pour Home Assistant
+    - name: Créer le répertoire de configuration pour Home Assistant
+      file:
+        path: /srv/homeassistant/config
+        state: directory
+        owner: homeassistant
+        group: homeassistant
+        mode: '0755'
+
+    - name: Ajouter le fichier configuration.yaml
       copy:
-        dest: /opt/home_assistant/config/configuration.yaml
+        dest: /srv/homeassistant/config/configuration.yaml
         content: |
           homeassistant:
             name: "Smart Home"
@@ -346,7 +381,33 @@
               action:
                 - service: light.turn_on
                   entity_id: light.living_room
+        owner: homeassistant
+        group: homeassistant
+        mode: '0644'
 
-    # Redémarrer Home Assistant
-    - name: Redémarrer Home Assistant
-      shell: pkill hass && hass --config /opt/home_assistant/config &
+    # Étape 4 : Démarrer Home Assistant en tant que service
+    - name: Créer un fichier systemd pour Home Assistant
+      copy:
+        dest: /etc/systemd/system/home-assistant.service
+        content: |
+          [Unit]
+          Description=Home Assistant
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=homeassistant
+          ExecStart=/srv/homeassistant/bin/hass -c /srv/homeassistant/config
+
+          [Install]
+          WantedBy=multi-user.target
+        mode: '0644'
+
+    - name: Recharger systemd pour inclure le nouveau service
+      command: systemctl daemon-reload
+
+    - name: Activer et démarrer le service Home Assistant
+      service:
+        name: home-assistant
+        state: started
+        enabled: yes
