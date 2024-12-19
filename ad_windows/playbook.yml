@@ -363,25 +363,25 @@
 
 
 
-#     - name: Ajouter le fichier configuration.yaml
-#       copy:
-#         dest: /srv/homeassistant/config/configuration.yaml
-#         content: |
-#           homeassistant:
-#             name: "Smart Home"
-#           default_config:
-#           automation:
-#             - alias: "Turn on lights at sunset"
-#               trigger:
-#                 - platform: sun
-#                   event: sunset
-#               action:
-#                 - service: light.turn_on
-#                   entity_id: light.living_room
-#         owner: homeassistant
-#         group: homeassistant
-#         mode: '0644'
-#       become: true
+    - name: Ajouter le fichier configuration.yaml
+      copy:
+        dest: /srv/homeassistant/config/configuration.yaml
+        content: |
+          homeassistant:
+            name: "Smart Home"
+          default_config:
+          automation:
+            - alias: "Turn on lights at sunset"
+              trigger:
+                - platform: sun
+                  event: sunset
+              action:
+                - service: light.turn_on
+                  entity_id: light.living_room
+        owner: homeassistant
+        group: homeassistant
+        mode: '0644'
+      become: true
 
 
 #     - name: Reconfigurer le paquet ssh
