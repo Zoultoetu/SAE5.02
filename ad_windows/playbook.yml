@@ -388,36 +388,36 @@
     # - name: Reconfigurer le paquet ssh
     #   command: ssh-keygen -f
 
-    - name: Redémarrer docker
-      service:
-        use : service
-        name: docker-compose
-        state: restarted
+    # - name: Redémarrer docker
+    #   service:
+    #     use : service
+    #     name: docker-compose
+    #     state: restarted
 
-#     - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
-#       docker_container:
-#         name: home_assistant
-#         image: homeassistant/home-assistant:stable
-#         state: started
-#         restart_policy: always
-#         ports:
-#           - "8123:8123"
-#         volumes:
-#           - /srv/homeassistant/config:/config
-#         networks:
-#           - homeassistant_network
-#       become: true
+    - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
+      docker_container:
+        name: home_assistant
+        image: homeassistant/home-assistant:stable
+        state: started
+        restart_policy: always
+        ports:
+          - "8123:8123"
+        volumes:
+          - /srv/homeassistant/config:/config
+        networks:
+          - homeassistant_network
+      become: true
 
-#     - name: Créer un réseau Docker si nécessaire
-#       docker_network:
-#         name: homeassistant_network
-#         state: present
-#       become: true
+    - name: Créer un réseau Docker si nécessaire
+      docker_network:
+        name: homeassistant_network
+        state: present
+      become: true
 
-#     - name: Démarrer Home Assistant directement sans systemd
-#       shell: |
-#         nohup hass -c /srv/homeassistant/config > /var/log/homeassistant.log 2>&1 &
-#       args:
-#         executable: /bin/bash
-#       become: true
+    - name: Démarrer Home Assistant directement sans systemd
+      shell: |
+        nohup hass -c /srv/homeassistant/config > /var/log/homeassistant.log 2>&1 &
+      args:
+        executable: /bin/bash
+      become: true
 
