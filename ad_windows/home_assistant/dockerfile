@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     iputils-ping && \
     apt-get clean && \
     pip install hass-nabucasa &&\
+    pip install --upgrade cryptography pyopenssl &&\
+    pip install --upgrade boto3 botocore &&\
     rm -rf /var/lib/apt/lists/*
 
 # Configurer SSH
