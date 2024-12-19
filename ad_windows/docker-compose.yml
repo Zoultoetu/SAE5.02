@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
     container_name: home_assistant
     ports:
-      - "22:22"     # SSH
+      - "2223:22"     # SSH
       - "8123:8123" # Home Assistant Web Interface
     volumes:
       - ./samba:/etc/samba
