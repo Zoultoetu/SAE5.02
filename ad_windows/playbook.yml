@@ -105,210 +105,210 @@
         state: restarted
 
 ##########################################################SERVEUR VPN############################################################################
-- name: Configuration complète d'OpenVPN
-  hosts: vpn
-  become: true
+# - name: Configuration complète d'OpenVPN
+#   hosts: vpn
+#   become: true
 
-  vars:
-    openvpn_dir: /etc/openvpn
-    easyrsa_dir: /etc/openvpn/easy-rsa
-    export_dir: /etc/openvpn/export
-    server_name: "server"
-    vpn_subnet: "10.7.0.0"
-    vpn_netmask: "255.255.255.0"
+#   vars:
+#     openvpn_dir: /etc/openvpn
+#     easyrsa_dir: /etc/openvpn/easy-rsa
+#     export_dir: /etc/openvpn/export
+#     server_name: "server"
+#     vpn_subnet: "10.7.0.0"
+#     vpn_netmask: "255.255.255.0"
 
-  tasks:
-    - name: Installer OpenVPN et Easy-RSA
-      apt:
-        name:
-          - openvpn
-          - easy-rsa
-        state: present
-        update_cache: yes
+#   tasks:
+#     - name: Installer OpenVPN et Easy-RSA
+#       apt:
+#         name:
+#           - openvpn
+#           - easy-rsa
+#         state: present
+#         update_cache: yes
 
-    - name: Créer les répertoires nécessaires pour OpenVPN
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: '0755'
-      loop:
-        - "{{ openvpn_dir }}"
-        - "{{ easyrsa_dir }}"
-        - "{{ export_dir }}"
+#     - name: Créer les répertoires nécessaires pour OpenVPN
+#       file:
+#         path: "{{ item }}"
+#         state: directory
+#         mode: '0755'
+#       loop:
+#         - "{{ openvpn_dir }}"
+#         - "{{ easyrsa_dir }}"
+#         - "{{ export_dir }}"
     
-    - name: Copier les fichiers Easy-RSA
-      copy:
-        src: /usr/share/easy-rsa/
-        dest: "{{ easyrsa_dir }}"
-        remote_src: yes
+#     - name: Copier les fichiers Easy-RSA
+#       copy:
+#         src: /usr/share/easy-rsa/
+#         dest: "{{ easyrsa_dir }}"
+#         remote_src: yes
 
-    - name: Configurer les variables Easy-RSA
-      lineinfile:
-        path: "{{ easyrsa_dir }}/vars"
-        create: yes
-        line: "{{ item }}"
-      loop:
-        - 'set_var EASYRSA_REQ_COUNTRY    "FR"'
-        - 'set_var EASYRSA_REQ_PROVINCE   "Ile-de-France"'
-        - 'set_var EASYRSA_REQ_CITY       "Paris"'
-        - 'set_var EASYRSA_REQ_ORG        "MyVPN"'
-        - 'set_var EASYRSA_REQ_EMAIL      "admin@myvpn.local"'
-        - 'set_var EASYRSA_REQ_OU         "IT Department"'
+#     - name: Configurer les variables Easy-RSA
+#       lineinfile:
+#         path: "{{ easyrsa_dir }}/vars"
+#         create: yes
+#         line: "{{ item }}"
+#       loop:
+#         - 'set_var EASYRSA_REQ_COUNTRY    "FR"'
+#         - 'set_var EASYRSA_REQ_PROVINCE   "Ile-de-France"'
+#         - 'set_var EASYRSA_REQ_CITY       "Paris"'
+#         - 'set_var EASYRSA_REQ_ORG        "MyVPN"'
+#         - 'set_var EASYRSA_REQ_EMAIL      "admin@myvpn.local"'
+#         - 'set_var EASYRSA_REQ_OU         "IT Department"'
 
-    - name: Initialiser le PKI et générer les certificats nécessaires
-      command: "{{ item }}"
-      args:
-        chdir: "{{ easyrsa_dir }}"
-      environment:
-        EASYRSA_BATCH: "1"
-      loop:
-        - ./easyrsa init-pki
-        - ./easyrsa build-ca nopass
-        - ./easyrsa gen-req {{ server_name }} nopass
-        - ./easyrsa sign-req server {{ server_name }}
-        - ./easyrsa gen-dh
-        - openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key
+#     - name: Initialiser le PKI et générer les certificats nécessaires
+#       command: "{{ item }}"
+#       args:
+#         chdir: "{{ easyrsa_dir }}"
+#       environment:
+#         EASYRSA_BATCH: "1"
+#       loop:
+#         - ./easyrsa init-pki
+#         - ./easyrsa build-ca nopass
+#         - ./easyrsa gen-req {{ server_name }} nopass
+#         - ./easyrsa sign-req server {{ server_name }}
+#         - ./easyrsa gen-dh
+#         - openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key
 
-    - name: Copier les certificats et clés vers /etc/openvpn
-      copy:
-        src: "{{ easyrsa_dir }}/pki/{{ item.src }}"
-        dest: "{{ openvpn_dir }}/{{ item.dest }}"
-        remote_src: yes
-      loop:
-        - { src: "ca.crt", dest: "ca.crt" }
-        - { src: "issued/{{ server_name }}.crt", dest: "server.crt" }
-        - { src: "private/{{ server_name }}.key", dest: "server.key" }
-        - { src: "dh.pem", dest: "dh.pem" }
-        - { src: "ta.key", dest: "ta.key" }
+#     - name: Copier les certificats et clés vers /etc/openvpn
+#       copy:
+#         src: "{{ easyrsa_dir }}/pki/{{ item.src }}"
+#         dest: "{{ openvpn_dir }}/{{ item.dest }}"
+#         remote_src: yes
+#       loop:
+#         - { src: "ca.crt", dest: "ca.crt" }
+#         - { src: "issued/{{ server_name }}.crt", dest: "server.crt" }
+#         - { src: "private/{{ server_name }}.key", dest: "server.key" }
+#         - { src: "dh.pem", dest: "dh.pem" }
+#         - { src: "ta.key", dest: "ta.key" }
 
-    - name: Vérifier l'existence des fichiers OpenVPN
-      stat:
-        path: "{{ openvpn_dir }}/{{ item }}"
-      register: file_check
-      loop:
-        - ca.crt
-        - server.crt
-        - server.key
-        - dh.pem
-        - ta.key
+#     - name: Vérifier l'existence des fichiers OpenVPN
+#       stat:
+#         path: "{{ openvpn_dir }}/{{ item }}"
+#       register: file_check
+#       loop:
+#         - ca.crt
+#         - server.crt
+#         - server.key
+#         - dh.pem
+#         - ta.key
 
-    - name: Sécuriser les permissions des fichiers sensibles (server.key et ta.key)
-      file:
-        path: "/etc/openvpn/easy-rsa/pki/"
-        mode: '0777'
-        owner: root
-        group: root
-      loop:
-        - server.key
-        - ta.key
+#     - name: Sécuriser les permissions des fichiers sensibles (server.key et ta.key)
+#       file:
+#         path: "/etc/openvpn/easy-rsa/pki/"
+#         mode: '0777'
+#         owner: root
+#         group: root
+#       loop:
+#         - server.key
+#         - ta.key
 
 
-    - name: Échouer si un fichier requis est manquant
-      fail:
-        msg: "Le fichier {{ item.item }} est manquant dans {{ openvpn_dir }}."
-      when: not item.stat.exists
-      loop: "{{ file_check.results }}"
+#     - name: Échouer si un fichier requis est manquant
+#       fail:
+#         msg: "Le fichier {{ item.item }} est manquant dans {{ openvpn_dir }}."
+#       when: not item.stat.exists
+#       loop: "{{ file_check.results }}"
 
-    - name: Configurer OpenVPN (server.conf)
-      copy:
-        dest: "{{ openvpn_dir }}/server.conf"
-        content: |
-          port 16387
-          proto udp
-          dev tun
-          ca ca.crt
-          cert server.crt
-          key server.key
-          dh dh.pem
-          auth SHA256
-          tls-auth ta.key 0
-          server {{ vpn_subnet }} {{ vpn_netmask }}
-          push "route 192.168.0.0 255.255.255.0"
-          ifconfig-pool-persist ipp.txt
-          keepalive 10 120
-          cipher AES-256-CBC
-          persist-key
-          persist-tun
-          status openvpn-status.log
-          log-append /var/log/openvpn.log
-          verb 3
-          explicit-exit-notify 1
+#     - name: Configurer OpenVPN (server.conf)
+#       copy:
+#         dest: "{{ openvpn_dir }}/server.conf"
+#         content: |
+#           port 16387
+#           proto udp
+#           dev tun
+#           ca ca.crt
+#           cert server.crt
+#           key server.key
+#           dh dh.pem
+#           auth SHA256
+#           tls-auth ta.key 0
+#           server {{ vpn_subnet }} {{ vpn_netmask }}
+#           push "route 192.168.0.0 255.255.255.0"
+#           ifconfig-pool-persist ipp.txt
+#           keepalive 10 120
+#           cipher AES-256-CBC
+#           persist-key
+#           persist-tun
+#           status openvpn-status.log
+#           log-append /var/log/openvpn.log
+#           verb 3
+#           explicit-exit-notify 1
 
-    - name: Activer et démarrer le service OpenVPN
-      service:
-        use : service
-        name: openvpn
-        state: started
-        enabled: yes
+#     - name: Activer et démarrer le service OpenVPN
+#       service:
+#         use : service
+#         name: openvpn
+#         state: started
+#         enabled: yes
 
-    # Étape 9 : Générer les certificats pour le client
-    - name: Générer une clé et un certificat pour le client
-      command: ./easyrsa gen-req client nopass
-      args:
-        chdir: "{{ easyrsa_dir }}"
-      environment:
-        EASYRSA_BATCH: "1"
+#     # Étape 9 : Générer les certificats pour le client
+#     - name: Générer une clé et un certificat pour le client
+#       command: ./easyrsa gen-req client nopass
+#       args:
+#         chdir: "{{ easyrsa_dir }}"
+#       environment:
+#         EASYRSA_BATCH: "1"
 
-    - name: Signer le certificat du client
-      command: ./easyrsa sign-req client client
-      args:
-        chdir: "{{ easyrsa_dir }}"
-      environment:
-        EASYRSA_BATCH: "1"
+#     - name: Signer le certificat du client
+#       command: ./easyrsa sign-req client client
+#       args:
+#         chdir: "{{ easyrsa_dir }}"
+#       environment:
+#         EASYRSA_BATCH: "1"
     
-    - name: Appliquer des permissions 777 sur tous les fichiers générés
-      file:
-        path: "{{ item }}"
-        mode: '777'
-      loop:
-        - /etc/openvpn
+#     - name: Appliquer des permissions 777 sur tous les fichiers générés
+#       file:
+#         path: "{{ item }}"
+#         mode: '777'
+#       loop:
+#         - /etc/openvpn
 
 
-    # Étape 10 : Générer le fichier client.ovpn
-    # - name: Créer le certificat et le fichier client.ovpn via Easy-RSA
-    #   command: ./easyrsa build-client-full client nopass
-    #   args:
-    #     chdir: /etc/openvpn/easy-rsa
+#     # Étape 10 : Générer le fichier client.ovpn
+#     # - name: Créer le certificat et le fichier client.ovpn via Easy-RSA
+#     #   command: ./easyrsa build-client-full client nopass
+#     #   args:
+#     #     chdir: /etc/openvpn/easy-rsa
 
-    - name: Générer automatiquement le fichier client.ovpn
-      shell: |
-        echo "client
-        dev tun
-        proto udp
-        remote 91.175.31.138 16387
-        resolv-retry infinite
-        nobind
-        persist-key
-        persist-tun
-        remote-cert-tls server
-        auth SHA256
-        cipher AES-256-CBC
-        verb 3
-        key-direction 1
-        <ca>" > /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/ca.crt >> /etc/openvpn/client.ovpn && \
-        echo "</ca>
-        <cert>" >> /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> /etc/openvpn/client.ovpn && \
-        echo "</cert>
-        <key>" >> /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/private/client.key >> /etc/openvpn/client.ovpn && \
-        echo "</key>
-        <tls-auth>" >> /etc/openvpn/client.ovpn && \
-        cat /etc/openvpn/easy-rsa/pki/ta.key >> /etc/openvpn/client.ovpn && \
-        echo "</tls-auth>" >> /etc/openvpn/client.ovpn
-      args:
-        creates: /etc/openvpn/client.ovpn
+#     - name: Générer automatiquement le fichier client.ovpn
+#       shell: |
+#         echo "client
+#         dev tun
+#         proto udp
+#         remote 91.175.31.138 16387
+#         resolv-retry infinite
+#         nobind
+#         persist-key
+#         persist-tun
+#         remote-cert-tls server
+#         auth SHA256
+#         cipher AES-256-CBC
+#         verb 3
+#         key-direction 1
+#         <ca>" > /etc/openvpn/client.ovpn && \
+#         cat /etc/openvpn/easy-rsa/pki/ca.crt >> /etc/openvpn/client.ovpn && \
+#         echo "</ca>
+#         <cert>" >> /etc/openvpn/client.ovpn && \
+#         cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> /etc/openvpn/client.ovpn && \
+#         echo "</cert>
+#         <key>" >> /etc/openvpn/client.ovpn && \
+#         cat /etc/openvpn/easy-rsa/pki/private/client.key >> /etc/openvpn/client.ovpn && \
+#         echo "</key>
+#         <tls-auth>" >> /etc/openvpn/client.ovpn && \
+#         cat /etc/openvpn/easy-rsa/pki/ta.key >> /etc/openvpn/client.ovpn && \
+#         echo "</tls-auth>" >> /etc/openvpn/client.ovpn
+#       args:
+#         creates: /etc/openvpn/client.ovpn
 
-    - name: S'assurer que le fichier client.ovpn est généré
-      stat:
-        path: /etc/openvpn/client.ovpn
-      register: client_ovpn_file
+#     - name: S'assurer que le fichier client.ovpn est généré
+#       stat:
+#         path: /etc/openvpn/client.ovpn
+#       register: client_ovpn_file
 
-    - name: Afficher un message si le fichier client.ovpn est généré
-      debug:
-        msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
-      when: client_ovpn_file.stat.exists
+#     - name: Afficher un message si le fichier client.ovpn est généré
+#       debug:
+#         msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
+#       when: client_ovpn_file.stat.exists
 
 
 ################################HOME ASSISTANT####################################################################################################################
