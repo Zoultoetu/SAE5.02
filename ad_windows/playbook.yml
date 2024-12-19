@@ -345,21 +345,21 @@
         state: present
       become: true
 
-#     - name: Créer l'utilisateur homeassistant
-#       user:
-#         name: homeassistant
-#         group: homeassistant
-#         create_home: yes
-#       become: true
+    - name: Créer l'utilisateur homeassistant
+      user:
+        name: homeassistant
+        group: homeassistant
+        create_home: yes
+      become: true
 
-#     - name: Créer un répertoire de configuration pour Home Assistant
-#       file:
-#         path: /srv/homeassistant/config
-#         state: directory
-#         owner: homeassistant
-#         group: homeassistant
-#         mode: '0755'
-#       become: true
+    - name: Créer un répertoire de configuration pour Home Assistant
+      file:
+        path: /srv/homeassistant/config
+        state: directory
+        owner: homeassistant
+        group: homeassistant
+        mode: '0755'
+      become: true
 
 
 
