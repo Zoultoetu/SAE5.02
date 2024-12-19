@@ -114,7 +114,7 @@
     easyrsa_dir: /etc/openvpn/easy-rsa
     export_dir: /etc/openvpn/export
     server_name: "server"
-    vpn_subnet: "10.7.0.0"
+    vpn_subnet: "10.8.0.0"
     vpn_netmask: "255.255.255.0"
 
   tasks:
@@ -225,7 +225,7 @@
           server {{ vpn_subnet }} {{ vpn_netmask }}
           push "route 192.168.0.0 255.255.255.0"
           push "route 192.168.1.0 255.255.255.0"
-          push "route 10.7.0.0 255.255.255.0"
+          push "route 10.8.0.0 255.255.255.0"
           ifconfig-pool-persist ipp.txt
           keepalive 10 120
           cipher AES-256-CBC
