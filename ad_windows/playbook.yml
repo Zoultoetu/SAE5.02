@@ -385,8 +385,8 @@
       become: true
 
 
-    - name: Reconfigurer le paquet ssh
-      command: ssh-keygen -f
+    # - name: Reconfigurer le paquet ssh
+    #   command: ssh-keygen -f
 
     - name: Redémarrer docker
       service:
