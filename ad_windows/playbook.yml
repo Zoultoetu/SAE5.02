@@ -313,52 +313,40 @@
 
 ################################HOME ASSISTANT####################################################################################################################
 
-- name: Installer Home Assistant directement sur la machine
-  hosts: home_assitance
+- name: Configurer la machine Home Assistant avec Docker
+  hosts: home_assistants
   gather_facts: true
   become: true
 
   tasks:
-    # Mise à jour des paquets et installation des dépendances nécessaires
-    - name: Mettre à jour les paquets et installer les dépendances
+    - name: Mettre à jour les paquets et installer Docker si nécessaire
       apt:
         name:
-          - python3
-          - python3-pip
+          - docker.io
           - python3-dev
-          - python3.9-venv
-          - python3.9-distutils
+          - python3-pip
           - build-essential
           - libffi-dev
           - libssl-dev
           - libxml2-dev
           - libxslt1-dev
-          - libpcap-dev
           - zlib1g-dev
         state: present
-        update_cache: yes
+      become: true
 
-    # Mettre à jour pip et installer Home Assistant
-    - name: Mettre à jour pip
+    - name: Installer Home Assistant avec pip
       shell: |
-        pip3 install --upgrade pip setuptools wheel
-      args:
-        executable: /bin/bash
+        pip3 install --upgrade homeassistant
+      become: true
 
-    - name: Installer Home Assistant globalement
-      pip:
-        name: homeassistant
-        state: latest
-        executable: pip3
-
-    # Configuration de Home Assistant
-    - name: Créer le répertoire de configuration de Home Assistant
+    - name: Créer un répertoire de configuration pour Home Assistant
       file:
         path: /srv/homeassistant/config
         state: directory
-        owner: root
-        group: root
+        owner: homeassistant
+        group: homeassistant
         mode: '0755'
+      become: true
 
     - name: Ajouter le fichier configuration.yaml
       copy:
@@ -375,37 +363,40 @@
               action:
                 - service: light.turn_on
                   entity_id: light.living_room
-        owner: root
-        group: root
+        owner: homeassistant
+        group: homeassistant
         mode: '0644'
+      become: true
 
-    # Créer un service systemd pour démarrer Home Assistant
-    - name: Créer un fichier systemd pour Home Assistant
-      copy:
-        dest: /etc/systemd/system/home-assistant.service
-        content: |
-          [Unit]
-          Description=Home Assistant
-          After=network.target
+    - name: Vérifier si Docker est installé et en cours d'exécution
+      shell: docker info
+      register: docker_info
+      ignore_errors: true
 
-          [Service]
-          Type=simple
-          User=root
-          ExecStart=/usr/local/bin/hass -c /srv/homeassistant/config
+    - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
+      docker_container:
+        name: home_assistant
+        image: homeassistant/home-assistant:stable
+        state: started
+        restart_policy: always
+        ports:
+          - "8123:8123"
+        volumes:
+          - /srv/homeassistant/config:/config
+        networks:
+          - homeassistant_network
+      become: true
 
-          [Install]
-          WantedBy=multi-user.target
-        mode: '0644'
+    - name: Créer un réseau Docker si nécessaire
+      docker_network:
+        name: homeassistant_network
+        state: present
+      become: true
 
     - name: Démarrer Home Assistant directement sans systemd
       shell: |
         nohup hass -c /srv/homeassistant/config > /var/log/homeassistant.log 2>&1 &
       args:
         executable: /bin/bash
+      become: true
 
-    - name: Activer et démarrer le service Home Assistant
-      service:
-        use : service
-        name: home-assistant
-        state: started
-        enabled: yes
