@@ -395,7 +395,7 @@
         mode: '0644'
 
     - name: Recharger systemd pour inclure le nouveau service
-      command: systemctl daemon-reload
+      command: service daemon-reload restart
 
     - name: Activer et démarrer le service Home Assistant
       service:
