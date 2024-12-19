@@ -339,7 +339,13 @@
         pip3 install --upgrade homeassistant
       become: true
 
-    - name: Créer l'utilisateur et le groupe homeassistant
+    - name: Créer le groupe homeassistant
+      group:
+        name: homeassistant
+        state: present
+      become: true
+
+    - name: Créer l'utilisateur homeassistant
       user:
         name: homeassistant
         group: homeassistant
@@ -354,6 +360,7 @@
         group: homeassistant
         mode: '0755'
       become: true
+
 
 
     - name: Ajouter le fichier configuration.yaml
