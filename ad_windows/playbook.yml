@@ -1,108 +1,108 @@
 ---
-###################################################### Samba ########################################################################################
-- name: Réécrire entièrement le fichier smb.conf pour Samba
-  hosts: all
-  become: true
-  tasks:
+# ###################################################### Samba ########################################################################################
+# - name: Réécrire entièrement le fichier smb.conf pour Samba
+#   hosts: all
+#   become: true
+#   tasks:
 
-    - name: Vérifier la configuration Samba avec testparm
-      command: testparm
-      register: testparm_output
-      failed_when: "'Error' in testparm_output.stderr"
-      changed_when: false
+#     - name: Vérifier la configuration Samba avec testparm
+#       command: testparm
+#       register: testparm_output
+#       failed_when: "'Error' in testparm_output.stderr"
+#       changed_when: false
 
-    - name: Reconfigurer le paquet samba-common-bin
-      command: dpkg --configure -a
+#     - name: Reconfigurer le paquet samba-common-bin
+#       command: dpkg --configure -a
 
-######################################################Mettre en place l'active directory##########################################################
+# ######################################################Mettre en place l'active directory##########################################################
 
-- name: Joindre une machine Ubuntu au domaine Active Directory
-  hosts: all
-  become: true
-  vars:
-    domaine_ad: "MAME.net"
-    realm_ad: "MAME.net"
-    serveur_ad_ip: "10.8.0.3"
-    utilisateur_domaine: "Administrator"
-    mot_de_passe_domaine: "Roa42300"
+# - name: Joindre une machine Ubuntu au domaine Active Directory
+#   hosts: all
+#   become: true
+#   vars:
+#     domaine_ad: "MAME.net"
+#     realm_ad: "MAME.net"
+#     serveur_ad_ip: "10.8.0.3"
+#     utilisateur_domaine: "Administrator"
+#     mot_de_passe_domaine: "Roa42300"
 
-  tasks:
+#   tasks:
 
-    - name: Installer les paquets nécessaires
-      apt:
-        name:
-          - realmd
-          - sssd
-          - samba-common-bin
-          - samba-libs
-          - adcli
-          - packagekit
-        state: present
-        update_cache: yes
+#     - name: Installer les paquets nécessaires
+#       apt:
+#         name:
+#           - realmd
+#           - sssd
+#           - samba-common-bin
+#           - samba-libs
+#           - adcli
+#           - packagekit
+#         state: present
+#         update_cache: yes
 
-    - name: Redémarrer SSSD
-      service:
-        name: dbus
-        state: started
+#     - name: Redémarrer SSSD
+#       service:
+#         name: dbus
+#         state: started
 
-    - name: Copier les fichiers samba dans le répertoire
-      copy:
-        src: /home/toine-fa/SAE5.02/ad_windows/samba/smb.conf
-        dest: "/etc/samba/smb.conf"
+#     - name: Copier les fichiers samba dans le répertoire
+#       copy:
+#         src: /home/toine-fa/SAE5.02/ad_windows/samba/smb.conf
+#         dest: "/etc/samba/smb.conf"
 
-    - name: Découvrir le domaine Active Directory
-      command: "realm discover {{ domaine_ad }}"
-      register: realm_discover
-      changed_when: false
+#     - name: Découvrir le domaine Active Directory
+#       command: "realm discover {{ domaine_ad }}"
+#       register: realm_discover
+#       changed_when: false
 
-    - name: Joindre la machine au domaine
-      command: >
-        echo {{ mot_de_passe_domaine }} | realm join {{ domaine_ad }} -U {{ utilisateur_domaine }}
-      args:
-        creates: /etc/sssd/sssd.conf
+#     - name: Joindre la machine au domaine
+#       command: >
+#         echo {{ mot_de_passe_domaine }} | realm join {{ domaine_ad }} -U {{ utilisateur_domaine }}
+#       args:
+#         creates: /etc/sssd/sssd.conf
 
-    - name: Configurer SSSD pour l'authentification AD
-      copy:
-        dest: /etc/sssd/sssd.conf
-        content: |
-          [sssd]
-          domains = {{ domaine_ad }}
-          config_file_version = 2
-          services = nss, pam
+#     - name: Configurer SSSD pour l'authentification AD
+#       copy:
+#         dest: /etc/sssd/sssd.conf
+#         content: |
+#           [sssd]
+#           domains = {{ domaine_ad }}
+#           config_file_version = 2
+#           services = nss, pam
 
-          [domain/{{ domaine_ad }}]
-          ad_domain = {{ domaine_ad }}
-          krb5_realm = {{ realm_ad }}
-          realmd_tags = manages-system joined-with-samba
-          cache_credentials = true
-          id_provider = ad
-          auth_provider = ad
-          chpass_provider = ad
-          access_provider = ad
-      notify:
-        - Redémarrer SSSD
+#           [domain/{{ domaine_ad }}]
+#           ad_domain = {{ domaine_ad }}
+#           krb5_realm = {{ realm_ad }}
+#           realmd_tags = manages-system joined-with-samba
+#           cache_credentials = true
+#           id_provider = ad
+#           auth_provider = ad
+#           chpass_provider = ad
+#           access_provider = ad
+#       notify:
+#         - Redémarrer SSSD
 
-    - name: Configurer PAM pour créer les répertoires utilisateurs automatiquement
-      lineinfile:
-        path: /etc/pam.d/common-session
-        line: "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077"
-        state: present
+#     - name: Configurer PAM pour créer les répertoires utilisateurs automatiquement
+#       lineinfile:
+#         path: /etc/pam.d/common-session
+#         line: "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077"
+#         state: present
 
-    - name: Vérifier l'intégration de la machine au domaine
-      command: "realm list"
-      register: realm_list
-      changed_when: false
+#     - name: Vérifier l'intégration de la machine au domaine
+#       command: "realm list"
+#       register: realm_list
+#       changed_when: false
 
-    - name: Afficher le résultat de l'intégration
-      debug:
-        msg: "La machine a rejoint avec succès le domaine {{ domaine_ad }}."
-      when: "'configured' in realm_list.stdout"
+#     - name: Afficher le résultat de l'intégration
+#       debug:
+#         msg: "La machine a rejoint avec succès le domaine {{ domaine_ad }}."
+#       when: "'configured' in realm_list.stdout"
 
-  handlers:
-    - name: Redémarrer SSSD
-      service:
-        name: sssd
-        state: restarted
+#   handlers:
+#     - name: Redémarrer SSSD
+#       service:
+#         name: sssd
+#         state: restarted
 
 ##########################################################SERVEUR VPN############################################################################
 # - name: Configuration complète d'OpenVPN
