@@ -30,7 +30,8 @@ services:
       - "22:22"     # SSH
       - "8123:8123" # Home Assistant Web Interface
     volumes:
-      - ./config:/opt/home_assistant/config
+      - ./home_assistant/configuration.yaml:/usr/src/app/config/configuration.yaml  # Montée du fichier de config
+      - ./home_assistant_system/srv/homeassistant/config:/usr/src/app/config
     networks:
       shared_net:
         ipv4_address: 192.168.0.4

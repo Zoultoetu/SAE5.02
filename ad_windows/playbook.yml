@@ -319,11 +319,12 @@
   become: true
 
   tasks:
-    - name: Copier le fichier configuration.yaml dans le conteneur
-      docker_container:
-        name: "home_assistant_container"
-        volumes:
-          - ./SAE5.02/ad_windows/home_assistant/configuration.yaml:/usr/src/app/config/configuration.yaml
+    # - name: Copier le fichier configuration.yaml dans le conteneur
+    #   docker_container:
+    #     name: "home_assistant_container"
+    #     volumes:
+    #       - ./SAE5.02/ad_windows/home_assistant/configuration.yaml:/usr/src/app/config/configuration.yaml
+    
     # Étape 1 : Mise à jour des paquets
     - name: Mettre à jour et installer les paquets nécessaires
       apt:
