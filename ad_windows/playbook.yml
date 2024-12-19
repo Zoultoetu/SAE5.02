@@ -387,7 +387,7 @@
       service:
         use : service
         name: docker
-        state: start
+        state: started
 
     - name: Lancer Home Assistant dans Docker si Docker n'est pas déjà en cours d'exécution
       docker_container:
