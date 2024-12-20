@@ -385,6 +385,6 @@
 
     - name: Démarrer le service OpenVPN
       service:
-        name: openvpn@server
+        name: openvpn
         state: restarted
         enabled: yes
