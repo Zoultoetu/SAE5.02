@@ -231,7 +231,6 @@
           push "dhcp-option DNS 1.1.1.1"
           push "dhcp-option DNS 1.0.0.1"
           ifconfig-pool-persist ipp.txt
-          client-config-dir ccd
           keepalive 10 120
           cipher AES-256-CBC
           persist-key
