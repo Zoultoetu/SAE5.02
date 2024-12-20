@@ -430,6 +430,7 @@
     #######################################
     - name: Redémarrer OpenVPN
       service:
+        use : service
         name: openvpn
         state: restarted
 
