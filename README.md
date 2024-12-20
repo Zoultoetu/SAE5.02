@@ -59,21 +59,14 @@ Les services sont déployés sur différentes machines virtuelles ou physiques, 
 
 ## **6. Instructions d’Installation**
 
-1. **Cloner le projet**  
+1. **Cloner le projet et lancer le projet**  
    ```bash
    git clone https://github.com/Zoultoetu/SAE5.02
    cd ./SAE5.02/ad_windows
    sudo bash ./SAE5.02/ad_windows/script.sh
    ```
 
-2. **Lancer les Playbooks Ansible**  
-   Exécutez les scripts pour chaque machine en suivant les étapes :
-   - DNS / AD / LDAP : `ansible-playbook dns_ad_ldap.yml`
-   - Serveur Domotique : `ansible-playbook home_assistant.yml`
-   - Serveur VPN : `ansible-playbook openvpn.yml`
-   - Pare-feu : `ansible-playbook opnsense.yml`
-
-3. **Configurer la Freebox**  
+2. **Configurer la Freebox**  
    Accédez à l’interface de la Freebox et configurez les redirections de ports pour permettre l’accès externe aux services.
 
 ## **7. Limitations Connues**
