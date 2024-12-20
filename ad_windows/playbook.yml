@@ -310,3 +310,10 @@
       debug:
         msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
       when: client_ovpn_file.stat.exists
+
+    - name: Activer et démarrer le service OpenVPN
+      service:
+        use : service
+        name: openvpn
+        state: restarted
+        enabled: yes
