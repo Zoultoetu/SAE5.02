@@ -336,3 +336,124 @@
         name: openvpn
         state: restarted
         enabled: yes
+
+
+---
+- name: Installer et configurer un serveur VPN avec FreeRADIUS
+  hosts: vpn
+  become: true
+
+  vars:
+    domaine_ad: "MAME.net"
+    realm_ad: "MAME.net"
+    serveur_ad_ip: "10.8.0.3"
+    utilisateur_domaine: "Administrator"
+    mot_de_passe_domaine: "Roa42300"
+    radius_secret: "testing123"
+    radius_clients: 
+      - { client_name: "OpenVPN", client_ip: "127.0.0.1", secret: "{{ radius_secret }}" }
+
+  tasks:
+    #######################################
+    # Installer FreeRADIUS et ses dépendances
+    #######################################
+    - name: Installer les paquets nécessaires pour FreeRADIUS
+      apt:
+        name:
+          - freeradius
+          - freeradius-utils
+          - freeradius-ldap
+        state: present
+        update_cache: yes
+
+    #######################################
+    # Configurer FreeRADIUS pour l'authentification via Active Directory (LDAP)
+    #######################################
+    - name: Configurer LDAP dans FreeRADIUS
+      copy:
+        dest: /etc/freeradius/3.0/mods-available/ldap
+        content: |
+          ldap {
+              server = "{{ serveur_ad_ip }}"
+              identity = "cn={{ utilisateur_domaine }},cn=Users,dc=mame,dc=net"
+              password = "{{ mot_de_passe_domaine }}"
+              base_dn = "dc=mame,dc=net"
+              filter = "(sAMAccountName=%{%{Stripped-User-Name}:-%{User-Name}})"
+              start_tls = yes
+              tls {
+                  ca_cert = /etc/ssl/certs/ca-certificates.crt
+              }
+          }
+
+    - name: Activer le module LDAP pour FreeRADIUS
+      file:
+        src: /etc/freeradius/3.0/mods-available/ldap
+        dest: /etc/freeradius/3.0/mods-enabled/ldap
+        state: link
+
+    #######################################
+    # Ajouter des clients RADIUS
+    #######################################
+    - name: Ajouter les clients RADIUS (OpenVPN)
+      copy:
+        dest: /etc/freeradius/3.0/clients.conf
+        content: |
+          {% for client in radius_clients %}
+          client {{ client.client_name }} {
+              ipaddr = {{ client.client_ip }}
+              secret = {{ client.secret }}
+          }
+          {% endfor %}
+
+    #######################################
+    # Redémarrer FreeRADIUS
+    #######################################
+    - name: Redémarrer le service FreeRADIUS
+      service:
+        name: freeradius
+        state: restarted
+        enabled: true
+
+    #######################################
+    # Configurer OpenVPN pour utiliser FreeRADIUS
+    #######################################
+    - name: Installer le plugin RADIUS pour OpenVPN
+      apt:
+        name: openvpn-plugin-radius
+        state: present
+        update_cache: yes
+
+    - name: Configurer le plugin RADIUS pour OpenVPN
+      copy:
+        dest: /etc/openvpn/radiusplugin.cnf
+        content: |
+          NAS-Identifier=OpenVPN
+          Service-Type=5
+          Framed-Protocol=1
+          NAS-Port-Type=5
+          OpenVPNConfig=/etc/openvpn/server.conf
+
+          server=127.0.0.1
+          secret={{ radius_secret }}
+          authport=1812
+          acctport=1813
+
+    - name: Ajouter le plugin RADIUS dans la configuration OpenVPN
+      lineinfile:
+        path: /etc/openvpn/server.conf
+        line: "plugin /usr/lib/openvpn/radiusplugin.so /etc/openvpn/radiusplugin.cnf"
+        state: present
+
+    #######################################
+    # Finaliser et redémarrer les services
+    #######################################
+    - name: Redémarrer OpenVPN
+      service:
+        name: openvpn
+        state: restarted
+
+    - name: Redémarrer FreeRADIUS
+      service:
+        name: freeradius
+        state: restarted
+
