@@ -37,6 +37,9 @@
           - samba-libs
           - adcli
           - packagekit
+          - iptables
+          - net-tools
+          - iptables-persistent
         state: present
         update_cache: yes
 
@@ -315,6 +318,17 @@
       debug:
         msg: "Le fichier client.ovpn a été généré avec succès et est disponible ici : /etc/openvpn/client.ovpn"
       when: client_ovpn_file.stat.exists
+    
+    - name: Reconfigurer le routage
+      command: iptables -t nat -A POSTROUTING -s 10.9.0.0/24 -o eth0 -j MASQUERADE
+
+    - name: Reconfigurer le routage
+      command: iptables -t nat -L -v
+
+    - name: Reconfigurer le routage
+      command: sysctl -p
+    
+    
 
     - name: Activer et démarrer le service OpenVPN
       service:
