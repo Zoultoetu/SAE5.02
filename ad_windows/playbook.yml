@@ -351,6 +351,7 @@
     vpn_netmask: "255.255.255.0"
     ldap_uri: "ldap://10.8.0.3"
     ldap_base_dn: "dc=mame,dc=net"
+    mot_de_passe_domaine: "Roa42300"
 
   tasks:
     - name: Installer OpenVPN, Easy-RSA et PAM-LDAP
