@@ -338,7 +338,6 @@
         enabled: yes
 
 
----
 - name: Installer et configurer un serveur VPN avec FreeRADIUS
   hosts: vpn
   become: true
