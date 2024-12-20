@@ -362,6 +362,7 @@
           - freeradius
           - freeradius-utils
           - freeradius-ldap
+          - wget
         state: present
         update_cache: yes
 
@@ -417,32 +418,42 @@
     #######################################
     # Configurer OpenVPN pour utiliser FreeRADIUS
     #######################################
-    - name: Installer le plugin RADIUS pour OpenVPN
-      apt:
-        name: openvpn-plugin-radius
-        state: present
-        update_cache: yes
+    - name: Télécharger le plugin RADIUS pour OpenVPN
+      get_url:
+        url: https://github.com/EnableSecurity/openvpn-radiusplugin/releases/download/v3.0.1/radiusplugin_v3.0.1.tar.gz
+        dest: /tmp/radiusplugin.tar.gz
 
-    - name: Configurer le plugin RADIUS pour OpenVPN
+    - name: Extraire le plugin RADIUS
+      unarchive:
+        src: /tmp/radiusplugin.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - name: Copier le plugin RADIUS dans le dossier OpenVPN
       copy:
+        src: /tmp/radiusplugin.so
+        dest: /etc/openvpn/radiusplugin.so
+
+    - name: Copier le fichier de configuration du plugin RADIUS
+      copy:
+        src: /tmp/radiusplugin.cnf
         dest: /etc/openvpn/radiusplugin.cnf
-        content: |
-          NAS-Identifier=OpenVPN
-          Service-Type=5
-          Framed-Protocol=1
-          NAS-Port-Type=5
-          OpenVPNConfig=/etc/openvpn/server.conf
 
-          server=127.0.0.1
-          secret={{ radius_secret }}
-          authport=1812
-          acctport=1813
-
-    - name: Ajouter le plugin RADIUS dans la configuration OpenVPN
+    - name: Configurer le fichier radiusplugin.cnf
       lineinfile:
-        path: /etc/openvpn/server.conf
-        line: "plugin /usr/lib/openvpn/radiusplugin.so /etc/openvpn/radiusplugin.cnf"
-        state: present
+        path: /etc/openvpn/radiusplugin.cnf
+        regexp: '^[#]* *{{ item.key }}'
+        line: "{{ item.key }} = {{ item.value }}"
+      loop:
+        - { key: 'NAS-Identifier', value: 'OpenVPN' }
+        - { key: 'Service-Type', value: '5' }
+        - { key: 'Framed-Protocol', value: '1' }
+        - { key: 'OpenVPNConfig', value: '/etc/openvpn/server.conf' }
+        - { key: 'RadiusServer', value: '{{ serveur_ad_ip }}' }
+        - { key: 'AuthPort', value: '1812' }
+        - { key: 'AcctPort', value: '1813' }
+        - { key: 'SharedSecret', value: 'YOUR_RADIUS_SHARED_SECRET' }
+
 
     #######################################
     # Finaliser et redémarrer les services
