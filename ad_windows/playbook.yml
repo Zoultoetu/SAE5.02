@@ -114,7 +114,7 @@
     easyrsa_dir: /etc/openvpn/easy-rsa
     export_dir: /etc/openvpn/export
     server_name: "server"
-    vpn_subnet: "10.8.0.0"
+    vpn_subnet: "10.9.0.0"
     vpn_netmask: "255.255.255.0"
 
   tasks:
