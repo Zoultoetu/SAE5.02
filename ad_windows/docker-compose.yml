@@ -16,7 +16,7 @@ services:
       - ./ad/resolv.conf:/etc/resolv.conf
     networks:
       shared_net:
-        ipv4_address: 192.168.0.3
+        ipv4_address: 192.168.0.2
     privileged: true
 
 
