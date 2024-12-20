@@ -382,7 +382,15 @@
           Password {{ mot_de_passe_domaine }}
           SearchFilter (sAMAccountName=%u)
           </LDAP>
+    - name: Configurer OpenVPN pour utiliser l'authentification LDAP
+      lineinfile:
+        path: /etc/openvpn/server.conf
+        regexp: '^plugin'
+        line: 'plugin /usr/lib/openvpn/plugins/openvpn-auth-ldap.so /etc/openvpn/auth-ldap.conf'
+        create: yes
 
+
+        
     - name: Démarrer le service OpenVPN
       service:
         use : service
