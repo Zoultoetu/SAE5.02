@@ -257,13 +257,6 @@
       loop:
         - /etc/openvpn
 
-
-    # Étape 10 : Générer le fichier client.ovpn
-    # - name: Créer le certificat et le fichier client.ovpn via Easy-RSA
-    #   command: ./easyrsa build-client-full client nopass
-    #   args:
-    #     chdir: /etc/openvpn/easy-rsa
-
     - name: Générer automatiquement le fichier client.ovpn
       shell: |
         echo "client
