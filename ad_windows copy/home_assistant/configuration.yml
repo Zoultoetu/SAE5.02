@@ -1,0 +1,49 @@
+homeassistant:
+  name: "Maison Intelligente"
+  latitude: 48.8566
+  longitude: 2.3522
+  elevation: 35
+  unit_system: metric
+  currency: EUR
+  external_url: "http://192.168.0.5:8123"
+  internal_url: "http://192.168.0.5:8123"
+
+default_config:
+
+automation:
+  - alias: "Allumer les lumières au coucher du soleil"
+    trigger:
+      - platform: sun
+        event: sunset
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.living_room
+
+  - alias: "Notifier en cas de détection de mouvement"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.motion_sensor
+        to: "on"
+    action:
+      - service: notify.mobile_app
+        data:
+          message: "Mouvement détecté dans le salon !"
+
+logger:
+  default: warning
+
+
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: "/"
+      - type: memory_free
+      - type: processor_use
+
+# Exemple de thème minimal dans themes/dark_theme.yaml
+dark_theme:
+  primary-color: "#000000"
+  accent-color: "#FF5722"
+  card-background-color: "#121212"

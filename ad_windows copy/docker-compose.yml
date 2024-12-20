@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  vpn_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vpn
+    ports:
+      - "16387:16387/udp"        # Port VPN
+      - "2222:22"              # Port SSH
+    volumes:
+      - ./openvpn:/etc/openvpn
+      - ./samba:/etc/samba
+      - ./kerberos:/etc/krb5.conf
+      - ./ad/resolv.conf:/etc/resolv.conf
+    networks:
+      shared_net:
+        ipv4_address: 192.168.0.2
+    privileged: true
+
+
+  
+  home_assistant:
+    image: homeassistant/home-assistant:stable  # Utilisation de l'image officielle
+    container_name: home_assistant
+    networks:
+      shared_net:
+        ipv4_address: 192.168.0.5
+    ports:
+      - "8123:8123"  # Interface Web Home Assistant
+    volumes:
+      - ./home_assistant_system:/config  # Répertoire de configuration
+    restart: always
+
+
+networks:
+  shared_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24

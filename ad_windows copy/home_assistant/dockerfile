@@ -1,0 +1,12 @@
+FROM homeassistant/home-assistant:stable
+
+# Installer le serveur SSH
+RUN apt-get update && \
+    apt-get install -y openssh-server && \
+    mkdir /var/run/sshd
+
+# Configurer SSH
+RUN echo "root:root" | chpasswd  # Définir un mot de passe pour root (à sécuriser)
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]
