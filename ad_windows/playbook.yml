@@ -361,6 +361,7 @@
           - easy-rsa
           - libpam-ldap
           - ldap-utils
+          - openvpn-auth-ldap
         state: present
         update_cache: yes
 
@@ -386,11 +387,11 @@
       lineinfile:
         path: /etc/openvpn/server.conf
         regexp: '^plugin'
-        line: 'plugin /usr/lib/openvpn/plugins/openvpn-auth-ldap.so /etc/openvpn/auth-ldap.conf'
+        line: 'plugin /usr/lib/openvpn/openvpn-auth-ldap.so /etc/openvpn/auth-ldap.conf'
         create: yes
 
 
-        
+
     - name: Démarrer le service OpenVPN
       service:
         use : service
