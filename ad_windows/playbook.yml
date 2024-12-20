@@ -377,12 +377,13 @@
               identity = "cn={{ utilisateur_domaine }},cn=Users,dc=mame,dc=net"
               password = "{{ mot_de_passe_domaine }}"
               base_dn = "dc=mame,dc=net"
-              filter = "(sAMAccountName=%{%{Stripped-User-Name}:-%{User-Name}})"
+              filter = "(sAMAccountName=%{% raw %}{%{Stripped-User-Name}:-%{User-Name}}{% endraw %})"
               start_tls = yes
               tls {
                   ca_cert = /etc/ssl/certs/ca-certificates.crt
               }
           }
+
 
     - name: Activer le module LDAP pour FreeRADIUS
       file:
