@@ -362,7 +362,8 @@
           - freeradius
           - freeradius-utils
           - freeradius-ldap
-          - wget
+          - openvpn-auth-radius
+          - ca-certificates
         state: present
         update_cache: yes
 
@@ -378,13 +379,12 @@
               identity = "cn={{ utilisateur_domaine }},cn=Users,dc=mame,dc=net"
               password = "{{ mot_de_passe_domaine }}"
               base_dn = "dc=mame,dc=net"
-              filter = "(sAMAccountName=%{% raw %}{%{Stripped-User-Name}:-%{User-Name}}{% endraw %})"
+              filter = "(sAMAccountName=%{%{Stripped-User-Name}:-%{User-Name}})"
               start_tls = yes
               tls {
                   ca_cert = /etc/ssl/certs/ca-certificates.crt
               }
           }
-
 
     - name: Activer le module LDAP pour FreeRADIUS
       file:
@@ -418,42 +418,11 @@
     #######################################
     # Configurer OpenVPN pour utiliser FreeRADIUS
     #######################################
-    - name: Télécharger le plugin RADIUS pour OpenVPN
-      get_url:
-        url: https://github.com/EnableSecurity/openvpn-radiusplugin/releases/download/v3.0.1/radiusplugin_v3.0.1.tar.gz
-        dest: /tmp/radiusplugin.tar.gz
-
-    - name: Extraire le plugin RADIUS
-      unarchive:
-        src: /tmp/radiusplugin.tar.gz
-        dest: /tmp/
-        remote_src: yes
-
-    - name: Copier le plugin RADIUS dans le dossier OpenVPN
-      copy:
-        src: /tmp/radiusplugin.so
-        dest: /etc/openvpn/radiusplugin.so
-
-    - name: Copier le fichier de configuration du plugin RADIUS
-      copy:
-        src: /tmp/radiusplugin.cnf
-        dest: /etc/openvpn/radiusplugin.cnf
-
-    - name: Configurer le fichier radiusplugin.cnf
+    - name: Ajouter le plugin RADIUS dans la configuration OpenVPN
       lineinfile:
-        path: /etc/openvpn/radiusplugin.cnf
-        regexp: '^[#]* *{{ item.key }}'
-        line: "{{ item.key }} = {{ item.value }}"
-      loop:
-        - { key: 'NAS-Identifier', value: 'OpenVPN' }
-        - { key: 'Service-Type', value: '5' }
-        - { key: 'Framed-Protocol', value: '1' }
-        - { key: 'OpenVPNConfig', value: '/etc/openvpn/server.conf' }
-        - { key: 'RadiusServer', value: '{{ serveur_ad_ip }}' }
-        - { key: 'AuthPort', value: '1812' }
-        - { key: 'AcctPort', value: '1813' }
-        - { key: 'SharedSecret', value: 'YOUR_RADIUS_SHARED_SECRET' }
-
+        path: /etc/openvpn/server.conf
+        regexp: '^plugin '
+        line: 'plugin /usr/lib/openvpn/plugins/openvpn-auth-radius.so /etc/freeradius/3.0/server.cnf'
 
     #######################################
     # Finaliser et redémarrer les services
@@ -463,8 +432,14 @@
         name: openvpn
         state: restarted
 
-    - name: Redémarrer FreeRADIUS
-      service:
-        name: freeradius
-        state: restarted
+    - name: Vérifier l'état de FreeRADIUS
+      shell: systemctl is-active freeradius
+      register: freeradius_status
+      failed_when: freeradius_status.stdout != "active"
+
+    - name: Vérifier l'état d'OpenVPN
+      shell: systemctl is-active openvpn
+      register: openvpn_status
+      failed_when: openvpn_status.stdout != "active"
+
 
