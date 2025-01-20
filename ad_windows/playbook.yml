@@ -284,7 +284,7 @@
         echo "client
         dev tun
         proto udp
-        remote 91.175.31.138 16387
+        remote ######################################################adresse IP publique et port
         resolv-retry infinite
         nobind
         persist-key
